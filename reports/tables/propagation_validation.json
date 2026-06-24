@@ -1,0 +1,8 @@
+{
+  "mae": 11.628136652097627,
+  "rmse": 29.5814362051866,
+  "spectral_radius_raw": 0.8204720367668384,
+  "stability_scale_factor": 1.0,
+  "spectral_radius_final": 0.8204720367668384,
+  "baseline_hold_mae": 13.173385522393476
+}

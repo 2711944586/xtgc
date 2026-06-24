@@ -1,0 +1,105 @@
+{
+  "best_model": "random_forest",
+  "threshold": 0.4,
+  "feature_columns": [
+    "Month",
+    "DayOfWeek",
+    "is_weekend",
+    "crs_dep_hour",
+    "Distance",
+    "CRSElapsedTime",
+    "origin_hist_delay_rate",
+    "dest_hist_delay_rate",
+    "route_hist_delay_rate",
+    "airline_hist_delay_rate",
+    "origin_hour_hist_delay_rate",
+    "origin_rolling_3h_delay_rate",
+    "origin_rolling_3h_volume",
+    "hour_sin",
+    "hour_cos",
+    "month_sin",
+    "month_cos",
+    "Origin",
+    "Dest",
+    "Reporting_Airline",
+    "dep_time_block"
+  ],
+  "forbidden_features_excluded": [
+    "DepTime",
+    "DepDelay",
+    "DepDelayMinutes",
+    "DepDel15",
+    "ArrTime",
+    "ArrDelay",
+    "ArrDelayMinutes",
+    "CarrierDelay",
+    "WeatherDelay",
+    "NASDelay",
+    "SecurityDelay",
+    "LateAircraftDelay",
+    "ActualElapsedTime",
+    "AirTime"
+  ],
+  "calibration_note": "isotonic calibration fitted on validation split",
+  "shap_note": "Tree SHAP computed on a representative test sample",
+  "best_test_metrics": {
+    "accuracy": 0.7654286618158811,
+    "precision": 0.5782280867106503,
+    "recall": 0.06502729344427367,
+    "f1": 0.11690724596255538,
+    "roc_auc": 0.674360027117792,
+    "pr_auc": 0.3822646512196846,
+    "brier": 0.17153029550315638,
+    "log_loss": 0.5213114787436813,
+    "tn": 59261,
+    "fp": 895,
+    "fn": 17642,
+    "tp": 1227
+  },
+  "sample_prediction": {
+    "baseline_train_rate": 0.21737127600567824,
+    "probability": 0.09397163120567376,
+    "contributions": [
+      {
+        "feature": "route_hist_delay_rate",
+        "value": "0.1593172119487909",
+        "contribution": 0.011748582661444407
+      },
+      {
+        "feature": "origin_hour_hist_delay_rate",
+        "value": "0.13636363636363635",
+        "contribution": 0.010613148742380452
+      },
+      {
+        "feature": "dest_hist_delay_rate",
+        "value": "0.1906347092765202",
+        "contribution": -0.009039511526694577
+      },
+      {
+        "feature": "Dest",
+        "value": "ORD",
+        "contribution": -0.013634585573959412
+      },
+      {
+        "feature": "Reporting_Airline",
+        "value": "AA",
+        "contribution": -0.01562175818733258
+      },
+      {
+        "feature": "origin_rolling_3h_volume",
+        "value": "24.0",
+        "contribution": -0.01631772236070833
+      },
+      {
+        "feature": "Distance",
+        "value": "1744.0",
+        "contribution": -0.016427176870374538
+      },
+      {
+        "feature": "hour_sin",
+        "value": "0.0",
+        "contribution": -0.01757977462717608
+      }
+    ]
+  }
+}

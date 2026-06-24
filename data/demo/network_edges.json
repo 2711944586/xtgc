@@ -1,0 +1,1634 @@
+[
+  {
+    "source": "ATL",
+    "target": "BOS",
+    "flights": 1031,
+    "delay_rate": 0.1454898157129001,
+    "avg_arr_delay": 9.250242483026188,
+    "avg_risk": 0.1503014802235566
+  },
+  {
+    "source": "ATL",
+    "target": "CLT",
+    "flights": 1138,
+    "delay_rate": 0.1274165202108963,
+    "avg_arr_delay": 8.125659050966608,
+    "avg_risk": 0.14381512668112081
+  },
+  {
+    "source": "ATL",
+    "target": "DCA",
+    "flights": 1681,
+    "delay_rate": 0.16894705532421178,
+    "avg_arr_delay": 11.217132659131469,
+    "avg_risk": 0.1604608564653898
+  },
+  {
+    "source": "ATL",
+    "target": "DEN",
+    "flights": 1413,
+    "delay_rate": 0.15711252653927812,
+    "avg_arr_delay": 8.551309271054494,
+    "avg_risk": 0.16145274510804844
+  },
+  {
+    "source": "ATL",
+    "target": "DFW",
+    "flights": 1474,
+    "delay_rate": 0.2645861601085482,
+    "avg_arr_delay": 19.73609226594301,
+    "avg_risk": 0.2311114075701759
+  },
+  {
+    "source": "ATL",
+    "target": "EWR",
+    "flights": 1353,
+    "delay_rate": 0.1433850702143385,
+    "avg_arr_delay": 9.685883222468588,
+    "avg_risk": 0.14541583706150463
+  },
+  {
+    "source": "ATL",
+    "target": "LAS",
+    "flights": 1122,
+    "delay_rate": 0.22994652406417113,
+    "avg_arr_delay": 15.177361853832442,
+    "avg_risk": 0.23431586479783204
+  },
+  {
+    "source": "ATL",
+    "target": "LAX",
+    "flights": 1160,
+    "delay_rate": 0.19913793103448277,
+    "avg_arr_delay": 11.552586206896551,
+    "avg_risk": 0.17445349990415174
+  },
+  {
+    "source": "ATL",
+    "target": "LGA",
+    "flights": 1901,
+    "delay_rate": 0.1557075223566544,
+    "avg_arr_delay": 11.647553918990006,
+    "avg_risk": 0.1518970436899875
+  },
+  {
+    "source": "ATL",
+    "target": "MCO",
+    "flights": 2325,
+    "delay_rate": 0.25763440860215053,
+    "avg_arr_delay": 16.7505376344086,
+    "avg_risk": 0.2217506862583995
+  },
+  {
+    "source": "ATL",
+    "target": "ORD",
+    "flights": 1272,
+    "delay_rate": 0.1871069182389937,
+    "avg_arr_delay": 15.56996855345912,
+    "avg_risk": 0.1653006977254286
+  },
+  {
+    "source": "ATL",
+    "target": "PHX",
+    "flights": 866,
+    "delay_rate": 0.20092378752886836,
+    "avg_arr_delay": 12.734411085450347,
+    "avg_risk": 0.19671627655845608
+  },
+  {
+    "source": "ATL",
+    "target": "SEA",
+    "flights": 677,
+    "delay_rate": 0.10487444608567208,
+    "avg_arr_delay": 6.644017725258493,
+    "avg_risk": 0.13083874969662734
+  },
+  {
+    "source": "ATL",
+    "target": "SFO",
+    "flights": 612,
+    "delay_rate": 0.25980392156862747,
+    "avg_arr_delay": 16.48856209150327,
+    "avg_risk": 0.20057624057333784
+  },
+  {
+    "source": "BOS",
+    "target": "ATL",
+    "flights": 1031,
+    "delay_rate": 0.1483996120271581,
+    "avg_arr_delay": 11.642095053346265,
+    "avg_risk": 0.1527395841254044
+  },
+  {
+    "source": "BOS",
+    "target": "CLT",
+    "flights": 1105,
+    "delay_rate": 0.1583710407239819,
+    "avg_arr_delay": 12.567420814479638,
+    "avg_risk": 0.16024946863424147
+  },
+  {
+    "source": "BOS",
+    "target": "DCA",
+    "flights": 2267,
+    "delay_rate": 0.15394794883105425,
+    "avg_arr_delay": 11.778120864578739,
+    "avg_risk": 0.14887765012053786
+  },
+  {
+    "source": "BOS",
+    "target": "DEN",
+    "flights": 695,
+    "delay_rate": 0.14244604316546763,
+    "avg_arr_delay": 8.407194244604316,
+    "avg_risk": 0.1530048933720622
+  },
+  {
+    "source": "BOS",
+    "target": "DFW",
+    "flights": 845,
+    "delay_rate": 0.1952662721893491,
+    "avg_arr_delay": 17.614201183431952,
+    "avg_risk": 0.2147506238203753
+  },
+  {
+    "source": "BOS",
+    "target": "EWR",
+    "flights": 903,
+    "delay_rate": 0.10299003322259136,
+    "avg_arr_delay": 6.276854928017719,
+    "avg_risk": 0.11420812513527916
+  },
+  {
+    "source": "BOS",
+    "target": "LAS",
+    "flights": 355,
+    "delay_rate": 0.22253521126760564,
+    "avg_arr_delay": 15.250704225352113,
+    "avg_risk": 0.21555788940297882
+  },
+  {
+    "source": "BOS",
+    "target": "LAX",
+    "flights": 906,
+    "delay_rate": 0.1467991169977925,
+    "avg_arr_delay": 11.24944812362031,
+    "avg_risk": 0.170472631898011
+  },
+  {
+    "source": "BOS",
+    "target": "LGA",
+    "flights": 1885,
+    "delay_rate": 0.1660477453580902,
+    "avg_arr_delay": 14.055702917771884,
+    "avg_risk": 0.15079487983536974
+  },
+  {
+    "source": "BOS",
+    "target": "MCO",
+    "flights": 1308,
+    "delay_rate": 0.31345565749235477,
+    "avg_arr_delay": 25.34480122324159,
+    "avg_risk": 0.23851163016837593
+  },
+  {
+    "source": "BOS",
+    "target": "ORD",
+    "flights": 1369,
+    "delay_rate": 0.12052593133674215,
+    "avg_arr_delay": 12.45653761869978,
+    "avg_risk": 0.13203148613969418
+  },
+  {
+    "source": "BOS",
+    "target": "PHX",
+    "flights": 546,
+    "delay_rate": 0.1282051282051282,
+    "avg_arr_delay": 15.824175824175825,
+    "avg_risk": 0.1592177681624011
+  },
+  {
+    "source": "BOS",
+    "target": "SEA",
+    "flights": 490,
+    "delay_rate": 0.12857142857142856,
+    "avg_arr_delay": 9.871428571428572,
+    "avg_risk": 0.1496705377375078
+  },
+  {
+    "source": "BOS",
+    "target": "SFO",
+    "flights": 867,
+    "delay_rate": 0.25144175317185696,
+    "avg_arr_delay": 16.645905420991927,
+    "avg_risk": 0.22621422598013968
+  },
+  {
+    "source": "CLT",
+    "target": "ATL",
+    "flights": 1140,
+    "delay_rate": 0.17105263157894737,
+    "avg_arr_delay": 13.271052631578947,
+    "avg_risk": 0.17520407911561184
+  },
+  {
+    "source": "CLT",
+    "target": "BOS",
+    "flights": 1109,
+    "delay_rate": 0.22993688007213706,
+    "avg_arr_delay": 15.78268710550045,
+    "avg_risk": 0.2276186123205782
+  },
+  {
+    "source": "CLT",
+    "target": "DCA",
+    "flights": 795,
+    "delay_rate": 0.3119496855345912,
+    "avg_arr_delay": 20.79622641509434,
+    "avg_risk": 0.277752481165469
+  },
+  {
+    "source": "CLT",
+    "target": "DEN",
+    "flights": 690,
+    "delay_rate": 0.23333333333333334,
+    "avg_arr_delay": 13.392753623188407,
+    "avg_risk": 0.22560456002726204
+  },
+  {
+    "source": "CLT",
+    "target": "DFW",
+    "flights": 978,
+    "delay_rate": 0.25357873210633947,
+    "avg_arr_delay": 14.58077709611452,
+    "avg_risk": 0.24531927069372547
+  },
+  {
+    "source": "CLT",
+    "target": "EWR",
+    "flights": 838,
+    "delay_rate": 0.20883054892601433,
+    "avg_arr_delay": 18.297136038186157,
+    "avg_risk": 0.19169464781827483
+  },
+  {
+    "source": "CLT",
+    "target": "LAS",
+    "flights": 634,
+    "delay_rate": 0.23659305993690852,
+    "avg_arr_delay": 16.154574132492115,
+    "avg_risk": 0.27099525412444725
+  },
+  {
+    "source": "CLT",
+    "target": "LAX",
+    "flights": 696,
+    "delay_rate": 0.21551724137931033,
+    "avg_arr_delay": 13.566091954022989,
+    "avg_risk": 0.22343785304028116
+  },
+  {
+    "source": "CLT",
+    "target": "LGA",
+    "flights": 1348,
+    "delay_rate": 0.24777448071216618,
+    "avg_arr_delay": 17.631305637982194,
+    "avg_risk": 0.2356157884567041
+  },
+  {
+    "source": "CLT",
+    "target": "MCO",
+    "flights": 1464,
+    "delay_rate": 0.2786885245901639,
+    "avg_arr_delay": 20.311475409836067,
+    "avg_risk": 0.24551923925398758
+  },
+  {
+    "source": "CLT",
+    "target": "ORD",
+    "flights": 1037,
+    "delay_rate": 0.210221793635487,
+    "avg_arr_delay": 15.832208293153327,
+    "avg_risk": 0.20169914927136334
+  },
+  {
+    "source": "CLT",
+    "target": "PHX",
+    "flights": 722,
+    "delay_rate": 0.19806094182825484,
+    "avg_arr_delay": 12.306094182825484,
+    "avg_risk": 0.24315867365836147
+  },
+  {
+    "source": "CLT",
+    "target": "SEA",
+    "flights": 258,
+    "delay_rate": 0.19767441860465115,
+    "avg_arr_delay": 19.003875968992247,
+    "avg_risk": 0.2048041171729402
+  },
+  {
+    "source": "CLT",
+    "target": "SFO",
+    "flights": 354,
+    "delay_rate": 0.3813559322033898,
+    "avg_arr_delay": 29.3135593220339,
+    "avg_risk": 0.30608297005041407
+  },
+  {
+    "source": "DCA",
+    "target": "ATL",
+    "flights": 1682,
+    "delay_rate": 0.14744351961950058,
+    "avg_arr_delay": 12.203923900118905,
+    "avg_risk": 0.17184045022964842
+  },
+  {
+    "source": "DCA",
+    "target": "BOS",
+    "flights": 2272,
+    "delay_rate": 0.16461267605633803,
+    "avg_arr_delay": 12.67605633802817,
+    "avg_risk": 0.15484897824775123
+  },
+  {
+    "source": "DCA",
+    "target": "CLT",
+    "flights": 798,
+    "delay_rate": 0.20300751879699247,
+    "avg_arr_delay": 20.860902255639097,
+    "avg_risk": 0.1851616833853525
+  },
+  {
+    "source": "DCA",
+    "target": "DEN",
+    "flights": 361,
+    "delay_rate": 0.14958448753462603,
+    "avg_arr_delay": 15.299168975069252,
+    "avg_risk": 0.18171358877870963
+  },
+  {
+    "source": "DCA",
+    "target": "DFW",
+    "flights": 797,
+    "delay_rate": 0.22082810539523212,
+    "avg_arr_delay": 24.075282308657467,
+    "avg_risk": 0.21629610855709613
+  },
+  {
+    "source": "DCA",
+    "target": "EWR",
+    "flights": 42,
+    "delay_rate": 0.11904761904761904,
+    "avg_arr_delay": 11.714285714285714,
+    "avg_risk": 0.12678251459061488
+  },
+  {
+    "source": "DCA",
+    "target": "LAS",
+    "flights": 90,
+    "delay_rate": 0.05555555555555555,
+    "avg_arr_delay": 3.8333333333333335,
+    "avg_risk": 0.1521145152250698
+  },
+  {
+    "source": "DCA",
+    "target": "LAX",
+    "flights": 357,
+    "delay_rate": 0.19327731092436976,
+    "avg_arr_delay": 11.862745098039216,
+    "avg_risk": 0.19553422287608474
+  },
+  {
+    "source": "DCA",
+    "target": "LGA",
+    "flights": 1072,
+    "delay_rate": 0.1912313432835821,
+    "avg_arr_delay": 16.065298507462686,
+    "avg_risk": 0.1539505658126368
+  },
+  {
+    "source": "DCA",
+    "target": "MCO",
+    "flights": 1337,
+    "delay_rate": 0.23410620792819745,
+    "avg_arr_delay": 20.167539267015705,
+    "avg_risk": 0.20895678357870912
+  },
+  {
+    "source": "DCA",
+    "target": "ORD",
+    "flights": 1470,
+    "delay_rate": 0.14761904761904762,
+    "avg_arr_delay": 15.3,
+    "avg_risk": 0.16116485105047265
+  },
+  {
+    "source": "DCA",
+    "target": "PHX",
+    "flights": 272,
+    "delay_rate": 0.09926470588235294,
+    "avg_arr_delay": 6.459558823529412,
+    "avg_risk": 0.15111471502086743
+  },
+  {
+    "source": "DCA",
+    "target": "SEA",
+    "flights": 180,
+    "delay_rate": 0.16111111111111112,
+    "avg_arr_delay": 10.833333333333334,
+    "avg_risk": 0.18614803623728732
+  },
+  {
+    "source": "DCA",
+    "target": "SFO",
+    "flights": 180,
+    "delay_rate": 0.17777777777777778,
+    "avg_arr_delay": 15.78888888888889,
+    "avg_risk": 0.18231033508228234
+  },
+  {
+    "source": "DEN",
+    "target": "ATL",
+    "flights": 1436,
+    "delay_rate": 0.1977715877437326,
+    "avg_arr_delay": 11.814066852367688,
+    "avg_risk": 0.23036626110410907
+  },
+  {
+    "source": "DEN",
+    "target": "BOS",
+    "flights": 704,
+    "delay_rate": 0.34375,
+    "avg_arr_delay": 20.448863636363637,
+    "avg_risk": 0.30753630916076774
+  },
+  {
+    "source": "DEN",
+    "target": "CLT",
+    "flights": 691,
+    "delay_rate": 0.2040520984081042,
+    "avg_arr_delay": 11.901591895803184,
+    "avg_risk": 0.2126884013339976
+  },
+  {
+    "source": "DEN",
+    "target": "DCA",
+    "flights": 361,
+    "delay_rate": 0.19390581717451524,
+    "avg_arr_delay": 12.041551246537397,
+    "avg_risk": 0.23422256234020164
+  },
+  {
+    "source": "DEN",
+    "target": "DFW",
+    "flights": 1372,
+    "delay_rate": 0.24635568513119532,
+    "avg_arr_delay": 19.340379008746357,
+    "avg_risk": 0.2763584558921128
+  },
+  {
+    "source": "DEN",
+    "target": "EWR",
+    "flights": 595,
+    "delay_rate": 0.2218487394957983,
+    "avg_arr_delay": 20.443697478991595,
+    "avg_risk": 0.205355970231229
+  },
+  {
+    "source": "DEN",
+    "target": "LAS",
+    "flights": 2112,
+    "delay_rate": 0.2840909090909091,
+    "avg_arr_delay": 18.479640151515152,
+    "avg_risk": 0.30977084426002083
+  },
+  {
+    "source": "DEN",
+    "target": "LAX",
+    "flights": 1703,
+    "delay_rate": 0.20786846741045215,
+    "avg_arr_delay": 13.614210217263652,
+    "avg_risk": 0.23173362545583473
+  },
+  {
+    "source": "DEN",
+    "target": "LGA",
+    "flights": 1087,
+    "delay_rate": 0.24103035878564857,
+    "avg_arr_delay": 15.346826126954921,
+    "avg_risk": 0.24978441423768388
+  },
+  {
+    "source": "DEN",
+    "target": "MCO",
+    "flights": 1239,
+    "delay_rate": 0.2598870056497175,
+    "avg_arr_delay": 19.188861985472155,
+    "avg_risk": 0.26611899020147556
+  },
+  {
+    "source": "DEN",
+    "target": "ORD",
+    "flights": 1407,
+    "delay_rate": 0.224591329068941,
+    "avg_arr_delay": 18.64179104477612,
+    "avg_risk": 0.25253492104979924
+  },
+  {
+    "source": "DEN",
+    "target": "PHX",
+    "flights": 2406,
+    "delay_rate": 0.24064837905236908,
+    "avg_arr_delay": 13.8595178719867,
+    "avg_risk": 0.27412288180458216
+  },
+  {
+    "source": "DEN",
+    "target": "SEA",
+    "flights": 1395,
+    "delay_rate": 0.24086021505376345,
+    "avg_arr_delay": 13.812903225806451,
+    "avg_risk": 0.25572085540810774
+  },
+  {
+    "source": "DEN",
+    "target": "SFO",
+    "flights": 1179,
+    "delay_rate": 0.453774385072095,
+    "avg_arr_delay": 31.587786259541986,
+    "avg_risk": 0.3522704640557214
+  },
+  {
+    "source": "DFW",
+    "target": "ATL",
+    "flights": 1482,
+    "delay_rate": 0.26653171390013497,
+    "avg_arr_delay": 23.842780026990553,
+    "avg_risk": 0.24117795181409912
+  },
+  {
+    "source": "DFW",
+    "target": "BOS",
+    "flights": 851,
+    "delay_rate": 0.28319623971797886,
+    "avg_arr_delay": 22.06227967097532,
+    "avg_risk": 0.27528833024215316
+  },
+  {
+    "source": "DFW",
+    "target": "CLT",
+    "flights": 985,
+    "delay_rate": 0.2649746192893401,
+    "avg_arr_delay": 20.48020304568528,
+    "avg_risk": 0.25607459202946475
+  },
+  {
+    "source": "DFW",
+    "target": "DCA",
+    "flights": 790,
+    "delay_rate": 0.2708860759493671,
+    "avg_arr_delay": 18.81139240506329,
+    "avg_risk": 0.27860687978696447
+  },
+  {
+    "source": "DFW",
+    "target": "DEN",
+    "flights": 1378,
+    "delay_rate": 0.25181422351233673,
+    "avg_arr_delay": 19.57256894049347,
+    "avg_risk": 0.24688783784109267
+  },
+  {
+    "source": "DFW",
+    "target": "EWR",
+    "flights": 820,
+    "delay_rate": 0.21097560975609755,
+    "avg_arr_delay": 15.27560975609756,
+    "avg_risk": 0.19307524385401248
+  },
+  {
+    "source": "DFW",
+    "target": "LAS",
+    "flights": 1519,
+    "delay_rate": 0.315339038841343,
+    "avg_arr_delay": 25.14351547070441,
+    "avg_risk": 0.30496324144227155
+  },
+  {
+    "source": "DFW",
+    "target": "LAX",
+    "flights": 1600,
+    "delay_rate": 0.2675,
+    "avg_arr_delay": 17.2525,
+    "avg_risk": 0.2659624663393303
+  },
+  {
+    "source": "DFW",
+    "target": "LGA",
+    "flights": 1390,
+    "delay_rate": 0.22661870503597123,
+    "avg_arr_delay": 17.866187050359713,
+    "avg_risk": 0.21986001013993658
+  },
+  {
+    "source": "DFW",
+    "target": "MCO",
+    "flights": 1306,
+    "delay_rate": 0.32924961715160794,
+    "avg_arr_delay": 26.65084226646248,
+    "avg_risk": 0.283380882834514
+  },
+  {
+    "source": "DFW",
+    "target": "ORD",
+    "flights": 1371,
+    "delay_rate": 0.19474835886214442,
+    "avg_arr_delay": 14.831509846827133,
+    "avg_risk": 0.19687071335283512
+  },
+  {
+    "source": "DFW",
+    "target": "PHX",
+    "flights": 1298,
+    "delay_rate": 0.2765793528505393,
+    "avg_arr_delay": 20.478428351309706,
+    "avg_risk": 0.2705938971439951
+  },
+  {
+    "source": "DFW",
+    "target": "SEA",
+    "flights": 926,
+    "delay_rate": 0.234341252699784,
+    "avg_arr_delay": 14.748380129589632,
+    "avg_risk": 0.24509014183780375
+  },
+  {
+    "source": "DFW",
+    "target": "SFO",
+    "flights": 902,
+    "delay_rate": 0.3902439024390244,
+    "avg_arr_delay": 24.89911308203991,
+    "avg_risk": 0.3450416857909749
+  },
+  {
+    "source": "EWR",
+    "target": "ATL",
+    "flights": 1350,
+    "delay_rate": 0.16592592592592592,
+    "avg_arr_delay": 13.364444444444445,
+    "avg_risk": 0.1615248965455901
+  },
+  {
+    "source": "EWR",
+    "target": "BOS",
+    "flights": 907,
+    "delay_rate": 0.16207276736493936,
+    "avg_arr_delay": 11.362734288864388,
+    "avg_risk": 0.14968492434219172
+  },
+  {
+    "source": "EWR",
+    "target": "CLT",
+    "flights": 848,
+    "delay_rate": 0.16745283018867924,
+    "avg_arr_delay": 14.62382075471698,
+    "avg_risk": 0.17221018019622192
+  },
+  {
+    "source": "EWR",
+    "target": "DCA",
+    "flights": 42,
+    "delay_rate": 0.19047619047619047,
+    "avg_arr_delay": 10.238095238095237,
+    "avg_risk": 0.1856973523187725
+  },
+  {
+    "source": "EWR",
+    "target": "DEN",
+    "flights": 601,
+    "delay_rate": 0.129783693843594,
+    "avg_arr_delay": 7.797004991680533,
+    "avg_risk": 0.15981592320675186
+  },
+  {
+    "source": "EWR",
+    "target": "DFW",
+    "flights": 817,
+    "delay_rate": 0.17258261933904528,
+    "avg_arr_delay": 17.11750305997552,
+    "avg_risk": 0.1835184479212755
+  },
+  {
+    "source": "EWR",
+    "target": "LAS",
+    "flights": 690,
+    "delay_rate": 0.1753623188405797,
+    "avg_arr_delay": 12.410144927536232,
+    "avg_risk": 0.19084182375633948
+  },
+  {
+    "source": "EWR",
+    "target": "LAX",
+    "flights": 1266,
+    "delay_rate": 0.1966824644549763,
+    "avg_arr_delay": 14.424960505529226,
+    "avg_risk": 0.18675418869840205
+  },
+  {
+    "source": "EWR",
+    "target": "MCO",
+    "flights": 1760,
+    "delay_rate": 0.23522727272727273,
+    "avg_arr_delay": 18.50965909090909,
+    "avg_risk": 0.19578014337868174
+  },
+  {
+    "source": "EWR",
+    "target": "ORD",
+    "flights": 1251,
+    "delay_rate": 0.1806554756195044,
+    "avg_arr_delay": 13.858513189448441,
+    "avg_risk": 0.17644110551106026
+  },
+  {
+    "source": "EWR",
+    "target": "PHX",
+    "flights": 721,
+    "delay_rate": 0.15950069348127602,
+    "avg_arr_delay": 11.54368932038835,
+    "avg_risk": 0.16877579591338576
+  },
+  {
+    "source": "EWR",
+    "target": "SEA",
+    "flights": 358,
+    "delay_rate": 0.13128491620111732,
+    "avg_arr_delay": 7.614525139664805,
+    "avg_risk": 0.1401298314006752
+  },
+  {
+    "source": "EWR",
+    "target": "SFO",
+    "flights": 856,
+    "delay_rate": 0.2523364485981308,
+    "avg_arr_delay": 18.48247663551402,
+    "avg_risk": 0.2165337810756606
+  },
+  {
+    "source": "LAS",
+    "target": "ATL",
+    "flights": 1147,
+    "delay_rate": 0.1935483870967742,
+    "avg_arr_delay": 12.603312990409764,
+    "avg_risk": 0.1991717695874512
+  },
+  {
+    "source": "LAS",
+    "target": "BOS",
+    "flights": 355,
+    "delay_rate": 0.18309859154929578,
+    "avg_arr_delay": 14.312676056338027,
+    "avg_risk": 0.23299997545874276
+  },
+  {
+    "source": "LAS",
+    "target": "CLT",
+    "flights": 638,
+    "delay_rate": 0.16614420062695925,
+    "avg_arr_delay": 11.858934169278998,
+    "avg_risk": 0.17800585734124819
+  },
+  {
+    "source": "LAS",
+    "target": "DCA",
+    "flights": 90,
+    "delay_rate": 0.3111111111111111,
+    "avg_arr_delay": 15.666666666666666,
+    "avg_risk": 0.2950104207396827
+  },
+  {
+    "source": "LAS",
+    "target": "DEN",
+    "flights": 2096,
+    "delay_rate": 0.23043893129770993,
+    "avg_arr_delay": 15.687977099236642,
+    "avg_risk": 0.2322407152113071
+  },
+  {
+    "source": "LAS",
+    "target": "DFW",
+    "flights": 1518,
+    "delay_rate": 0.22397891963109354,
+    "avg_arr_delay": 22.33596837944664,
+    "avg_risk": 0.23512848724085253
+  },
+  {
+    "source": "LAS",
+    "target": "EWR",
+    "flights": 698,
+    "delay_rate": 0.167621776504298,
+    "avg_arr_delay": 13.411174785100286,
+    "avg_risk": 0.20642114004794881
+  },
+  {
+    "source": "LAS",
+    "target": "LAX",
+    "flights": 2241,
+    "delay_rate": 0.26639892904953144,
+    "avg_arr_delay": 17.238286479250334,
+    "avg_risk": 0.26626657720788116
+  },
+  {
+    "source": "LAS",
+    "target": "LGA",
+    "flights": 7,
+    "delay_rate": 0.14285714285714285,
+    "avg_arr_delay": 9.857142857142858,
+    "avg_risk": 0.23041782190484542
+  },
+  {
+    "source": "LAS",
+    "target": "MCO",
+    "flights": 297,
+    "delay_rate": 0.32323232323232326,
+    "avg_arr_delay": 19.87878787878788,
+    "avg_risk": 0.274361418511925
+  },
+  {
+    "source": "LAS",
+    "target": "ORD",
+    "flights": 1179,
+    "delay_rate": 0.19168787107718405,
+    "avg_arr_delay": 15.583545377438508,
+    "avg_risk": 0.18040101576577894
+  },
+  {
+    "source": "LAS",
+    "target": "PHX",
+    "flights": 1710,
+    "delay_rate": 0.22923976608187135,
+    "avg_arr_delay": 16.04327485380117,
+    "avg_risk": 0.27413254929299047
+  },
+  {
+    "source": "LAS",
+    "target": "SEA",
+    "flights": 1551,
+    "delay_rate": 0.2005157962604771,
+    "avg_arr_delay": 14.163120567375886,
+    "avg_risk": 0.20325296613523336
+  },
+  {
+    "source": "LAS",
+    "target": "SFO",
+    "flights": 1239,
+    "delay_rate": 0.4213075060532688,
+    "avg_arr_delay": 29.740112994350284,
+    "avg_risk": 0.344581988395496
+  },
+  {
+    "source": "LAX",
+    "target": "ATL",
+    "flights": 1158,
+    "delay_rate": 0.21243523316062177,
+    "avg_arr_delay": 16.310017271157168,
+    "avg_risk": 0.21466975668099036
+  },
+  {
+    "source": "LAX",
+    "target": "BOS",
+    "flights": 909,
+    "delay_rate": 0.1573157315731573,
+    "avg_arr_delay": 11.082508250825082,
+    "avg_risk": 0.17349412999435285
+  },
+  {
+    "source": "LAX",
+    "target": "CLT",
+    "flights": 696,
+    "delay_rate": 0.12931034482758622,
+    "avg_arr_delay": 12.619252873563218,
+    "avg_risk": 0.1490004857715969
+  },
+  {
+    "source": "LAX",
+    "target": "DCA",
+    "flights": 359,
+    "delay_rate": 0.18384401114206128,
+    "avg_arr_delay": 11.01949860724234,
+    "avg_risk": 0.18441467998731484
+  },
+  {
+    "source": "LAX",
+    "target": "DEN",
+    "flights": 1676,
+    "delay_rate": 0.15572792362768498,
+    "avg_arr_delay": 10.624701670644392,
+    "avg_risk": 0.17627998694188
+  },
+  {
+    "source": "LAX",
+    "target": "DFW",
+    "flights": 1600,
+    "delay_rate": 0.211875,
+    "avg_arr_delay": 21.709375,
+    "avg_risk": 0.19822176895556406
+  },
+  {
+    "source": "LAX",
+    "target": "EWR",
+    "flights": 1269,
+    "delay_rate": 0.17494089834515367,
+    "avg_arr_delay": 13.260047281323876,
+    "avg_risk": 0.18387668347004169
+  },
+  {
+    "source": "LAX",
+    "target": "LAS",
+    "flights": 2244,
+    "delay_rate": 0.2825311942959002,
+    "avg_arr_delay": 18.75579322638146,
+    "avg_risk": 0.27968909485399296
+  },
+  {
+    "source": "LAX",
+    "target": "LGA",
+    "flights": 1,
+    "delay_rate": 0.0,
+    "avg_arr_delay": 0.0,
+    "avg_risk": 0.18538565629228687
+  },
+  {
+    "source": "LAX",
+    "target": "MCO",
+    "flights": 755,
+    "delay_rate": 0.18543046357615894,
+    "avg_arr_delay": 14.590728476821193,
+    "avg_risk": 0.15618739673744012
+  },
+  {
+    "source": "LAX",
+    "target": "ORD",
+    "flights": 1466,
+    "delay_rate": 0.17326057298772168,
+    "avg_arr_delay": 15.590040927694407,
+    "avg_risk": 0.16029462562125582
+  },
+  {
+    "source": "LAX",
+    "target": "PHX",
+    "flights": 1518,
+    "delay_rate": 0.24176548089591568,
+    "avg_arr_delay": 14.942028985507246,
+    "avg_risk": 0.2488352756141663
+  },
+  {
+    "source": "LAX",
+    "target": "SEA",
+    "flights": 1559,
+    "delay_rate": 0.1597177677998717,
+    "avg_arr_delay": 9.028864656831303,
+    "avg_risk": 0.18097607082948616
+  },
+  {
+    "source": "LAX",
+    "target": "SFO",
+    "flights": 2545,
+    "delay_rate": 0.43850687622789786,
+    "avg_arr_delay": 27.469548133595286,
+    "avg_risk": 0.39929493753389117
+  },
+  {
+    "source": "LGA",
+    "target": "ATL",
+    "flights": 1904,
+    "delay_rate": 0.13760504201680673,
+    "avg_arr_delay": 11.211134453781513,
+    "avg_risk": 0.15261781748210096
+  },
+  {
+    "source": "LGA",
+    "target": "BOS",
+    "flights": 1881,
+    "delay_rate": 0.1717171717171717,
+    "avg_arr_delay": 13.798511430090377,
+    "avg_risk": 0.15058405800007968
+  },
+  {
+    "source": "LGA",
+    "target": "CLT",
+    "flights": 1351,
+    "delay_rate": 0.153960029607698,
+    "avg_arr_delay": 13.453737971872687,
+    "avg_risk": 0.15067250534894736
+  },
+  {
+    "source": "LGA",
+    "target": "DCA",
+    "flights": 1071,
+    "delay_rate": 0.10644257703081232,
+    "avg_arr_delay": 8.916900093370682,
+    "avg_risk": 0.12189280944438025
+  },
+  {
+    "source": "LGA",
+    "target": "DEN",
+    "flights": 1088,
+    "delay_rate": 0.14613970588235295,
+    "avg_arr_delay": 12.457720588235293,
+    "avg_risk": 0.16750767311624193
+  },
+  {
+    "source": "LGA",
+    "target": "DFW",
+    "flights": 1392,
+    "delay_rate": 0.21408045977011494,
+    "avg_arr_delay": 22.50933908045977,
+    "avg_risk": 0.2219236200978265
+  },
+  {
+    "source": "LGA",
+    "target": "LAS",
+    "flights": 7,
+    "delay_rate": 0.0,
+    "avg_arr_delay": 0.0,
+    "avg_risk": 0.1505399078458632
+  },
+  {
+    "source": "LGA",
+    "target": "LAX",
+    "flights": 1,
+    "delay_rate": 0.0,
+    "avg_arr_delay": 0.0,
+    "avg_risk": 0.13161659513590848
+  },
+  {
+    "source": "LGA",
+    "target": "MCO",
+    "flights": 1405,
+    "delay_rate": 0.26334519572953735,
+    "avg_arr_delay": 21.58291814946619,
+    "avg_risk": 0.2064202265016901
+  },
+  {
+    "source": "LGA",
+    "target": "ORD",
+    "flights": 2426,
+    "delay_rate": 0.1471558120362737,
+    "avg_arr_delay": 13.798021434460017,
+    "avg_risk": 0.14525817190316953
+  },
+  {
+    "source": "LGA",
+    "target": "PHX",
+    "flights": 3,
+    "delay_rate": 0.3333333333333333,
+    "avg_arr_delay": 15.0,
+    "avg_risk": 0.11411584793799334
+  },
+  {
+    "source": "MCO",
+    "target": "ATL",
+    "flights": 2332,
+    "delay_rate": 0.2538593481989708,
+    "avg_arr_delay": 19.463121783876502,
+    "avg_risk": 0.22574046128656633
+  },
+  {
+    "source": "MCO",
+    "target": "BOS",
+    "flights": 1307,
+    "delay_rate": 0.2364192807957154,
+    "avg_arr_delay": 20.198163733741392,
+    "avg_risk": 0.19615935200071444
+  },
+  {
+    "source": "MCO",
+    "target": "CLT",
+    "flights": 1463,
+    "delay_rate": 0.2734107997265892,
+    "avg_arr_delay": 21.53656869446343,
+    "avg_risk": 0.2327127345023249
+  },
+  {
+    "source": "MCO",
+    "target": "DCA",
+    "flights": 1335,
+    "delay_rate": 0.2157303370786517,
+    "avg_arr_delay": 17.584269662921347,
+    "avg_risk": 0.22019254237900318
+  },
+  {
+    "source": "MCO",
+    "target": "DEN",
+    "flights": 1217,
+    "delay_rate": 0.28430566967953985,
+    "avg_arr_delay": 20.612982744453575,
+    "avg_risk": 0.24761233832828825
+  },
+  {
+    "source": "MCO",
+    "target": "DFW",
+    "flights": 1302,
+    "delay_rate": 0.35944700460829493,
+    "avg_arr_delay": 28.678187403993856,
+    "avg_risk": 0.2918724309037455
+  },
+  {
+    "source": "MCO",
+    "target": "EWR",
+    "flights": 1764,
+    "delay_rate": 0.2046485260770975,
+    "avg_arr_delay": 16.4359410430839,
+    "avg_risk": 0.1659103564577682
+  },
+  {
+    "source": "MCO",
+    "target": "LAS",
+    "flights": 297,
+    "delay_rate": 0.39730639730639733,
+    "avg_arr_delay": 22.589225589225588,
+    "avg_risk": 0.2961523495893725
+  },
+  {
+    "source": "MCO",
+    "target": "LAX",
+    "flights": 755,
+    "delay_rate": 0.21589403973509932,
+    "avg_arr_delay": 15.124503311258279,
+    "avg_risk": 0.1735828848035569
+  },
+  {
+    "source": "MCO",
+    "target": "LGA",
+    "flights": 1404,
+    "delay_rate": 0.26994301994301995,
+    "avg_arr_delay": 18.99928774928775,
+    "avg_risk": 0.20163797998594674
+  },
+  {
+    "source": "MCO",
+    "target": "ORD",
+    "flights": 1404,
+    "delay_rate": 0.24216524216524216,
+    "avg_arr_delay": 18.452279202279204,
+    "avg_risk": 0.2230124358383335
+  },
+  {
+    "source": "MCO",
+    "target": "PHX",
+    "flights": 431,
+    "delay_rate": 0.31322505800464034,
+    "avg_arr_delay": 21.127610208816705,
+    "avg_risk": 0.24548501219718263
+  },
+  {
+    "source": "MCO",
+    "target": "SEA",
+    "flights": 455,
+    "delay_rate": 0.17802197802197803,
+    "avg_arr_delay": 12.791208791208792,
+    "avg_risk": 0.17218253716951162
+  },
+  {
+    "source": "MCO",
+    "target": "SFO",
+    "flights": 250,
+    "delay_rate": 0.284,
+    "avg_arr_delay": 20.016,
+    "avg_risk": 0.23308843014767705
+  },
+  {
+    "source": "ORD",
+    "target": "ATL",
+    "flights": 1272,
+    "delay_rate": 0.21540880503144655,
+    "avg_arr_delay": 16.42138364779874,
+    "avg_risk": 0.20173655512897318
+  },
+  {
+    "source": "ORD",
+    "target": "BOS",
+    "flights": 1372,
+    "delay_rate": 0.20626822157434402,
+    "avg_arr_delay": 18.097667638483966,
+    "avg_risk": 0.2041157924161449
+  },
+  {
+    "source": "ORD",
+    "target": "CLT",
+    "flights": 1029,
+    "delay_rate": 0.1924198250728863,
+    "avg_arr_delay": 13.149659863945578,
+    "avg_risk": 0.207115018582446
+  },
+  {
+    "source": "ORD",
+    "target": "DCA",
+    "flights": 1462,
+    "delay_rate": 0.2188782489740082,
+    "avg_arr_delay": 16.93296853625171,
+    "avg_risk": 0.20806488343967755
+  },
+  {
+    "source": "ORD",
+    "target": "DEN",
+    "flights": 1398,
+    "delay_rate": 0.1688125894134478,
+    "avg_arr_delay": 15.157367668097281,
+    "avg_risk": 0.18917318298297842
+  },
+  {
+    "source": "ORD",
+    "target": "DFW",
+    "flights": 1370,
+    "delay_rate": 0.2562043795620438,
+    "avg_arr_delay": 18.042335766423356,
+    "avg_risk": 0.2554268132850193
+  },
+  {
+    "source": "ORD",
+    "target": "EWR",
+    "flights": 1253,
+    "delay_rate": 0.19154030327214686,
+    "avg_arr_delay": 12.869114126097367,
+    "avg_risk": 0.1728382273824504
+  },
+  {
+    "source": "ORD",
+    "target": "LAS",
+    "flights": 1201,
+    "delay_rate": 0.2031640299750208,
+    "avg_arr_delay": 13.492089925062448,
+    "avg_risk": 0.23116984724011955
+  },
+  {
+    "source": "ORD",
+    "target": "LAX",
+    "flights": 1471,
+    "delay_rate": 0.21481985044187626,
+    "avg_arr_delay": 15.722637661454792,
+    "avg_risk": 0.22284037666579984
+  },
+  {
+    "source": "ORD",
+    "target": "LGA",
+    "flights": 2431,
+    "delay_rate": 0.20855614973262032,
+    "avg_arr_delay": 17.865076100370217,
+    "avg_risk": 0.18307576501918202
+  },
+  {
+    "source": "ORD",
+    "target": "MCO",
+    "flights": 1401,
+    "delay_rate": 0.25767309064953603,
+    "avg_arr_delay": 19.199143468950748,
+    "avg_risk": 0.2278814747982259
+  },
+  {
+    "source": "ORD",
+    "target": "PHX",
+    "flights": 1556,
+    "delay_rate": 0.17866323907455012,
+    "avg_arr_delay": 16.09897172236504,
+    "avg_risk": 0.20180022686137067
+  },
+  {
+    "source": "ORD",
+    "target": "SEA",
+    "flights": 807,
+    "delay_rate": 0.161090458488228,
+    "avg_arr_delay": 10.178438661710038,
+    "avg_risk": 0.16645563911049416
+  },
+  {
+    "source": "ORD",
+    "target": "SFO",
+    "flights": 889,
+    "delay_rate": 0.3295838020247469,
+    "avg_arr_delay": 25.655793025871766,
+    "avg_risk": 0.26224822388357194
+  },
+  {
+    "source": "PHX",
+    "target": "ATL",
+    "flights": 868,
+    "delay_rate": 0.1497695852534562,
+    "avg_arr_delay": 9.891705069124423,
+    "avg_risk": 0.16141206484839205
+  },
+  {
+    "source": "PHX",
+    "target": "BOS",
+    "flights": 546,
+    "delay_rate": 0.19047619047619047,
+    "avg_arr_delay": 13.293040293040294,
+    "avg_risk": 0.19087535188162638
+  },
+  {
+    "source": "PHX",
+    "target": "CLT",
+    "flights": 722,
+    "delay_rate": 0.13019390581717452,
+    "avg_arr_delay": 7.286703601108033,
+    "avg_risk": 0.1542211347224875
+  },
+  {
+    "source": "PHX",
+    "target": "DCA",
+    "flights": 272,
+    "delay_rate": 0.15073529411764705,
+    "avg_arr_delay": 10.290441176470589,
+    "avg_risk": 0.15190754992094954
+  },
+  {
+    "source": "PHX",
+    "target": "DEN",
+    "flights": 2447,
+    "delay_rate": 0.18062934205149161,
+    "avg_arr_delay": 12.404985696771558,
+    "avg_risk": 0.19669821908815668
+  },
+  {
+    "source": "PHX",
+    "target": "DFW",
+    "flights": 1298,
+    "delay_rate": 0.2041602465331279,
+    "avg_arr_delay": 16.940677966101696,
+    "avg_risk": 0.21645067685270922
+  },
+  {
+    "source": "PHX",
+    "target": "EWR",
+    "flights": 717,
+    "delay_rate": 0.22873082287308227,
+    "avg_arr_delay": 12.733612273361228,
+    "avg_risk": 0.2086817889604556
+  },
+  {
+    "source": "PHX",
+    "target": "LAS",
+    "flights": 1732,
+    "delay_rate": 0.24364896073903003,
+    "avg_arr_delay": 17.337759815242496,
+    "avg_risk": 0.2757864635200865
+  },
+  {
+    "source": "PHX",
+    "target": "LAX",
+    "flights": 1498,
+    "delay_rate": 0.1822429906542056,
+    "avg_arr_delay": 10.98931909212283,
+    "avg_risk": 0.19529584042673984
+  },
+  {
+    "source": "PHX",
+    "target": "LGA",
+    "flights": 3,
+    "delay_rate": 0.3333333333333333,
+    "avg_arr_delay": 7.0,
+    "avg_risk": 0.17409707185630371
+  },
+  {
+    "source": "PHX",
+    "target": "MCO",
+    "flights": 430,
+    "delay_rate": 0.2651162790697674,
+    "avg_arr_delay": 19.086046511627906,
+    "avg_risk": 0.23153580828524598
+  },
+  {
+    "source": "PHX",
+    "target": "ORD",
+    "flights": 1537,
+    "delay_rate": 0.18282368249837344,
+    "avg_arr_delay": 12.65191932335719,
+    "avg_risk": 0.17285074535244563
+  },
+  {
+    "source": "PHX",
+    "target": "SEA",
+    "flights": 1732,
+    "delay_rate": 0.1541570438799076,
+    "avg_arr_delay": 9.716512702078521,
+    "avg_risk": 0.1842374174338999
+  },
+  {
+    "source": "PHX",
+    "target": "SFO",
+    "flights": 1161,
+    "delay_rate": 0.4737295434969854,
+    "avg_arr_delay": 32.11024978466839,
+    "avg_risk": 0.3792536743465228
+  },
+  {
+    "source": "SEA",
+    "target": "ATL",
+    "flights": 677,
+    "delay_rate": 0.16691285081240767,
+    "avg_arr_delay": 9.617429837518463,
+    "avg_risk": 0.20270462574780349
+  },
+  {
+    "source": "SEA",
+    "target": "BOS",
+    "flights": 490,
+    "delay_rate": 0.23061224489795917,
+    "avg_arr_delay": 12.363265306122448,
+    "avg_risk": 0.26175476767517813
+  },
+  {
+    "source": "SEA",
+    "target": "CLT",
+    "flights": 257,
+    "delay_rate": 0.13229571984435798,
+    "avg_arr_delay": 26.91828793774319,
+    "avg_risk": 0.16955052686844146
+  },
+  {
+    "source": "SEA",
+    "target": "DCA",
+    "flights": 182,
+    "delay_rate": 0.23626373626373626,
+    "avg_arr_delay": 14.302197802197803,
+    "avg_risk": 0.28169435552681527
+  },
+  {
+    "source": "SEA",
+    "target": "DEN",
+    "flights": 1381,
+    "delay_rate": 0.19188993482983346,
+    "avg_arr_delay": 13.178131788559016,
+    "avg_risk": 0.19747615037012176
+  },
+  {
+    "source": "SEA",
+    "target": "DFW",
+    "flights": 923,
+    "delay_rate": 0.20585048754062837,
+    "avg_arr_delay": 20.84723726977248,
+    "avg_risk": 0.24445305006580795
+  },
+  {
+    "source": "SEA",
+    "target": "EWR",
+    "flights": 359,
+    "delay_rate": 0.1615598885793872,
+    "avg_arr_delay": 13.462395543175488,
+    "avg_risk": 0.19406684706636204
+  },
+  {
+    "source": "SEA",
+    "target": "LAS",
+    "flights": 1544,
+    "delay_rate": 0.22992227979274613,
+    "avg_arr_delay": 16.474740932642487,
+    "avg_risk": 0.2512685945296407
+  },
+  {
+    "source": "SEA",
+    "target": "LAX",
+    "flights": 1555,
+    "delay_rate": 0.17234726688102894,
+    "avg_arr_delay": 10.889389067524116,
+    "avg_risk": 0.18395877139027708
+  },
+  {
+    "source": "SEA",
+    "target": "MCO",
+    "flights": 449,
+    "delay_rate": 0.18485523385300667,
+    "avg_arr_delay": 10.770601336302896,
+    "avg_risk": 0.1864914679459516
+  },
+  {
+    "source": "SEA",
+    "target": "ORD",
+    "flights": 810,
+    "delay_rate": 0.18518518518518517,
+    "avg_arr_delay": 13.980246913580247,
+    "avg_risk": 0.20482702656803756
+  },
+  {
+    "source": "SEA",
+    "target": "PHX",
+    "flights": 1743,
+    "delay_rate": 0.18703384968445208,
+    "avg_arr_delay": 12.608146873207113,
+    "avg_risk": 0.22094885840387934
+  },
+  {
+    "source": "SEA",
+    "target": "SFO",
+    "flights": 1418,
+    "delay_rate": 0.39492242595204513,
+    "avg_arr_delay": 27.708744710860366,
+    "avg_risk": 0.3104325567915134
+  },
+  {
+    "source": "SFO",
+    "target": "ATL",
+    "flights": 614,
+    "delay_rate": 0.16449511400651465,
+    "avg_arr_delay": 9.530944625407166,
+    "avg_risk": 0.1548257441164873
+  },
+  {
+    "source": "SFO",
+    "target": "BOS",
+    "flights": 872,
+    "delay_rate": 0.24655963302752293,
+    "avg_arr_delay": 19.78440366972477,
+    "avg_risk": 0.246461280643745
+  },
+  {
+    "source": "SFO",
+    "target": "CLT",
+    "flights": 355,
+    "delay_rate": 0.30140845070422534,
+    "avg_arr_delay": 32.304225352112674,
+    "avg_risk": 0.23390691982296427
+  },
+  {
+    "source": "SFO",
+    "target": "DCA",
+    "flights": 181,
+    "delay_rate": 0.13812154696132597,
+    "avg_arr_delay": 8.408839779005525,
+    "avg_risk": 0.15721588260182787
+  },
+  {
+    "source": "SFO",
+    "target": "DEN",
+    "flights": 1188,
+    "delay_rate": 0.2845117845117845,
+    "avg_arr_delay": 19.372053872053872,
+    "avg_risk": 0.2406277799728539
+  },
+  {
+    "source": "SFO",
+    "target": "DFW",
+    "flights": 899,
+    "delay_rate": 0.3147942157953281,
+    "avg_arr_delay": 30.777530589543936,
+    "avg_risk": 0.2856550188364354
+  },
+  {
+    "source": "SFO",
+    "target": "EWR",
+    "flights": 859,
+    "delay_rate": 0.22235157159487776,
+    "avg_arr_delay": 15.973224679860303,
+    "avg_risk": 0.22052643733874566
+  },
+  {
+    "source": "SFO",
+    "target": "LAS",
+    "flights": 1233,
+    "delay_rate": 0.3795620437956204,
+    "avg_arr_delay": 30.89456609894566,
+    "avg_risk": 0.3161389845186007
+  },
+  {
+    "source": "SFO",
+    "target": "LAX",
+    "flights": 2552,
+    "delay_rate": 0.3013322884012539,
+    "avg_arr_delay": 20.75822884012539,
+    "avg_risk": 0.2765177566123777
+  },
+  {
+    "source": "SFO",
+    "target": "MCO",
+    "flights": 249,
+    "delay_rate": 0.20481927710843373,
+    "avg_arr_delay": 16.12449799196787,
+    "avg_risk": 0.14985752869611596
+  },
+  {
+    "source": "SFO",
+    "target": "ORD",
+    "flights": 896,
+    "delay_rate": 0.20535714285714285,
+    "avg_arr_delay": 17.176339285714285,
+    "avg_risk": 0.17492760901883755
+  },
+  {
+    "source": "SFO",
+    "target": "PHX",
+    "flights": 1170,
+    "delay_rate": 0.3111111111111111,
+    "avg_arr_delay": 25.356410256410257,
+    "avg_risk": 0.2777065363843801
+  },
+  {
+    "source": "SFO",
+    "target": "SEA",
+    "flights": 1396,
+    "delay_rate": 0.23925501432664756,
+    "avg_arr_delay": 16.869627507163322,
+    "avg_risk": 0.2071220257395282
+  }
+]

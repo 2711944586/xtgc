@@ -1,0 +1,24 @@
+name: flightresilience
+channels:
+  - conda-forge
+dependencies:
+  - python>=3.11
+  - pandas
+  - numpy
+  - pyarrow
+  - scikit-learn
+  - lightgbm
+  - shap
+  - networkx
+  - plotly
+  - matplotlib
+  - seaborn
+  - streamlit
+  - joblib
+  - python-docx
+  - reportlab
+  - pillow
+  - pypdf
+  - pyyaml
+  - requests
+

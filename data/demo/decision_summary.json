@@ -1,0 +1,37 @@
+{
+  "recommended_strategy": "dynamic_combo",
+  "main_lambda_ahp": 0.9,
+  "ahp_consistency": {
+    "lambda_max": 10.0,
+    "ci": 0.0,
+    "cr": 0.0
+  },
+  "risk_recommended_strategy": "baseline",
+  "uncertainty_recommendations": [
+    {
+      "criterion": "乐观准则",
+      "recommended_strategy": "baseline",
+      "value": 192.30118185368985
+    },
+    {
+      "criterion": "悲观准则",
+      "recommended_strategy": "baseline",
+      "value": 965.4871669588019
+    },
+    {
+      "criterion": "Laplace 等概率准则",
+      "recommended_strategy": "baseline",
+      "value": 508.592018607544
+    },
+    {
+      "criterion": "最小最大后悔值准则",
+      "recommended_strategy": "baseline",
+      "value": 0.0
+    },
+    {
+      "criterion": "Hurwicz 折中准则",
+      "recommended_strategy": "baseline",
+      "value": 501.5755758957347
+    }
+  ]
+}

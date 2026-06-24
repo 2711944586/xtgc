@@ -1,0 +1,6 @@
+﻿criterion,recommended_strategy,value
+乐观准则,baseline,192.30118185368985
+悲观准则,baseline,965.4871669588019
+Laplace 等概率准则,baseline,508.592018607544
+最小最大后悔值准则,baseline,0.0
+Hurwicz 折中准则,baseline,501.5755758957347

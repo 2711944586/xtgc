@@ -1,0 +1,63 @@
+﻿field,dtype,missing_rate,description
+Year,int64,0.0,Derived or retained BTS project field.
+Quarter,int64,0.0,Derived or retained BTS project field.
+Month,int64,0.0,Derived or retained BTS project field.
+DayofMonth,int64,0.0,Derived or retained BTS project field.
+DayOfWeek,int64,0.0,Derived or retained BTS project field.
+FlightDate,datetime64[ns],0.0,Scheduled flight date.
+Reporting_Airline,object,0.0,BTS reporting airline code.
+DOT_ID_Reporting_Airline,int64,0.0,Derived or retained BTS project field.
+IATA_CODE_Reporting_Airline,object,0.0,Derived or retained BTS project field.
+Tail_Number,object,0.007795154724032836,Derived or retained BTS project field.
+Flight_Number_Reporting_Airline,int64,0.0,Derived or retained BTS project field.
+Origin,object,0.0,Origin airport IATA code.
+OriginCityName,object,0.0,Derived or retained BTS project field.
+OriginState,object,0.0,Derived or retained BTS project field.
+Dest,object,0.0,Destination airport IATA code.
+DestCityName,object,0.0,Derived or retained BTS project field.
+DestState,object,0.0,Derived or retained BTS project field.
+CRSDepTime,int64,0.0,Scheduled departure local time.
+DepTime,float64,0.01797957776245245,Derived or retained BTS project field.
+DepDelay,float64,0.017984027051678494,Derived or retained BTS project field.
+DepDelayMinutes,float64,0.017984027051678494,Derived or retained BTS project field.
+DepDel15,float64,0.017984027051678494,Derived or retained BTS project field.
+CRSArrTime,int64,0.0,Scheduled arrival local time.
+ArrTime,float64,0.0184956953126738,Derived or retained BTS project field.
+ArrDelay,float64,0.02011078730172855,Derived or retained BTS project field.
+ArrDelayMinutes,float64,0.02011078730172855,Non-negative arrival delay minutes.
+ArrDel15,int64,0.0,Arrival delay >= 15 minutes indicator.
+Cancelled,int64,0.0,Flight cancellation indicator.
+CancellationCode,object,0.9816689283886899,Derived or retained BTS project field.
+Diverted,int64,0.0,Flight diversion indicator.
+CRSElapsedTime,float64,0.0,Derived or retained BTS project field.
+ActualElapsedTime,float64,0.02011078730172855,Derived or retained BTS project field.
+AirTime,float64,0.02011078730172855,Derived or retained BTS project field.
+Flights,float64,0.0,Derived or retained BTS project field.
+Distance,float64,0.0,Derived or retained BTS project field.
+CarrierDelay,float64,0.7831282952548331,Derived or retained BTS project field.
+WeatherDelay,float64,0.7831282952548331,Derived or retained BTS project field.
+NASDelay,float64,0.7831282952548331,Derived or retained BTS project field.
+SecurityDelay,float64,0.7831282952548331,Derived or retained BTS project field.
+LateAircraftDelay,float64,0.7831282952548331,Derived or retained BTS project field.
+is_completed,int64,0.0,Derived or retained BTS project field.
+ArrDel15_calc,int64,0.0,Derived or retained BTS project field.
+arrdel15_consistent,bool,0.0,Derived or retained BTS project field.
+route,object,0.0,Origin-Dest route key.
+crs_dep_hour_float,float64,0.0,Derived or retained BTS project field.
+crs_arr_hour_float,float64,0.0,Derived or retained BTS project field.
+crs_dep_hour,int64,0.0,Derived or retained BTS project field.
+is_weekend,int64,0.0,Derived or retained BTS project field.
+dep_time_block,object,0.0,Derived or retained BTS project field.
+scheduled_datetime,datetime64[ns],0.0,Derived or retained BTS project field.
+split,object,0.0,Time-ordered train/valid/test split.
+origin_hist_delay_rate,float64,0.0,Derived or retained BTS project field.
+dest_hist_delay_rate,float64,0.0,Derived or retained BTS project field.
+route_hist_delay_rate,float64,0.0,Derived or retained BTS project field.
+airline_hist_delay_rate,float64,0.0,Derived or retained BTS project field.
+origin_hour_hist_delay_rate,float64,0.0,Derived or retained BTS project field.
+origin_rolling_3h_delay_rate,float64,0.0,Derived or retained BTS project field.
+origin_rolling_3h_volume,float64,0.0,Derived or retained BTS project field.
+hour_sin,float64,0.0,Derived or retained BTS project field.
+hour_cos,float64,0.0,Derived or retained BTS project field.
+month_sin,float64,0.0,Derived or retained BTS project field.
+month_cos,float64,0.0,Derived or retained BTS project field.

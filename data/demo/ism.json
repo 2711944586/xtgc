@@ -1,0 +1,208 @@
+{
+  "factors": [
+    {
+      "code": "S1",
+      "factor": "恶劣天气或空域限制"
+    },
+    {
+      "code": "S2",
+      "factor": "机场有效容量下降"
+    },
+    {
+      "code": "S3",
+      "factor": "高峰航班密度"
+    },
+    {
+      "code": "S4",
+      "factor": "航班计划紧凑"
+    },
+    {
+      "code": "S5",
+      "factor": "时间缓冲不足"
+    },
+    {
+      "code": "S6",
+      "factor": "上游/前序航班晚到"
+    },
+    {
+      "code": "S7",
+      "factor": "出发延误"
+    },
+    {
+      "code": "S8",
+      "factor": "地面滑行与排队增加"
+    },
+    {
+      "code": "S9",
+      "factor": "局部机场拥堵"
+    },
+    {
+      "code": "S10",
+      "factor": "跨机场延误传播"
+    },
+    {
+      "code": "S11",
+      "factor": "航班取消或严重延误"
+    },
+    {
+      "code": "S12",
+      "factor": "网络恢复时间增加"
+    }
+  ],
+  "edges": [
+    {
+      "source": "S1",
+      "target": "S2"
+    },
+    {
+      "source": "S1",
+      "target": "S8"
+    },
+    {
+      "source": "S1",
+      "target": "S9"
+    },
+    {
+      "source": "S2",
+      "target": "S8"
+    },
+    {
+      "source": "S2",
+      "target": "S9"
+    },
+    {
+      "source": "S3",
+      "target": "S9"
+    },
+    {
+      "source": "S3",
+      "target": "S7"
+    },
+    {
+      "source": "S4",
+      "target": "S5"
+    },
+    {
+      "source": "S4",
+      "target": "S6"
+    },
+    {
+      "source": "S5",
+      "target": "S7"
+    },
+    {
+      "source": "S6",
+      "target": "S7"
+    },
+    {
+      "source": "S6",
+      "target": "S10"
+    },
+    {
+      "source": "S7",
+      "target": "S8"
+    },
+    {
+      "source": "S7",
+      "target": "S10"
+    },
+    {
+      "source": "S8",
+      "target": "S9"
+    },
+    {
+      "source": "S9",
+      "target": "S10"
+    },
+    {
+      "source": "S9",
+      "target": "S11"
+    },
+    {
+      "source": "S10",
+      "target": "S11"
+    },
+    {
+      "source": "S10",
+      "target": "S12"
+    },
+    {
+      "source": "S11",
+      "target": "S12"
+    }
+  ],
+  "levels": [
+    {
+      "level": 1,
+      "code": "S12",
+      "factor": "网络恢复时间增加",
+      "interpretation": "结果层"
+    },
+    {
+      "level": 2,
+      "code": "S11",
+      "factor": "航班取消或严重延误",
+      "interpretation": "直接层"
+    },
+    {
+      "level": 3,
+      "code": "S10",
+      "factor": "跨机场延误传播",
+      "interpretation": "传导层"
+    },
+    {
+      "level": 4,
+      "code": "S9",
+      "factor": "局部机场拥堵",
+      "interpretation": "根源层"
+    },
+    {
+      "level": 5,
+      "code": "S8",
+      "factor": "地面滑行与排队增加",
+      "interpretation": "根源层"
+    },
+    {
+      "level": 6,
+      "code": "S2",
+      "factor": "机场有效容量下降",
+      "interpretation": "根源层"
+    },
+    {
+      "level": 6,
+      "code": "S7",
+      "factor": "出发延误",
+      "interpretation": "根源层"
+    },
+    {
+      "level": 7,
+      "code": "S1",
+      "factor": "恶劣天气或空域限制",
+      "interpretation": "根源层"
+    },
+    {
+      "level": 7,
+      "code": "S3",
+      "factor": "高峰航班密度",
+      "interpretation": "根源层"
+    },
+    {
+      "level": 7,
+      "code": "S5",
+      "factor": "时间缓冲不足",
+      "interpretation": "根源层"
+    },
+    {
+      "level": 7,
+      "code": "S6",
+      "factor": "上游/前序航班晚到",
+      "interpretation": "根源层"
+    },
+    {
+      "level": 8,
+      "code": "S4",
+      "factor": "航班计划紧凑",
+      "interpretation": "根源层"
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "airports": [
+    "ATL",
+    "BOS",
+    "CLT",
+    "DCA",
+    "DEN",
+    "DFW",
+    "EWR",
+    "LAS",
+    "LAX",
+    "LGA",
+    "MCO",
+    "ORD",
+    "PHX",
+    "SEA",
+    "SFO"
+  ],
+  "airlines": [
+    "9E",
+    "AA",
+    "AS",
+    "B6",
+    "DL",
+    "F9",
+    "G4",
+    "MQ",
+    "NK",
+    "OH",
+    "OO",
+    "UA",
+    "WN",
+    "YX"
+  ],
+  "distance_median": 868.0,
+  "elapsed_median": 162.0,
+  "hist_delay_rate": 0.22132267804844824,
+  "rolling_volume_median": 28.0
+}

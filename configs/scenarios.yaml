@@ -1,0 +1,26 @@
+scenarios:
+  normal:
+    label: Normal variation
+    shock_multiplier: 0.35
+    duration_hours: 2
+    capacity_drop: 0.00
+    probability: 0.42
+  peak:
+    label: Demand peak
+    shock_multiplier: 0.80
+    duration_hours: 3
+    capacity_drop: 0.12
+    probability: 0.28
+  weather:
+    label: Weather cluster shock
+    shock_multiplier: 1.25
+    duration_hours: 5
+    capacity_drop: 0.25
+    probability: 0.20
+  hub_failure:
+    label: Critical hub capacity drop
+    shock_multiplier: 1.60
+    duration_hours: 4
+    capacity_drop: 0.30
+    probability: 0.10
+

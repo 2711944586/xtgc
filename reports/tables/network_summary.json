@@ -1,0 +1,14 @@
+{
+  "node_count": 15,
+  "edge_count": 204,
+  "density": 0.9714285714285714,
+  "strong_component_count": 1,
+  "largest_strong_component_size": 15,
+  "top_critical_airports": [
+    "DEN",
+    "DFW",
+    "LAX",
+    "MCO",
+    "LAS"
+  ]
+}

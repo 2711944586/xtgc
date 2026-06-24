@@ -1,0 +1,4 @@
+﻿file_name,source,download_date,rows,columns,file_size_bytes,sha256,processing_script
+On_Time_Reporting_Carrier_On_Time_Performance_1987_present_2024_1.zip,U.S. DOT BTS TranStats PREZIP monthly on-time performance file,2026-06-24,547271,40,27573265,fe089b45523f9d4ac0ccd0e176a543d274e914ee5ae5bd384dbaafc7dc06ebfd,scripts/01_prepare_data.py
+On_Time_Reporting_Carrier_On_Time_Performance_1987_present_2024_2.zip,U.S. DOT BTS TranStats PREZIP monthly on-time performance file,2026-06-24,519221,40,25086854,8463683d100504a97847497d2f2281008fd9add9639bf7436a9747032df15f9a,scripts/01_prepare_data.py
+On_Time_Reporting_Carrier_On_Time_Performance_1987_present_2024_3.zip,U.S. DOT BTS TranStats PREZIP monthly on-time performance file,2026-06-24,591767,40,29313663,e2c5021406f480e813a52a2ed795c251eb1169613da6a416daf88236db8c9013,scripts/01_prepare_data.py

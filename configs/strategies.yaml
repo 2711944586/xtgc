@@ -1,0 +1,24 @@
+strategies:
+  baseline:
+    label: Baseline operation
+    buffer_minutes: 0
+    resource_budget: 0
+    complexity: 1
+  uniform_buffer:
+    label: Uniform buffer
+    buffer_minutes: 8
+    resource_budget: 0.60
+    complexity: 2
+  hub_priority:
+    label: Critical hub priority
+    priority_airports: 3
+    resource_budget: 0.60
+    complexity: 3
+  dynamic_combo:
+    label: Prediction-network-state dynamic combo
+    resource_budget: 0.60
+    risk_weight: 0.30
+    centrality_weight: 0.30
+    state_weight: 0.30
+    downstream_weight: 0.10
+    complexity: 4
