@@ -43,62 +43,62 @@
   "calibration_note": "isotonic calibration fitted on validation split",
   "shap_note": "Tree SHAP computed on a representative test sample",
   "best_test_metrics": {
-    "accuracy": 0.7654286618158811,
-    "precision": 0.5782280867106503,
-    "recall": 0.06502729344427367,
-    "f1": 0.11690724596255538,
-    "roc_auc": 0.674360027117792,
-    "pr_auc": 0.3822646512196846,
-    "brier": 0.17153029550315638,
-    "log_loss": 0.5213114787436813,
-    "tn": 59261,
-    "fp": 895,
-    "fn": 17642,
-    "tp": 1227
+    "accuracy": 0.7644086861137449,
+    "precision": 0.5217887725975262,
+    "recall": 0.05385340560923874,
+    "f1": 0.09763044987627068,
+    "roc_auc": 0.6773543150489416,
+    "pr_auc": 0.3785226332287526,
+    "brier": 0.17146720824377132,
+    "log_loss": 0.5218522449435871,
+    "tn": 161719,
+    "fp": 2513,
+    "fn": 48174,
+    "tp": 2742
   },
   "sample_prediction": {
-    "baseline_train_rate": 0.21737127600567824,
-    "probability": 0.09397163120567376,
+    "baseline_train_rate": 0.2175764414400425,
+    "probability": 0.11395348837209303,
     "contributions": [
       {
-        "feature": "route_hist_delay_rate",
-        "value": "0.1593172119487909",
-        "contribution": 0.011748582661444407
-      },
-      {
         "feature": "origin_hour_hist_delay_rate",
-        "value": "0.13636363636363635",
-        "contribution": 0.010613148742380452
+        "value": "0.09219858156028368",
+        "contribution": 0.03301278127627755
       },
       {
-        "feature": "dest_hist_delay_rate",
-        "value": "0.1906347092765202",
-        "contribution": -0.009039511526694577
+        "feature": "route_hist_delay_rate",
+        "value": "0.20658682634730538",
+        "contribution": 0.021430062609633538
       },
       {
-        "feature": "Dest",
-        "value": "ORD",
-        "contribution": -0.013634585573959412
-      },
-      {
-        "feature": "Reporting_Airline",
-        "value": "AA",
-        "contribution": -0.01562175818733258
-      },
-      {
-        "feature": "origin_rolling_3h_volume",
-        "value": "24.0",
-        "contribution": -0.01631772236070833
-      },
-      {
-        "feature": "Distance",
-        "value": "1744.0",
-        "contribution": -0.016427176870374538
+        "feature": "airline_hist_delay_rate",
+        "value": "0.2503032753740396",
+        "contribution": 0.014906854337957076
       },
       {
         "feature": "hour_sin",
         "value": "0.0",
-        "contribution": -0.01757977462717608
+        "contribution": 0.010657760378437686
+      },
+      {
+        "feature": "dep_time_block",
+        "value": "night",
+        "contribution": 0.009708320122752967
+      },
+      {
+        "feature": "crs_dep_hour",
+        "value": "0",
+        "contribution": 0.008536728789063974
+      },
+      {
+        "feature": "dest_hist_delay_rate",
+        "value": "0.21266596169662788",
+        "contribution": 0.006679269196241455
+      },
+      {
+        "feature": "Dest",
+        "value": "JFK",
+        "contribution": 0.006375956254955573
       }
     ]
   }

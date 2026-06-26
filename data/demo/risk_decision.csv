@@ -1,5 +1,5 @@
 ﻿strategy,expected_loss,risk_rank
-baseline,422.1364017377414,1
-hub_priority,1442.7928369421968,2
-dynamic_combo,1641.449730989355,3
-uniform_buffer,2366.1573806551414,4
+baseline,1309.4684115116602,1
+dynamic_combo,1922.2447454044693,2
+hub_priority,1957.154286662877,3
+uniform_buffer,3680.301255575602,4

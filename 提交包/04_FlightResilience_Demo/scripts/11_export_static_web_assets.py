@@ -54,11 +54,18 @@ def round_float(value: Any) -> Any:
 def copy_media() -> list[str]:
     MEDIA_DIR.mkdir(parents=True, exist_ok=True)
     selected = [
+        "fig_12_route_risk_bubble.png",
+        "fig_16_roc_pr_curves.png",
         "fig_20_airport_network.png",
         "fig_25_ism_hierarchy.png",
+        "fig_26_airport_role_quadrant.png",
+        "fig_28_recovery_heatmap.png",
         "fig_29_recovery_curves.png",
+        "fig_33_strategy_radar.png",
         "fig_34_topsis_score.png",
+        "fig_36_indicator_weights.png",
         "fig_37_weight_sensitivity.png",
+        "fig_38_risk_vs_topsis.png",
     ]
     copied: list[str] = []
     for name in selected:
@@ -71,14 +78,17 @@ def copy_media() -> list[str]:
 
 def main() -> None:
     DATA_DIR.mkdir(parents=True, exist_ok=True)
+    audit = read_json(ROOT / "data" / "data_audit.json")
+    airport_count = len(audit.get("top_airports", []))
 
     payload: dict[str, Any] = {
         "meta": {
-            "generated_at": datetime.now(timezone.utc).isoformat(),
+            "exported_at": datetime.now(timezone.utc).isoformat(),
             "source": "U.S. DOT BTS TranStats, 2024-01 to 2024-03",
-            "scope": "Top 15 airports by traffic in the selected sample",
+            "scope": f"Top {airport_count} airports by traffic in the selected sample",
             "static_site_note": "All values are exported from repository precomputed artifacts.",
         },
+        "audit": audit,
         "kpi": read_json(DEMO_DIR / "kpi_summary.json"),
         "decision": read_json(DEMO_DIR / "decision_summary.json"),
         "modelSummary": read_json(DEMO_DIR / "model_metrics.json"),

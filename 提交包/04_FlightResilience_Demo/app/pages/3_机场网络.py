@@ -9,11 +9,11 @@ from common import conclusion, image, read_csv, setup_page
 
 setup_page("机场网络")
 st.title("机场网络")
-conclusion("高航班量机场不必然是最高传播关键节点；综合流量、介数中心性、延误率和预测风险后，DEN 在本样本中最关键。")
+conclusion("高航班量机场不必然是最高传播关键节点；综合流量、介数中心性、延误率和预测风险后，MIA、DEN、DFW 等节点位于关键性前列。")
 
 nodes = read_csv("airport_nodes.csv")
 edges = read_csv("airport_edges.csv")
-top_n = st.slider("显示机场数量", 5, 15, 15)
+top_n = st.slider("显示机场数量", 5, 30, 18)
 metric = st.selectbox("节点颜色", ["criticality", "delay_rate", "avg_risk", "betweenness"])
 selected_nodes = nodes.sort_values("criticality", ascending=False).head(top_n)["airport"].tolist()
 edges_view = edges[edges["Origin"].isin(selected_nodes) & edges["Dest"].isin(selected_nodes)]
@@ -51,4 +51,3 @@ with c1:
     st.dataframe(nodes.sort_values("criticality", ascending=False).head(10), use_container_width=True, hide_index=True)
 with c2:
     image("fig_22_network_risk_scatter.png", "中心性-风险-航班量关系")
-

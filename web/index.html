@@ -6,8 +6,11 @@
     <title>FlightResilience | 航空网络延误传播与恢复决策</title>
     <meta
       name="description"
-      content="基于 BTS 公开数据的航空网络延误传播识别与恢复策略决策静态演示系统"
+      content="面向航空网络延误传播、恢复仿真和多准则策略评价的静态交互展示"
     />
+    <meta property="og:title" content="FlightResilience 航空网络恢复决策" />
+    <meta property="og:description" content="BTS 2024 年一季度航班数据、30 个主要机场、824 条有向航线。" />
+    <meta property="og:type" content="website" />
     <link rel="stylesheet" href="assets/css/styles.css" />
   </head>
   <body>
@@ -18,7 +21,7 @@
         <span class="brand-mark" aria-hidden="true">FR</span>
         <div>
           <strong>FlightResilience</strong>
-          <span>BTS 航空网络延误传播与恢复决策</span>
+          <span>航空网络延误传播与恢复决策</span>
         </div>
       </div>
       <nav class="nav-links" aria-label="模块导航">
@@ -28,7 +31,7 @@
         <a href="#network">网络</a>
         <a href="#simulation">仿真</a>
         <a href="#decision">决策</a>
-        <a href="#access">扫码</a>
+        <a href="#access">入口</a>
         <a href="#method">方法</a>
       </nav>
     </header>
@@ -36,21 +39,25 @@
     <main id="main">
       <section class="hero" id="overview">
         <div class="hero-copy">
-          <p class="eyebrow">System Engineering Decision Support</p>
-          <h1>把“航班是否延误”推进到“网络如何恢复”。</h1>
+          <p class="eyebrow">Research console</p>
+          <h1>从单点延误概率，推到全网恢复选择。</h1>
           <p class="lede">
-            本系统使用 2024 年 1-3 月 BTS 航班准点数据，连接延误预测、机场网络、
-            ISM 结构分析、传播仿真和多准则决策，演示局部扰动如何扩散，以及有限恢复资源如何分配。
+            以 2024 年 1-3 月 BTS 航班准点数据为底座，将计划阶段风险预测、
+            机场有向网络、ISM 结构解释、状态空间传播仿真和多准则评价串成一条可复核的证据链。
           </p>
           <div class="hero-actions">
-            <a class="button primary" href="#simulation">进入策略仿真</a>
-            <a class="button secondary" href="#decision">查看决策条件</a>
-            <a class="button secondary" href="#access">手机扫码访问</a>
+            <a class="button primary" href="#simulation">进入仿真台</a>
+            <a class="button secondary" href="#decision">看决策边界</a>
+            <a class="button secondary" href="#access">现场扫码</a>
+          </div>
+          <div class="hero-note" aria-label="研究判断">
+            <span>主判断</span>
+            <strong>dynamic_combo 在恢复优先口径下领先；成本与风险保守口径会把 baseline 推回前列。</strong>
           </div>
         </div>
         <aside class="control-strip" aria-label="项目关键事实">
           <div>
-            <span>数据范围</span>
+            <span>数据窗口</span>
             <strong id="date-range">加载中</strong>
           </div>
           <div>
@@ -58,8 +65,8 @@
             <strong id="flight-count">--</strong>
           </div>
           <div>
-            <span>机场节点</span>
-            <strong id="airport-count">--</strong>
+            <span>机场/航线</span>
+            <strong><span id="airport-count">--</span> / <span id="edge-count">--</span></strong>
           </div>
           <div>
             <span>主推荐</span>
@@ -68,44 +75,54 @@
         </aside>
       </section>
 
-      <section class="section tight">
-        <div class="flow" aria-label="分析流程">
-          <div><span>01</span>真实数据</div>
-          <div><span>02</span>风险预测</div>
-          <div><span>03</span>网络识别</div>
-          <div><span>04</span>传播仿真</div>
-          <div><span>05</span>策略评价</div>
-          <div><span>06</span>静态部署</div>
+      <section class="section tight" aria-label="分析流程">
+        <div class="flow">
+          <div><span>01</span>公开运行数据</div>
+          <div><span>02</span>计划风险排序</div>
+          <div><span>03</span>机场网络画像</div>
+          <div><span>04</span>扰动传播仿真</div>
+          <div><span>05</span>偏好与风险决策</div>
+          <div><span>06</span>静态现场展示</div>
         </div>
       </section>
 
-      <section class="section access-section" id="access" aria-label="移动端扫码访问">
-        <div class="access-panel">
+      <section class="section proof-section" aria-label="关键图表证据">
+        <div class="section-heading split">
           <div>
-            <p class="eyebrow">GitHub Pages Access</p>
-            <h2>现场展示可直接扫码进入静态演示站。</h2>
-            <p>
-              页面由 GitHub Actions 发布 `web/` 静态目录，不依赖服务器进程。
-              二维码指向正式 Pages 地址，适合答辩现场手机、平板和投屏备用访问。
-            </p>
-            <a class="deploy-link" href="https://2711944586.github.io/xtgc/" target="_blank" rel="noreferrer">
-              https://2711944586.github.io/xtgc/
-            </a>
+            <p class="eyebrow">Evidence board</p>
+            <h2>先看证据，再讨论策略。</h2>
           </div>
-          <figure class="qr-card">
-            <img src="assets/media/github-pages-qr.svg" alt="访问 FlightResilience GitHub Pages 静态站的二维码" />
-            <figcaption>扫码打开 GitHub Pages 静态 Web Demo</figcaption>
+          <p>
+            页面保留完整交互链路，同时把报告中的关键图表放进同一个视野：航线风险、
+            预测曲线、恢复热力和策略稳健性分别回答“哪里危险、模型能否排序、冲击怎么扩散、结论是否敏感”。
+          </p>
+        </div>
+        <div class="media-grid">
+          <figure class="media-card wide">
+            <img src="assets/media/fig_12_route_risk_bubble.png" alt="航线风险气泡图" />
+            <figcaption>航线风险并不只随流量增加，节点暴露和历史延误共同抬高恢复压力。</figcaption>
+          </figure>
+          <figure class="media-card">
+            <img src="assets/media/fig_16_roc_pr_curves.png" alt="ROC 和 PR 曲线" />
+            <figcaption>预测模型承担排序输入，不把分类阈值当作最终管理结论。</figcaption>
+          </figure>
+          <figure class="media-card">
+            <img src="assets/media/fig_28_recovery_heatmap.png" alt="恢复过程热力图" />
+            <figcaption>恢复路径随情景和冲击节点改变，平均指标无法替代过程视角。</figcaption>
+          </figure>
+          <figure class="media-card">
+            <img src="assets/media/fig_38_risk_vs_topsis.png" alt="风险决策与 TOPSIS 对比图" />
+            <figcaption>TOPSIS 与风险准则给出不同排序，正好暴露了目标冲突。</figcaption>
           </figure>
         </div>
       </section>
 
       <section class="section" id="dashboard">
         <div class="section-heading">
-          <p class="eyebrow">Operational Dashboard</p>
-          <h2>延误不是平均发生的：时间、机场和网络位置共同决定风险。</h2>
+          <p class="eyebrow">Operational data</p>
+          <h2>延误不是平均发生的，时间、机场和网络位置会一起改变风险。</h2>
           <p>
-            本页使用聚合后的 BTS 样本展示 2024 年一季度前 15 个机场的运行轮廓。
-            所有图表为静态资产实时渲染，不连接后端。
+            样本扩展到 30 个主要机场后，既能保留枢纽结构，也能看到高风险机场与高流量机场并不完全重合。
           </p>
         </div>
 
@@ -143,7 +160,7 @@
           <article class="panel">
             <div class="panel-title">
               <h3>星期-小时延误热力</h3>
-              <span>越深表示延误率越高</span>
+              <span>颜色越深，延误率越高</span>
             </div>
             <div class="chart tall" id="heatmap-chart" role="img" aria-label="星期和小时延误率热力图"></div>
           </article>
@@ -151,8 +168,8 @@
 
         <article class="panel">
           <div class="panel-title">
-            <h3>机场风险排名</h3>
-            <span>选择机场后联动网络和预测模块</span>
+            <h3>机场关键性排序</h3>
+            <span>点击条形后联动网络、画像和预测模块</span>
           </div>
           <div class="airport-toolbar">
             <label for="airport-select">关注机场</label>
@@ -164,11 +181,10 @@
 
       <section class="section" id="prediction">
         <div class="section-heading">
-          <p class="eyebrow">Delay Risk Prediction</p>
-          <h2>预测模型只回答局部风险，它的价值在于成为传播仿真的输入。</h2>
+          <p class="eyebrow">Delay risk</p>
+          <h2>预测模型回答局部风险，传播仿真把局部风险接到系统后果。</h2>
           <p>
-            计划阶段模型排除了实际起降、到达延误和延误原因字段，采用时间顺序划分验证。
-            下方估算器用于演示风险因子如何改变概率，不替代真实在线调度系统。
+            训练只使用计划阶段能获得的变量和训练期历史统计，时间顺序切分用于检查模型在 3 月样本上的泛化表现。
           </p>
         </div>
 
@@ -176,7 +192,7 @@
           <article class="panel">
             <div class="panel-title">
               <h3>快速风险估算</h3>
-              <span>基于样本统计的可解释演示</span>
+              <span>改动参数后即时刷新</span>
             </div>
             <form class="risk-form" id="risk-form">
               <label>
@@ -214,7 +230,7 @@
           <article class="panel">
             <div class="panel-title">
               <h3>模型表现与主要特征</h3>
-              <span>时间外测试集与 SHAP 摘要</span>
+              <span>ROC-AUC / PR-AUC / SHAP</span>
             </div>
             <div class="chart medium" id="model-bars" role="img" aria-label="模型测试指标对比"></div>
             <div class="chart medium" id="shap-bars" role="img" aria-label="SHAP 特征重要性"></div>
@@ -224,25 +240,24 @@
 
       <section class="section" id="network">
         <div class="section-heading">
-          <p class="eyebrow">Network Structure</p>
-          <h2>高流量机场不一定就是最危险节点，关键在传播位置和风险叠加。</h2>
+          <p class="eyebrow">Network structure</p>
+          <h2>高流量机场不一定是最高风险节点，传播位置会改变恢复优先级。</h2>
           <p>
-            节点大小表示关键性，连线宽度表示航线流量。当前样本中 DEN 在综合关键性指标下排在前列，
-            因此被用作默认冲击机场。
+            节点大小表示综合关键性，连线宽度表示航线流量。当前样本下 MIA、DEN、DFW、FLL、MCO 位于关键性前列。
           </p>
         </div>
 
         <div class="analysis-grid two">
           <article class="panel">
             <div class="panel-title">
-              <h3>机场网络图</h3>
-              <span>Top 15 airports, 204 directed routes</span>
+              <h3>机场有向网络</h3>
+              <span id="network-count">30 airports / 824 directed routes</span>
             </div>
             <canvas class="network-canvas" id="network-canvas" width="920" height="560" aria-label="机场网络图"></canvas>
           </article>
           <article class="panel">
             <div class="panel-title">
-              <h3>关键机场解释</h3>
+              <h3>关键机场画像</h3>
               <span id="selected-airport-title">--</span>
             </div>
             <div class="airport-profile" id="airport-profile"></div>
@@ -253,11 +268,10 @@
 
       <section class="section" id="simulation">
         <div class="section-heading">
-          <p class="eyebrow">Scenario Simulation</p>
-          <h2>同一个冲击下，不同恢复策略的差异体现在传播范围、恢复速度和资源成本。</h2>
+          <p class="eyebrow">Scenario simulation</p>
+          <h2>同一个冲击下，策略差异会在传播范围、恢复速度和资源成本上分开。</h2>
           <p>
-            状态方程使用预估传播矩阵 A，情景冲击和控制资源均为仿真参数。页面默认展示 DEN
-            受到扰动时四种策略的恢复轨迹。
+            状态方程使用估计传播矩阵 A，冲击机场和恢复策略可切换。默认从当前关键性最高的机场开始观察扰动。
           </p>
         </div>
 
@@ -297,11 +311,11 @@
 
       <section class="section" id="decision">
         <div class="section-heading">
-          <p class="eyebrow">Evaluation & Decision</p>
-          <h2>推荐不是无条件口号，而是管理偏好、预算和风险态度共同作用的结果。</h2>
+          <p class="eyebrow">Evaluation</p>
+          <h2>推荐策略不是口号，它随预算、偏好和风险态度改变。</h2>
           <p>
             主情景采用 AHP 与熵权组合，恢复收益权重较高时 dynamic_combo 排名第一；
-            风险/成本保守准则下 baseline 会反超，这一点在答辩中必须主动说明。
+            在期望损失或保守成本准则下，baseline 的低成本优势会变得更明显。
           </p>
         </div>
 
@@ -309,7 +323,7 @@
           <article class="panel">
             <div class="panel-title">
               <h3>偏好权重敏感性</h3>
-              <span>λ 越高表示越接近主观 AHP 恢复偏好</span>
+              <span>λ 越高，越接近主观恢复偏好</span>
             </div>
             <label class="lambda-control">
               λ = <output id="lambda-output">0.90</output>
@@ -338,43 +352,62 @@
         </div>
       </section>
 
+      <section class="section access-section" id="access" aria-label="移动端扫码访问">
+        <div class="access-panel">
+          <div>
+            <p class="eyebrow">Live entry</p>
+            <h2>答辩现场扫二维码，直接进入这套静态页面。</h2>
+            <p>
+              地址固定为 GitHub Pages 发布页。手机可扫二维码跟随演示，投屏端保留同一条数据和决策路径。
+            </p>
+            <a class="deploy-link" href="https://2711944586.github.io/xtgc/" target="_blank" rel="noreferrer">
+              https://2711944586.github.io/xtgc/
+            </a>
+          </div>
+          <figure class="qr-card">
+            <img src="assets/media/github-pages-qr.svg" alt="访问 FlightResilience GitHub Pages 静态站的二维码" />
+            <figcaption>现场入口</figcaption>
+          </figure>
+        </div>
+      </section>
+
       <section class="section" id="method">
         <div class="section-heading">
-          <p class="eyebrow">Method Notes</p>
-          <h2>这不是单一算法展示，而是系统工程闭环。</h2>
+          <p class="eyebrow">Method notes</p>
+          <h2>研究对象是一个系统，不是一串孤立算法。</h2>
           <p>
-            本模块说明关键公式、假设边界和可复现路径。所有浏览器图表均来自仓库内预计算结果。
+            系统边界从“单航班是否延误”扩展到“机场网络如何恢复”。公式、假设和可复现路径在报告中展开，网页保留最关键的现场检查点。
           </p>
         </div>
 
         <div class="method-grid">
           <article class="method-block">
             <h3>风险预测</h3>
-            <p>模型输出计划阶段到达延误概率，禁用实际运行和延误原因字段。</p>
-            <code>p(y=1|x)=f(time, route, airport history, airline, distance)</code>
+            <p>模型输出计划阶段到达延误概率，实际运行和延误原因字段不进入训练。</p>
+            <code>p_i = P(y_i=1 | x_i), y_i = 1(ArrDel15)</code>
           </article>
           <article class="method-block">
             <h3>网络传播</h3>
             <p>机场小时状态由传播矩阵、恢复控制和外部冲击共同驱动。</p>
-            <code>x(t+1)=A x(t)+B u(t)+G w(t)</code>
+            <code>x(t+1) = A x(t) + B u(t) + G w(t)</code>
           </article>
           <article class="method-block">
             <h3>多准则评价</h3>
-            <p>成本型指标正向化后，组合 AHP 与熵权，再计算 TOPSIS 接近度。</p>
+            <p>成本型指标正向化后组合 AHP 与熵权，再计算 TOPSIS 接近度。</p>
             <code>C_i = D_i^- / (D_i^+ + D_i^-)</code>
           </article>
           <article class="method-block">
             <h3>结论边界</h3>
-            <p>仿真参数为情景假设；推荐策略随管理偏好变化，不能解释为唯一绝对最优。</p>
-            <code>recommendation = argmax score(strategy | scenario, weights)</code>
+            <p>推荐策略随情景和偏好改变，最终结论必须写成条件判断。</p>
+            <code>s* = argmax score(s | scenario, weights)</code>
           </article>
         </div>
       </section>
     </main>
 
     <footer class="footer">
-      <span>FlightResilience static demo</span>
-      <span>Data: U.S. DOT BTS TranStats, exported from repository artifacts</span>
+      <span>FlightResilience static research console</span>
+      <span>Data: U.S. DOT BTS TranStats, repository artifacts</span>
     </footer>
 
     <script src="assets/js/app.js" defer></script>

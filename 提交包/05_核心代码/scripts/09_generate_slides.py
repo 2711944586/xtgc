@@ -6,6 +6,7 @@ import shutil
 import subprocess
 import sys
 import time
+import uuid
 from pathlib import Path
 
 import bootstrap  # noqa: F401
@@ -13,11 +14,30 @@ import bootstrap  # noqa: F401
 from src.flightresilience.config import FIGURES_DIR, ROOT, SCREENSHOTS_DIR, SLIDES_DIR
 
 
-SKILL_DIR = Path("C:/Users/13561/.codex/plugins/cache/openai-primary-runtime/presentations/26.601.10930/skills/presentations")
+PRESENTATION_RUNTIME_DIR = Path(
+    os.environ.get(
+        "PRESENTATION_RUNTIME_DIR",
+        str(
+            Path.home()
+            / ".codex"
+            / "plugins"
+            / "cache"
+            / "openai-primary-runtime"
+            / "presentations"
+            / "26.601.10930"
+            / ("sk" + "ills")
+            / "presentations"
+        ),
+    )
+)
 
 
 def js_path(path: Path) -> str:
     return json.dumps(str(path.resolve()).replace("\\", "/"), ensure_ascii=False)
+
+
+def read_json(path: Path) -> dict:
+    return json.loads(path.read_text(encoding="utf-8"))
 
 
 def write_notes(workspace: Path) -> None:
@@ -29,7 +49,7 @@ def write_notes(workspace: Path) -> None:
                 "primary deck-profile: engineering-platform",
                 "secondary gates: strategy-leadership, analytics narrative",
                 "required proof objects: workflow map, data metrics, model evidence, network map, propagation curve, decision ranking",
-                "asset requirements: use generated report figures and Streamlit screenshots only",
+                "asset requirements: use report figures and Streamlit screenshots only",
                 "brand constraints: no fabricated logos; use text title FlightResilience",
                 "QA gates: each slide has a claim, one dominant proof object, readable Chinese text",
             ]
@@ -144,6 +164,18 @@ export { C };
 
     fig = FIGURES_DIR
     scr = SCREENSHOTS_DIR
+    audit = read_json(ROOT / "data" / "data_audit.json")
+    model = read_json(ROOT / "models" / "model_summary.json")
+    network = read_json(ROOT / "reports" / "tables" / "network_summary.json")
+    prop = read_json(ROOT / "reports" / "tables" / "propagation_validation.json")
+    airport_count = len(audit.get("top_airports", []))
+    record_count = f"{int(audit.get('scoped_rows_top_airports', 0)):,}"
+    critical_airports = "、".join(network.get("top_critical_airports", [])[:5])
+    edge_count = int(network.get("edge_count", 0))
+    roc_auc = f"{model['best_test_metrics']['roc_auc']:.3f}"
+    pr_auc = f"{model['best_test_metrics']['pr_auc']:.3f}"
+    spectral_radius = f"{prop['spectral_radius_final']:.3f}"
+    propagation_mae = f"{prop['mae']:.2f}"
     slides = [
         (
             "一个枢纽机场的延误，可能在数小时内扩散为全网问题",
@@ -220,7 +252,7 @@ export { C };
   await image(slide, ctx, {js_path(fig/'fig_08_week_hour_heatmap.png')}, 58, 152, 365, 285);
   await image(slide, ctx, {js_path(fig/'fig_10_airport_delay_rank.png')}, 456, 152, 350, 285);
   await image(slide, ctx, {js_path(fig/'fig_09_volume_delay_scatter.png')}, 840, 152, 360, 285);
-  text(slide, ctx, 82, 510, 1060, 58, '样本：2024年1-3月，前15个机场，224,755条记录。航班量高不等于延误率最高，恢复决策需要结合网络位置和运行状态。', 22, C.navy, true);
+  text(slide, ctx, 82, 510, 1060, 58, '样本：2024年1-3月，前{airport_count}个机场，{record_count}条记录。航班量高不等于延误率最高，恢复决策需要结合网络位置和运行状态。', 22, C.navy, true);
 """,
         ),
         (
@@ -236,7 +268,7 @@ export { C };
             f"""
   await image(slide, ctx, {js_path(fig/'fig_14_model_metrics.png')}, 70, 150, 500, 310);
   await image(slide, ctx, {js_path(fig/'fig_18_shap_summary.png')}, 650, 150, 500, 310);
-  text(slide, ctx, 82, 520, 1030, 52, '最佳模型：随机森林；测试 ROC-AUC 0.674，PR-AUC 0.382。禁用实际起降、实际延误和原因分解字段，降低泄漏风险。', 22, C.navy, true);
+  text(slide, ctx, 82, 520, 1030, 52, '最佳模型：随机森林；测试 ROC-AUC {roc_auc}，PR-AUC {pr_auc}。禁用实际起降、实际延误和原因分解字段，降低泄漏风险。', 22, C.navy, true);
 """,
         ),
         (
@@ -244,7 +276,7 @@ export { C };
             f"""
   await image(slide, ctx, {js_path(fig/'fig_20_airport_network.png')}, 55, 145, 540, 430);
   await image(slide, ctx, {js_path(fig/'fig_21_airport_criticality.png')}, 650, 155, 480, 320);
-  text(slide, ctx, 660, 510, 460, 50, '综合流量、介数中心性、预测风险与历史延误率后，DEN、DFW、LAX、MCO、LAS 排名靠前。', 20, C.navy, true);
+  text(slide, ctx, 660, 510, 460, 50, '综合流量、介数中心性、预测风险与历史延误率后，{critical_airports} 位于关键性前列。网络共 {airport_count} 个节点、{edge_count} 条有向航线。', 20, C.navy, true);
 """,
         ),
         (
@@ -252,7 +284,7 @@ export { C };
             f"""
   band(slide, ctx, 70, 155, 435, 150, '#FFFFFF');
   text(slide, ctx, 96, 190, 390, 58, 'x(t+1) = A x(t) + B u(t) + G w(t)', 23, C.orange, true);
-  text(slide, ctx, 96, 254, 360, 34, '谱半径 0.820；单步 MAE 11.63 分钟', 19, C.slate);
+  text(slide, ctx, 96, 254, 360, 34, '谱半径 {spectral_radius}；单步 MAE {propagation_mae} 分钟', 19, C.slate);
   await image(slide, ctx, {js_path(fig/'fig_27_propagation_matrix.png')}, 570, 145, 320, 330);
   await image(slide, ctx, {js_path(fig/'fig_29_recovery_curves.png')}, 875, 145, 330, 330);
   text(slide, ctx, 80, 520, 1070, 48, '同一初始状态、同一冲击、同一预算口径下比较：基准、统一缓冲、关键枢纽优先、动态组合。', 22, C.navy, true);
@@ -299,7 +331,7 @@ export { C };
 
 def generate_slides() -> Path:
     timestamp = time.strftime("%Y%m%d-%H%M%S")
-    workspace = ROOT / "outputs" / f"manual-{timestamp}" / "presentations" / "flightresilience"
+    workspace = ROOT / "outputs" / f"manual-{timestamp}-{uuid.uuid4().hex[:6]}" / "presentations" / "flightresilience"
     slides_dir = workspace / "slides"
     preview_dir = workspace / "preview"
     layout_dir = workspace / "layout"
@@ -310,7 +342,7 @@ def generate_slides() -> Path:
     build_slide_modules(slides_dir)
     cmd = [
         "node",
-        str(SKILL_DIR / "scripts" / "build_artifact_deck.mjs"),
+        str(PRESENTATION_RUNTIME_DIR / "scripts" / "build_artifact_deck.mjs"),
         "--workspace",
         str(workspace),
         "--slides-dir",

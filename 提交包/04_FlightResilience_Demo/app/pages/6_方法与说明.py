@@ -15,7 +15,7 @@ st.markdown(
     """
     1. 首页说明闭环和主推荐。
     2. 数据驾驶舱查看延误时段差异。
-    3. 机场网络点击关键机场 DEN。
+    3. 机场网络点击 MIA、DEN 等关键机场。
     4. 扰动仿真选择 weather 或 hub_failure，对比 baseline 与 dynamic_combo。
     5. 策略决策查看 TOPSIS、风险决策和敏感性反转条件。
     """
@@ -44,4 +44,3 @@ st.markdown(
     - Demo 默认使用预计算资产，避免课堂现场重新训练导致不稳定。
     """
 )
-

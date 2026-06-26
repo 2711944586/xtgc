@@ -8,7 +8,7 @@ from common import conclusion, image, read_json, read_parquet, setup_page
 
 setup_page("数据驾驶舱")
 st.title("数据驾驶舱")
-conclusion("2024 年 1-3 月前 15 个机场样本显示，延误具有明显时段差异和节点差异，航班量并不等于最高延误风险。")
+conclusion("2024 年 1-3 月前 30 个机场样本显示，延误具有明显时段差异和节点差异，航班量并不等于最高延误风险。")
 
 kpi = read_json("kpi_summary.json")
 daily = read_parquet("dashboard_daily.parquet")
@@ -41,4 +41,3 @@ with st.expander("报告图表预览"):
         image("fig_09_volume_delay_scatter.png")
     with c4:
         image("fig_13_split_delay_rate.png")
-

@@ -1,20 +1,35 @@
 {
   "airports": [
     "ATL",
+    "AUS",
+    "BNA",
     "BOS",
+    "BWI",
     "CLT",
+    "DAL",
     "DCA",
     "DEN",
     "DFW",
+    "DTW",
     "EWR",
+    "FLL",
+    "IAH",
+    "JFK",
     "LAS",
     "LAX",
     "LGA",
     "MCO",
+    "MDW",
+    "MIA",
+    "MSP",
     "ORD",
+    "PHL",
     "PHX",
+    "SAN",
     "SEA",
-    "SFO"
+    "SFO",
+    "SLC",
+    "TPA"
   ],
   "airlines": [
     "9E",
@@ -32,8 +47,8 @@
     "WN",
     "YX"
   ],
-  "distance_median": 868.0,
+  "distance_median": 931.0,
   "elapsed_median": 162.0,
-  "hist_delay_rate": 0.22132267804844824,
-  "rolling_volume_median": 28.0
+  "hist_delay_rate": 0.2189630579801644,
+  "rolling_volume_median": 38.0
 }

@@ -11,17 +11,17 @@
     {
       "criterion": "乐观准则",
       "recommended_strategy": "baseline",
-      "value": 192.30118185368985
+      "value": 873.4860939123223
     },
     {
       "criterion": "悲观准则",
       "recommended_strategy": "baseline",
-      "value": 965.4871669588019
+      "value": 2273.366676576723
     },
     {
       "criterion": "Laplace 等概率准则",
       "recommended_strategy": "baseline",
-      "value": 508.592018607544
+      "value": 1496.5734991038612
     },
     {
       "criterion": "最小最大后悔值准则",
@@ -31,7 +31,7 @@
     {
       "criterion": "Hurwicz 折中准则",
       "recommended_strategy": "baseline",
-      "value": 501.5755758957347
+      "value": 1433.4383269780826
     }
   ]
 }

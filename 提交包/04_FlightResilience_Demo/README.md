@@ -6,7 +6,7 @@ FlightResilience 是一个系统工程课程项目，研究航空网络中局部
 
 - 数据来源：U.S. DOT BTS Airline On-Time Performance 月度公开文件。
 - 样本范围：2024-01 至 2024-03。
-- 空间范围：样本内总流量前 15 个机场。
+- 空间范围：样本内总流量前 30 个机场，形成 610,640 条航班记录与 824 条有向航线。
 - 预测目标：`ArrDel15`，即到达延误是否达到 15 分钟。
 - 策略比较：`baseline`、`uniform_buffer`、`hub_priority`、`dynamic_combo`。
 - 主结论：恢复/韧性优先偏好下推荐 `dynamic_combo`；成本或风险极端保守条件下 `baseline` 可能反超。
@@ -101,6 +101,13 @@ http://127.0.0.1:4173/
 ```
 
 静态站包含总览、数据驾驶舱、风险预测、机场网络、扰动仿真、综合决策和方法说明。页面只读取本地 JSON，不依赖后端。
+正式发布地址为：
+
+```text
+https://2711944586.github.io/xtgc/
+```
+
+页面内已加入现场扫码入口，二维码文件为 `web/assets/media/github-pages-qr.svg`。
 
 ## GitHub Pages 部署
 
@@ -110,12 +117,12 @@ http://127.0.0.1:4173/
 https://github.com/2711944586/xtgc
 ```
 
-推荐步骤：
+部署配置：
 
-1. 将本仓库内容推送到 `2711944586/xtgc` 的 `main` 分支。
-2. 确认 `.github/workflows/pages.yml` 存在。
-3. 在 GitHub 仓库 Settings -> Pages 中，将 Source 设为 `GitHub Actions`。
-4. 推送后工作流会把 `web/` 目录作为 Pages artifact 发布。
+1. 本仓库推送到 `2711944586/xtgc` 的 `main` 分支。
+2. `.github/workflows/pages.yml` 会把 `web/` 目录打包为 Pages artifact。
+3. GitHub 仓库 Settings -> Pages 的 Source 使用 `GitHub Actions`。
+4. 发布完成后访问 `https://2711944586.github.io/xtgc/`，或扫描页面内二维码。
 
 ## Streamlit 原型
 

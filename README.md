@@ -6,7 +6,7 @@ FlightResilience 是一个系统工程课程项目，研究航空网络中局部
 
 - 数据来源：U.S. DOT BTS Airline On-Time Performance 月度公开文件。
 - 样本范围：2024-01 至 2024-03。
-- 空间范围：样本内总流量前 15 个机场。
+- 空间范围：样本内总流量前 30 个机场，形成 610,640 条航班记录与 824 条有向航线。
 - 预测目标：`ArrDel15`，即到达延误是否达到 15 分钟。
 - 策略比较：`baseline`、`uniform_buffer`、`hub_priority`、`dynamic_combo`。
 - 主结论：恢复/韧性优先偏好下推荐 `dynamic_combo`；成本或风险极端保守条件下 `baseline` 可能反超。

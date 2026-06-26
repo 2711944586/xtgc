@@ -1,11 +1,11 @@
 {
-  "flights": 224755,
-  "completed_flights": 220235,
+  "flights": 610640,
+  "completed_flights": 598722,
   "date_min": "2024-01-01",
   "date_max": "2024-03-31",
-  "airport_count": 15,
-  "delay_rate": 0.22132267804844824,
-  "avg_arr_delay": 16.41294980361886,
-  "cancel_rate": 0.018331071611310094,
+  "airport_count": 30,
+  "delay_rate": 0.2189630579801644,
+  "avg_arr_delay": 16.216008431291986,
+  "cancel_rate": 0.01758646665793266,
   "data_source": "U.S. DOT BTS TranStats, 2024-01 to 2024-03"
 }

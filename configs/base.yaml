@@ -1,10 +1,9 @@
 random_seed: 42
 months: [1, 2, 3]
 year: 2024
-top_airports: 15
+top_airports: 30
 train_end: "2024-02-15"
 valid_end: "2024-02-29"
 test_end: "2024-03-31"
 delay_threshold_minutes: 15
 raw_url_template: "https://transtats.bts.gov/PREZIP/On_Time_Reporting_Carrier_On_Time_Performance_1987_present_{year}_{month}.zip"
-

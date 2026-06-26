@@ -8,10 +8,13 @@ import matplotlib.pyplot as plt
 import networkx as nx
 import numpy as np
 import pandas as pd
+import joblib
 import plotly.graph_objects as go
 import seaborn as sns
+from sklearn.metrics import precision_recall_curve, roc_curve
 
-from .config import DEMO_DIR, FIGURES_DIR, PROCESSED_DIR, TABLES_DIR, ensure_dirs
+from .config import DEMO_DIR, FIGURES_DIR, MODELS_DIR, PROCESSED_DIR, TABLES_DIR, ensure_dirs
+from .modeling import CATEGORICAL_FEATURES, NUMERIC_FEATURES, TARGET
 from .utils import write_json
 
 
@@ -39,6 +42,11 @@ def set_theme() -> None:
             "axes.labelcolor": PALETTE["ink"],
             "xtick.color": "#425466",
             "ytick.color": "#425466",
+            "axes.titleweight": "bold",
+            "axes.titlesize": 13,
+            "axes.titlecolor": PALETTE["navy"],
+            "figure.facecolor": "#FFFFFF",
+            "axes.facecolor": "#FFFFFF",
         }
     )
 
@@ -92,6 +100,49 @@ def eda_figures(df: pd.DataFrame) -> None:
     plt.xlabel("延误率")
     plt.ylabel("机场")
     savefig(FIGURES_DIR / "fig_10_airport_delay_rank.png")
+
+    airline = (
+        completed.groupby("Reporting_Airline", as_index=False)
+        .agg(flights=("ArrDel15", "size"), delay_rate=("ArrDel15", "mean"), avg_delay=("ArrDelayMinutes", "mean"))
+        .query("flights >= 1200")
+        .sort_values("delay_rate", ascending=False)
+        .head(15)
+    )
+    plt.figure(figsize=(8.4, 4.8))
+    sns.barplot(data=airline, y="Reporting_Airline", x="delay_rate", color=PALETTE["green"])
+    plt.title("图 11  航司计划阶段延误暴露差异")
+    plt.xlabel("延误率")
+    plt.ylabel("承运航司")
+    for i, row in enumerate(airline.itertuples(index=False)):
+        plt.text(row.delay_rate + 0.003, i, f"{int(row.flights):,}", va="center", fontsize=8, color=PALETTE["slate"])
+    savefig(FIGURES_DIR / "fig_11_airline_delay_rank.png")
+
+    route = (
+        completed.groupby(["Origin", "Dest", "route"], as_index=False)
+        .agg(flights=("ArrDel15", "size"), delay_rate=("ArrDel15", "mean"), avg_delay=("ArrDelayMinutes", "mean"))
+        .query("flights >= 350")
+    )
+    route["risk_volume"] = route["flights"] * route["delay_rate"]
+    top_route = route.sort_values("risk_volume", ascending=False).head(22).copy()
+    plt.figure(figsize=(8.8, 5.8))
+    ax = sns.scatterplot(
+        data=top_route,
+        x="flights",
+        y="delay_rate",
+        size="avg_delay",
+        hue="risk_volume",
+        palette="YlOrRd",
+        sizes=(60, 520),
+        edgecolor="white",
+        linewidth=0.8,
+    )
+    for row in top_route.itertuples(index=False):
+        plt.text(row.flights, row.delay_rate, row.route, fontsize=7.6, color=PALETTE["ink"])
+    ax.legend(bbox_to_anchor=(1.02, 1), loc="upper left", frameon=True, fontsize=7.5)
+    plt.title("图 12  高暴露航线：流量、延误率与平均延误")
+    plt.xlabel("样本航班量")
+    plt.ylabel("延误率")
+    savefig(FIGURES_DIR / "fig_12_route_risk_bubble.png")
 
     plt.figure(figsize=(7.5, 5.2))
     sns.scatterplot(data=airport.reset_index(), x="flights", y="delay_rate", size="avg_delay", sizes=(40, 280), color=PALETTE["blue"])
@@ -147,6 +198,34 @@ def model_figures() -> None:
     plt.ylabel("特征")
     savefig(FIGURES_DIR / "fig_18_shap_summary.png")
 
+    df = pd.read_parquet(PROCESSED_DIR / "flights_features.parquet")
+    feature_cols = NUMERIC_FEATURES + CATEGORICAL_FEATURES
+    test = df[(df["is_completed"] == 1) & (df["split"] == "test")].copy()
+    if (MODELS_DIR / "delay_model.joblib").exists() and len(test):
+        model = joblib.load(MODELS_DIR / "delay_model.joblib")
+        sample = test.sample(n=min(50000, len(test)), random_state=42)
+        y = sample[TARGET].astype(int)
+        proba = model.predict_proba(sample[feature_cols])[:, 1]
+        fpr, tpr, _ = roc_curve(y, proba)
+        precision, recall, _ = precision_recall_curve(y, proba)
+        curve_df = pd.DataFrame({"fpr": pd.Series(fpr), "tpr": pd.Series(tpr)})
+        curve_df.to_csv(TABLES_DIR / "roc_curve.csv", index=False, encoding="utf-8-sig")
+        pr_df = pd.DataFrame({"recall": pd.Series(recall), "precision": pd.Series(precision)})
+        pr_df.to_csv(TABLES_DIR / "pr_curve.csv", index=False, encoding="utf-8-sig")
+
+        fig, axes = plt.subplots(1, 2, figsize=(10.2, 4.3))
+        axes[0].plot(fpr, tpr, color=PALETTE["blue"], linewidth=2.2)
+        axes[0].plot([0, 1], [0, 1], "--", color=PALETTE["slate"], linewidth=1)
+        axes[0].set_title("ROC 曲线")
+        axes[0].set_xlabel("FPR")
+        axes[0].set_ylabel("TPR")
+        axes[1].plot(recall, precision, color=PALETTE["orange"], linewidth=2.2)
+        axes[1].set_title("PR 曲线")
+        axes[1].set_xlabel("Recall")
+        axes[1].set_ylabel("Precision")
+        fig.suptitle("图 16  时间外测试集排序能力曲线", x=0.5, y=1.02, fontweight="bold", color=PALETTE["navy"])
+        savefig(FIGURES_DIR / "fig_16_roc_pr_curves.png")
+
 
 def network_figures() -> None:
     nodes = pd.read_csv(TABLES_DIR / "airport_nodes.csv")
@@ -156,14 +235,15 @@ def network_figures() -> None:
         G.add_node(row.airport, criticality=float(row.criticality), delay_rate=float(row.delay_rate), departures=int(row.departures))
     for row in edges.itertuples(index=False):
         G.add_edge(row.Origin, row.Dest, weight=float(row.flights))
-    pos = nx.spring_layout(G, seed=42, weight="weight", k=0.8)
+    pos = nx.spring_layout(G, seed=42, weight="weight", k=1.15, iterations=220)
     plt.figure(figsize=(8, 6))
     widths = [0.4 + 2.5 * (G[u][v]["weight"] / edges["flights"].max()) for u, v in G.edges()]
-    sizes = [280 + 1050 * G.nodes[n]["departures"] / nodes["departures"].max() for n in G.nodes()]
+    sizes = [120 + 760 * G.nodes[n]["departures"] / nodes["departures"].max() for n in G.nodes()]
     colors = [G.nodes[n]["criticality"] for n in G.nodes()]
     nx.draw_networkx_edges(G, pos, alpha=0.25, width=widths, edge_color=PALETTE["slate"], arrows=False)
     nx.draw_networkx_nodes(G, pos, node_size=sizes, node_color=colors, cmap="YlOrRd", edgecolors="white", linewidths=1.2)
-    nx.draw_networkx_labels(G, pos, font_size=8, font_family="Microsoft YaHei")
+    label_nodes = set(nodes.sort_values("criticality", ascending=False).head(14)["airport"])
+    nx.draw_networkx_labels(G, pos, labels={n: n for n in G.nodes() if n in label_nodes}, font_size=8, font_family="Microsoft YaHei")
     plt.title("图 20  主要机场有向航线网络")
     plt.axis("off")
     savefig(FIGURES_DIR / "fig_20_airport_network.png")
@@ -203,6 +283,35 @@ def network_figures() -> None:
         title_fontsize=8.5,
     )
     savefig(FIGURES_DIR / "fig_22_network_risk_scatter.png")
+
+    role = nodes.copy()
+    role["departures_norm"] = role["departures"] / role["departures"].max()
+    role["role"] = np.where(
+        (role["pagerank"] >= role["pagerank"].median()) & (role["avg_risk"] >= role["avg_risk"].median()),
+        "高中心-高风险",
+        np.where(role["pagerank"] >= role["pagerank"].median(), "高中心", np.where(role["avg_risk"] >= role["avg_risk"].median(), "高风险", "低暴露")),
+    )
+    plt.figure(figsize=(8.6, 5.2))
+    ax = sns.scatterplot(
+        data=role,
+        x="pagerank",
+        y="avg_risk",
+        hue="role",
+        size="departures",
+        sizes=(60, 430),
+        palette=[PALETTE["red"], PALETTE["blue"], PALETTE["orange"], PALETTE["slate"]],
+        edgecolor="white",
+        linewidth=0.8,
+    )
+    for row in role.sort_values("criticality", ascending=False).head(12).itertuples(index=False):
+        plt.text(row.pagerank, row.avg_risk, row.airport, fontsize=8, fontweight="bold")
+    ax.axvline(role["pagerank"].median(), color=PALETTE["slate"], linestyle="--", linewidth=1)
+    ax.axhline(role["avg_risk"].median(), color=PALETTE["slate"], linestyle="--", linewidth=1)
+    ax.legend(bbox_to_anchor=(1.02, 1), loc="upper left", frameon=True, fontsize=7.4)
+    plt.title("图 26  机场角色象限：中心性与风险暴露")
+    plt.xlabel("PageRank 中心性")
+    plt.ylabel("平均预测风险")
+    savefig(FIGURES_DIR / "fig_26_airport_role_quadrant.png")
 
 
 def ism_figures() -> None:
@@ -257,6 +366,23 @@ def simulation_figures() -> None:
     plt.legend()
     savefig(FIGURES_DIR / "fig_29_recovery_curves.png")
 
+    heat = weather.pivot_table(index="strategy", columns="hour", values="total_delay", aggfunc="mean")
+    plt.figure(figsize=(9.2, 3.8))
+    sns.heatmap(heat, cmap="YlOrRd", linewidths=0.2, cbar_kws={"label": "总延误分钟"})
+    plt.title("图 28  天气冲击下恢复过程热力图")
+    plt.xlabel("冲击后小时")
+    plt.ylabel("策略")
+    savefig(FIGURES_DIR / "fig_28_recovery_heatmap.png")
+
+    focus = weather[weather["hour"].isin([1, 3, 6, 12, 24])].copy()
+    plt.figure(figsize=(9.2, 4.8))
+    sns.lineplot(data=weather, x="hour", y="spread_range", hue="strategy", marker="o")
+    plt.title("图 31  传播范围随时间收敛过程")
+    plt.xlabel("冲击后小时")
+    plt.ylabel("延误超过阈值的机场数")
+    plt.legend(title="")
+    savefig(FIGURES_DIR / "fig_31_spread_range_curves.png")
+
     metrics = pd.read_csv(TABLES_DIR / "strategy_metrics_by_scenario.csv")
     plt.figure(figsize=(8.4, 4.8))
     sns.barplot(data=metrics, x="scenario", y="cumulative_delay", hue="strategy")
@@ -272,6 +398,28 @@ def simulation_figures() -> None:
     plt.xlabel("相对策略成本")
     plt.ylabel("累计总延误")
     savefig(FIGURES_DIR / "fig_32_cost_delay_pareto.png")
+
+    radar_cols = ["cumulative_delay", "recovery_time", "spread_range", "strategy_cost"]
+    radar = metrics.groupby("strategy", as_index=False)[radar_cols].mean()
+    radar_norm = radar.copy()
+    for col in radar_cols:
+        series = radar[col]
+        radar_norm[col] = 1 - (series - series.min()) / (series.max() - series.min() + 1e-9)
+    angles = np.linspace(0, 2 * np.pi, len(radar_cols), endpoint=False).tolist()
+    angles += angles[:1]
+    fig = plt.figure(figsize=(6.8, 6.2))
+    ax = plt.subplot(111, polar=True)
+    for row in radar_norm.itertuples(index=False):
+        values = [getattr(row, col) for col in radar_cols]
+        values += values[:1]
+        ax.plot(angles, values, linewidth=2, label=row.strategy)
+        ax.fill(angles, values, alpha=0.08)
+    ax.set_xticks(angles[:-1])
+    ax.set_xticklabels(["低累计延误", "快恢复", "小传播", "低成本"], fontsize=9)
+    ax.set_yticklabels([])
+    ax.set_title("图 33  策略韧性画像雷达图", color=PALETTE["navy"], fontweight="bold")
+    ax.legend(loc="upper right", bbox_to_anchor=(1.32, 1.1), fontsize=8)
+    savefig(FIGURES_DIR / "fig_33_strategy_radar.png")
 
 
 def decision_figures() -> None:
@@ -290,6 +438,16 @@ def decision_figures() -> None:
     plt.ylabel("策略")
     savefig(FIGURES_DIR / "fig_35_fuzzy_grades.png")
 
+    weights = pd.read_csv(TABLES_DIR / "indicator_weights.csv")
+    plot_weights = weights.sort_values("combined_weight", ascending=False)
+    plt.figure(figsize=(8.8, 5.0))
+    sns.barplot(data=plot_weights, y="label", x="combined_weight", hue="criterion", dodge=False, palette=[PALETTE["blue"], PALETTE["green"], PALETTE["orange"], PALETTE["red"], PALETTE["slate"]])
+    plt.title("图 36  组合权重结构")
+    plt.xlabel("组合权重")
+    plt.ylabel("评价指标")
+    plt.legend(title="", bbox_to_anchor=(1.02, 1), loc="upper left", fontsize=8)
+    savefig(FIGURES_DIR / "fig_36_indicator_weights.png")
+
     sens = pd.read_csv(TABLES_DIR / "weight_sensitivity.csv")
     plt.figure(figsize=(7.4, 4.4))
     plt.plot(sens["lambda_ahp"], sens["dynamic_combo_rank"], marker="o", label="dynamic_combo")
@@ -301,6 +459,22 @@ def decision_figures() -> None:
     plt.ylabel("排名")
     plt.legend()
     savefig(FIGURES_DIR / "fig_37_weight_sensitivity.png")
+
+    risk = pd.read_csv(TABLES_DIR / "risk_decision.csv")
+    rank = pd.read_csv(TABLES_DIR / "strategy_rankings.csv")[["strategy", "overall_rank"]]
+    merged = risk.merge(rank, on="strategy", how="left")
+    fig, axes = plt.subplots(1, 2, figsize=(9.4, 4.2), sharey=False)
+    sns.barplot(data=merged.sort_values("expected_loss"), y="strategy", x="expected_loss", ax=axes[0], color=PALETTE["red"])
+    axes[0].set_title("风险型期望损失")
+    axes[0].set_xlabel("期望损失")
+    axes[0].set_ylabel("策略")
+    sns.barplot(data=merged.sort_values("overall_rank"), y="strategy", x="overall_rank", ax=axes[1], color=PALETTE["blue"])
+    axes[1].invert_xaxis()
+    axes[1].set_title("主偏好 TOPSIS 排名")
+    axes[1].set_xlabel("排名（越靠左越优）")
+    axes[1].set_ylabel("")
+    fig.suptitle("图 38  风险决策与主偏好排名并不完全一致", y=1.03, color=PALETTE["navy"], fontweight="bold")
+    savefig(FIGURES_DIR / "fig_38_risk_vs_topsis.png")
 
 
 def interactive_network_html() -> None:

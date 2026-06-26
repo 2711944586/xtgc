@@ -8,7 +8,7 @@ from common import conclusion, read_csv, read_parquet, setup_page, strategy_labe
 
 setup_page("扰动仿真")
 st.title("扰动仿真")
-conclusion("在同一 DEN 冲击、相同仿真时长和统一预算口径下，动态组合策略通常能降低累计延误并提升最低系统性能。")
+conclusion("在同一关键节点冲击、相同仿真时长和统一预算口径下，动态组合策略通常能降低累计延误并提升最低系统性能。")
 
 traj = read_parquet("scenario_results.parquet")
 metrics = read_csv("strategy_metrics_by_scenario.csv")
@@ -32,4 +32,3 @@ st.plotly_chart(fig2, use_container_width=True)
 
 st.subheader("策略指标表")
 st.dataframe(metric_view, use_container_width=True, hide_index=True)
-
