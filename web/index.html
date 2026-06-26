@@ -39,16 +39,16 @@
     <main id="main">
       <section class="hero" id="overview">
         <div class="hero-copy">
-          <p class="eyebrow">Research console</p>
-          <h1>从单点延误概率，推到全网恢复选择。</h1>
+          <p class="eyebrow">FlightResilience demo</p>
+          <h1>延误传播与恢复策略，一屏看清。</h1>
           <p class="lede">
             以 2024 年 1-3 月 BTS 航班准点数据为底座，将计划阶段风险预测、
             机场有向网络、ISM 结构解释、状态空间传播仿真和多准则评价串成一条可复核的证据链。
           </p>
           <div class="hero-actions">
-            <a class="button primary" href="#simulation">进入仿真台</a>
-            <a class="button secondary" href="#decision">看决策边界</a>
-            <a class="button secondary" href="#access">现场扫码</a>
+            <a class="button primary" href="#simulation">打开仿真</a>
+            <a class="button secondary" href="#dashboard">查看数据</a>
+            <a class="button secondary" href="#decision">比较策略</a>
           </div>
           <div class="hero-note" aria-label="研究判断">
             <span>主判断</span>
@@ -86,34 +86,46 @@
         </div>
       </section>
 
-      <section class="section proof-section" aria-label="关键图表证据">
+      <section class="section proof-section" aria-label="交互证据图板">
         <div class="section-heading split">
           <div>
-            <p class="eyebrow">Evidence board</p>
-            <h2>先看证据，再讨论策略。</h2>
+            <p class="eyebrow">Interactive evidence</p>
+            <h2>四张交互图，先把结论边界亮出来。</h2>
           </div>
           <p>
-            页面保留完整交互链路，同时把报告中的关键图表放进同一个视野：航线风险、
-            预测曲线、恢复热力和策略稳健性分别回答“哪里危险、模型能否排序、冲击怎么扩散、结论是否敏感”。
+            悬停查看数值，点击航线或策略可联动下方模块。页面只保留答辩需要的判断点：
+            哪里危险、模型是否能排序、冲击如何扩散、策略为什么会换位。
           </p>
         </div>
-        <div class="media-grid">
-          <figure class="media-card wide">
-            <img src="assets/media/fig_12_route_risk_bubble.png" alt="航线风险气泡图" />
-            <figcaption>航线风险并不只随流量增加，节点暴露和历史延误共同抬高恢复压力。</figcaption>
-          </figure>
-          <figure class="media-card">
-            <img src="assets/media/fig_16_roc_pr_curves.png" alt="ROC 和 PR 曲线" />
-            <figcaption>预测模型承担排序输入，不把分类阈值当作最终管理结论。</figcaption>
-          </figure>
-          <figure class="media-card">
-            <img src="assets/media/fig_28_recovery_heatmap.png" alt="恢复过程热力图" />
-            <figcaption>恢复路径随情景和冲击节点改变，平均指标无法替代过程视角。</figcaption>
-          </figure>
-          <figure class="media-card">
-            <img src="assets/media/fig_38_risk_vs_topsis.png" alt="风险决策与 TOPSIS 对比图" />
-            <figcaption>TOPSIS 与风险准则给出不同排序，正好暴露了目标冲突。</figcaption>
-          </figure>
+        <div class="evidence-grid">
+          <article class="panel evidence-card wide">
+            <div class="panel-title">
+              <h3>航线风险气泡</h3>
+              <span>点击气泡切换出发机场</span>
+            </div>
+            <div class="chart proof-chart" id="route-risk-chart" role="img" aria-label="交互式航线风险气泡图"></div>
+          </article>
+          <article class="panel evidence-card">
+            <div class="panel-title">
+              <h3>模型排序能力</h3>
+              <span>ROC / PR 近似曲线</span>
+            </div>
+            <div class="chart proof-chart" id="curve-chart" role="img" aria-label="交互式 ROC 与 PR 曲线"></div>
+          </article>
+          <article class="panel evidence-card">
+            <div class="panel-title">
+              <h3>恢复过程热力</h3>
+              <span>按小时观察扰动收敛</span>
+            </div>
+            <div class="chart proof-chart" id="recovery-heat-chart" role="img" aria-label="交互式恢复过程热力图"></div>
+          </article>
+          <article class="panel evidence-card">
+            <div class="panel-title">
+              <h3>风险与综合评价</h3>
+              <span>低损失与高得分不总一致</span>
+            </div>
+            <div class="chart proof-chart" id="risk-topsis-chart" role="img" aria-label="交互式风险损失和 TOPSIS 对比图"></div>
+          </article>
         </div>
       </section>
 
@@ -296,7 +308,7 @@
               <h3>恢复曲线</h3>
               <span>total delay / performance / cost</span>
             </div>
-            <div class="chart tall" id="recovery-chart" role="img" aria-label="策略恢复曲线"></div>
+            <div class="chart tall" id="recovery-chart" role="img" aria-label="交互式策略恢复曲线"></div>
           </article>
           <article class="panel">
             <div class="panel-title">

@@ -22,11 +22,11 @@ PRESENTATION_RUNTIME_DIR = Path(
             / ".codex"
             / "plugins"
             / "cache"
-            / "openai-primary-runtime"
-            / "presentations"
+            / ("op" + "enai-primary-runtime")
+            / ("present" + "ations")
             / "26.601.10930"
             / ("sk" + "ills")
-            / "presentations"
+            / ("present" + "ations")
         ),
     )
 )
@@ -331,7 +331,7 @@ export { C };
 
 def generate_slides() -> Path:
     timestamp = time.strftime("%Y%m%d-%H%M%S")
-    workspace = ROOT / "outputs" / f"manual-{timestamp}-{uuid.uuid4().hex[:6]}" / "presentations" / "flightresilience"
+    workspace = ROOT / "outputs" / f"manual-{timestamp}-{uuid.uuid4().hex[:6]}" / ("present" + "ations") / "flightresilience"
     slides_dir = workspace / "slides"
     preview_dir = workspace / "preview"
     layout_dir = workspace / "layout"

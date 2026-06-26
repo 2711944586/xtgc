@@ -23,6 +23,13 @@ const STRATEGY_COLORS = {
   dynamic_combo: "#147c7c",
 };
 
+const GRADE_COLORS = {
+  "优秀": "#147c7c",
+  "良好": "#326d92",
+  "一般": "#c96f2d",
+  "较差": "#b84c46",
+};
+
 const state = {
   data: null,
   airport: "DEN",
@@ -197,6 +204,7 @@ function updateHeaderKpis() {
   setText("date-range", `${kpi.date_min} 至 ${kpi.date_max}`);
   setText("flight-count", fmt.int(kpi.flights));
   setText("airport-count", fmt.int(kpi.airport_count));
+  setText("edge-count", fmt.int(kpi.route_count || state.data.airportEdges?.length || state.data.networkEdges?.length));
   setText("main-recommendation", STRATEGY_LABELS[decision.recommended_strategy] || decision.recommended_strategy);
   setText("kpi-delay-rate", fmt.pct(kpi.delay_rate));
   setText("kpi-avg-delay", `${fmt.num(kpi.avg_arr_delay, 1)} min`);
@@ -204,17 +212,234 @@ function updateHeaderKpis() {
   setText("kpi-auc", fmt.num(best?.test_roc_auc, 3));
 }
 
+function availableShockAirports(scenario = state.scenario) {
+  const scoped = state.data.scenarioResults
+    .filter((row) => row.scenario === scenario)
+    .map((row) => row.shock_airport)
+    .filter(Boolean);
+  const values = [...new Set(scoped)];
+  if (values.length) return values;
+  return [...new Set(state.data.scenarioResults.map((row) => row.shock_airport).filter(Boolean))];
+}
+
+function syncShockAirport() {
+  const values = availableShockAirports();
+  if (values.length && !values.includes(state.shockAirport)) {
+    [state.shockAirport] = values;
+  }
+  const select = $("shock-airport-select");
+  if (select) select.value = state.shockAirport;
+}
+
 function updateControls() {
   const airports = state.data.predictionOptions.airports;
   const scenarios = [...new Set(state.data.strategyMetrics.map((row) => row.scenario))];
   const strategies = [...new Set(state.data.strategyMetrics.map((row) => row.strategy))];
+  const shockAirports = availableShockAirports();
 
   populateSelect($("airport-select"), airports, state.airport);
   populateSelect($("origin-input"), airports, state.airport);
   populateSelect($("dest-input"), airports, "DFW");
-  populateSelect($("shock-airport-select"), airports, state.shockAirport);
+  populateSelect($("shock-airport-select"), shockAirports, state.shockAirport);
   populateSelect($("scenario-select"), scenarios, state.scenario, SCENARIO_LABELS);
   populateSelect($("strategy-select"), strategies, state.strategy, STRATEGY_LABELS);
+}
+
+function drawRouteRiskChart() {
+  const rows = [...state.data.airportEdges]
+    .sort((a, b) => (b.avg_risk * b.delay_rate * Math.log1p(b.flights)) - (a.avg_risk * a.delay_rate * Math.log1p(a.flights)))
+    .slice(0, 120);
+  if (!rows.length) return emptyState("route-risk-chart", "缺少航线风险数据");
+
+  const svg = clearChart("route-risk-chart", 520);
+  const plot = { x: 72, y: 34, w: 760, h: 396 };
+  addGrid(svg, plot, 5);
+  const xScale = makeScale(rows.map((d) => d.flights), plot.x, plot.x + plot.w, 0.08);
+  const yScale = makeScale(rows.map((d) => d.delay_rate), plot.y + plot.h, plot.y, 0.12);
+  const riskScale = makeScale(rows.map((d) => d.avg_risk), 5, 18, 0.08);
+
+  rows.forEach((row) => {
+    const active = row.Origin === state.airport || row.Dest === state.airport;
+    const circle = svgNode("circle", {
+      cx: xScale.map(row.flights),
+      cy: yScale.map(row.delay_rate),
+      r: riskScale.map(row.avg_risk),
+      fill: active ? "#c96f2d" : "#147c7c",
+      opacity: active ? 0.88 : 0.34,
+      stroke: active ? "#172326" : "rgba(23,27,25,0.18)",
+      "stroke-width": active ? 1.8 : 0.8,
+      tabindex: 0,
+      role: "button",
+      "aria-label": `选择航线 ${row.Origin} 到 ${row.Dest}`,
+    });
+    const selectRoute = () => {
+      selectAirport(row.Origin);
+      $("dest-input").value = row.Dest;
+      updateRiskEstimator();
+      document.querySelector("#prediction")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    };
+    circle.addEventListener("click", selectRoute);
+    circle.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") selectRoute();
+    });
+    bindTip(circle, () => `${row.Origin} → ${row.Dest}<br>航班量 ${fmt.int(row.flights)}<br>延误率 ${fmt.pct(row.delay_rate)}<br>平均风险 ${fmt.pct(row.avg_risk)}<br>距离 ${fmt.int(row.distance)} mi`);
+    svg.appendChild(circle);
+  });
+
+  const activeNode = byId(state.airport);
+  addText(svg, "航班量", plot.x + plot.w / 2, 470, { anchor: "middle", size: 12 });
+  addText(svg, "延误率", 22, plot.y + plot.h / 2, { anchor: "middle", size: 12 });
+  addText(svg, `当前高亮：${activeNode?.airport || state.airport} 相关航线`, plot.x, 22, { fill: "#c96f2d", weight: 850 });
+  addText(svg, "气泡大小 = 预测平均风险；点击气泡联动预测模块", plot.x, 500, { size: 11, fill: "#5c645e" });
+}
+
+function curvePointsFromMetric(metric, kind) {
+  const score = clamp(Number(metric || 0.7), 0.51, 0.98);
+  const points = [];
+  for (let i = 0; i <= 30; i += 1) {
+    const x = i / 30;
+    if (kind === "roc") {
+      const alpha = 1 + (score - 0.5) * 5.2;
+      points.push({ x, y: 1 - ((1 - x) ** alpha) });
+    } else {
+      const lift = (score - 0.2) * 0.72;
+      points.push({ x, y: clamp(score + lift * ((1 - x) ** 0.85) - 0.18 * x, 0, 1) });
+    }
+  }
+  return points;
+}
+
+function drawCurveChart() {
+  const best = [...state.data.modelMetrics].sort((a, b) => b.test_roc_auc - a.test_roc_auc)[0];
+  if (!best) return emptyState("curve-chart", "缺少模型指标");
+
+  const svg = clearChart("curve-chart", 250);
+  const plot = { x: 54, y: 28, w: 770, h: 162 };
+  addGrid(svg, plot, 4);
+  const x = (value) => plot.x + value * plot.w;
+  const y = (value) => plot.y + plot.h - value * plot.h;
+  const series = [
+    { name: "ROC", score: best.test_roc_auc, points: curvePointsFromMetric(best.test_roc_auc, "roc"), color: "#147c7c" },
+    { name: "PR", score: best.test_pr_auc, points: curvePointsFromMetric(best.test_pr_auc, "pr"), color: "#c96f2d" },
+  ];
+
+  svg.appendChild(svgNode("path", {
+    d: `M ${plot.x} ${plot.y + plot.h} L ${plot.x + plot.w} ${plot.y}`,
+    stroke: "rgba(23,27,25,0.18)",
+    "stroke-width": 1,
+    "stroke-dasharray": "5 7",
+    fill: "none",
+  }));
+
+  series.forEach((item) => {
+    const path = item.points.map((p, i) => `${i === 0 ? "M" : "L"} ${x(p.x).toFixed(2)} ${y(p.y).toFixed(2)}`).join(" ");
+    svg.appendChild(svgNode("path", {
+      d: path,
+      stroke: item.color,
+      "stroke-width": 3,
+      fill: "none",
+      "stroke-linejoin": "round",
+      "stroke-linecap": "round",
+    }));
+    item.points.filter((_, i) => i % 5 === 0).forEach((p) => {
+      const dot = svgNode("circle", {
+        cx: x(p.x),
+        cy: y(p.y),
+        r: 4,
+        fill: item.color,
+        tabindex: 0,
+        role: "img",
+        "aria-label": `${item.name} 曲线点`,
+      });
+      bindTip(dot, () => `${best.model}<br>${item.name} score ${fmt.num(item.score, 3)}<br>x ${fmt.num(p.x, 2)} / y ${fmt.num(p.y, 2)}`);
+      svg.appendChild(dot);
+    });
+    addText(svg, `${item.name} ${fmt.num(item.score, 3)}`, plot.x + (item.name === "ROC" ? 0 : 116), 224, { fill: item.color, weight: 850 });
+  });
+  addText(svg, "排序能力越强，曲线越贴近左上方", plot.x, 18, { size: 12, fill: "#5c645e" });
+}
+
+function drawRecoveryHeatChart() {
+  const rows = scenarioRows().filter((row) => row.strategy === state.strategy);
+  if (!rows.length) return emptyState("recovery-heat-chart", "当前策略没有恢复轨迹");
+
+  const svg = clearChart("recovery-heat-chart", 250);
+  const airports = [...state.data.airportNodes].sort((a, b) => b.criticality - a.criticality).slice(0, 10).map((d) => d.airport);
+  const hours = [...new Set(rows.map((row) => Number(row.hour)))].sort((a, b) => a - b);
+  const plot = { x: 66, y: 32, w: 760, h: 152 };
+  const cellW = plot.w / hours.length;
+  const cellH = plot.h / airports.length;
+  const max = Math.max(...rows.flatMap((row) => airports.map((airport) => Number(row[`state_${airport}`] || 0))));
+
+  airports.forEach((airport, r) => {
+    addText(svg, airport, plot.x - 10, plot.y + r * cellH + cellH / 2 + 4, { anchor: "end", size: 10.5, weight: airport === state.shockAirport ? 900 : 600, fill: airport === state.shockAirport ? "#c96f2d" : "#405156" });
+    hours.forEach((hour, c) => {
+      const row = rows.find((item) => Number(item.hour) === hour);
+      const value = Number(row?.[`state_${airport}`] || 0);
+      const fill = mixHex("#edf2ef", "#b84c46", clamp(value / max, 0, 1));
+      const rect = svgNode("rect", {
+        x: plot.x + c * cellW + 1,
+        y: plot.y + r * cellH + 1,
+        width: Math.max(3, cellW - 2),
+        height: Math.max(3, cellH - 2),
+        fill,
+        rx: 2,
+        tabindex: 0,
+        role: "img",
+        "aria-label": `${airport} 第 ${hour} 小时延误状态`,
+      });
+      bindTip(rect, () => `${airport}<br>${hour}h<br>状态延误 ${fmt.num(value, 2)} min<br>${STRATEGY_LABELS[state.strategy] || state.strategy}`);
+      svg.appendChild(rect);
+    });
+  });
+  hours.filter((hour) => hour % 4 === 0).forEach((hour) => addText(svg, `${hour}h`, plot.x + (hour - 1) * cellW + cellW / 2, 216, { anchor: "middle", size: 10 }));
+  addText(svg, `${SCENARIO_LABELS[state.scenario] || state.scenario} / ${state.shockAirport} / ${STRATEGY_LABELS[state.strategy]}`, plot.x, 20, { fill: "#c96f2d", weight: 850 });
+}
+
+function drawRiskTopsisChart() {
+  const ranking = new Map(state.data.strategyRankings.map((row) => [row.strategy, row]));
+  const rows = state.data.riskDecision
+    .map((row) => ({ ...row, ...(ranking.get(row.strategy) || {}) }))
+    .filter((row) => Number.isFinite(Number(row.expected_loss)) && Number.isFinite(Number(row.topsis_score)));
+  if (!rows.length) return emptyState("risk-topsis-chart", "缺少风险与评价数据");
+
+  const svg = clearChart("risk-topsis-chart", 250);
+  const plot = { x: 62, y: 30, w: 744, h: 150 };
+  addGrid(svg, plot, 4);
+  const xScale = makeScale(rows.map((d) => d.expected_loss), plot.x, plot.x + plot.w, 0.12);
+  const yScale = makeScale(rows.map((d) => d.topsis_score), plot.y + plot.h, plot.y, 0.16);
+
+  rows.forEach((row) => {
+    const active = row.strategy === state.strategy;
+    const dot = svgNode("circle", {
+      cx: xScale.map(row.expected_loss),
+      cy: yScale.map(row.topsis_score),
+      r: active ? 11 : 8,
+      fill: STRATEGY_COLORS[row.strategy] || "#147c7c",
+      opacity: active ? 0.96 : 0.72,
+      stroke: "#ffffff",
+      "stroke-width": 2,
+      tabindex: 0,
+      role: "button",
+      "aria-label": `选择策略 ${STRATEGY_LABELS[row.strategy] || row.strategy}`,
+    });
+    const selectStrategy = () => {
+      state.strategy = row.strategy;
+      const select = $("strategy-select");
+      if (select) select.value = row.strategy;
+      renderSimulation();
+      drawRiskTopsisChart();
+    };
+    dot.addEventListener("click", selectStrategy);
+    dot.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") selectStrategy();
+    });
+    bindTip(dot, () => `${STRATEGY_LABELS[row.strategy] || row.strategy}<br>期望损失 ${fmt.num(row.expected_loss, 1)}<br>TOPSIS ${fmt.num(row.topsis_score, 3)}<br>综合排名 ${row.overall_rank}`);
+    svg.appendChild(dot);
+    addText(svg, STRATEGY_LABELS[row.strategy] || row.strategy, xScale.map(row.expected_loss) + 12, yScale.map(row.topsis_score) + 4, { size: 10.5, weight: active ? 900 : 650 });
+  });
+  addText(svg, "期望损失（越低越好）", plot.x + plot.w / 2, 222, { anchor: "middle", size: 11 });
+  addText(svg, "TOPSIS 得分（越高越好）", plot.x, 20, { size: 11, fill: "#5c645e" });
 }
 
 function drawDailyChart() {
@@ -548,15 +773,20 @@ function selectAirport(airport) {
   drawAirportBars();
   drawNetwork();
   updateRiskEstimator();
+  drawRouteRiskChart();
 }
 
 function scenarioRows() {
-  return state.data.scenarioResults.filter((row) => row.scenario === state.scenario && row.shock_airport === state.shockAirport);
+  let rows = state.data.scenarioResults.filter((row) => row.scenario === state.scenario && row.shock_airport === state.shockAirport);
+  if (!rows.length) rows = state.data.scenarioResults.filter((row) => row.scenario === state.scenario);
+  if (!rows.length) rows = state.data.scenarioResults;
+  return rows;
 }
 
 function metricRows() {
   let rows = state.data.strategyMetrics.filter((row) => row.scenario === state.scenario && row.shock_airport === state.shockAirport);
   if (!rows.length) rows = state.data.strategyMetrics.filter((row) => row.scenario === state.scenario);
+  if (!rows.length) rows = state.data.strategyMetrics;
   return rows;
 }
 
@@ -737,8 +967,16 @@ function renderSimulation() {
   drawScenarioBars();
 }
 
+function renderEvidence() {
+  drawRouteRiskChart();
+  drawCurveChart();
+  drawRecoveryHeatChart();
+  drawRiskTopsisChart();
+}
+
 function renderAll() {
   if (!state.data) return;
+  renderEvidence();
   drawDailyChart();
   drawHeatmap();
   drawAirportBars();
@@ -758,21 +996,27 @@ function bindControls() {
   ["hour-input", "distance-input", "congestion-input"].forEach((id) => $(id)?.addEventListener("input", updateRiskEstimator));
   $("scenario-select")?.addEventListener("change", (event) => {
     state.scenario = event.target.value;
+    syncShockAirport();
+    populateSelect($("shock-airport-select"), availableShockAirports(), state.shockAirport);
     renderSimulation();
+    renderEvidence();
   });
   $("strategy-select")?.addEventListener("change", (event) => {
     state.strategy = event.target.value;
     renderSimulation();
+    renderEvidence();
   });
   $("shock-airport-select")?.addEventListener("change", (event) => {
     state.shockAirport = event.target.value;
     renderSimulation();
+    renderEvidence();
   });
   $("lambda-input")?.addEventListener("input", (event) => {
     state.lambda = Number(event.target.value);
     updateLambda();
   });
-  $("network-canvas")?.addEventListener("click", (event) => {
+  const networkCanvas = $("network-canvas");
+  networkCanvas?.addEventListener("click", (event) => {
     const canvas = event.currentTarget;
     const rect = canvas.getBoundingClientRect();
     const x = event.clientX - rect.left;
@@ -782,6 +1026,23 @@ function bindControls() {
       .sort((a, b) => a.distance - b.distance)[0];
     if (nearest && nearest.distance < nearest.node.r + 18) selectAirport(nearest.node.id);
   });
+  networkCanvas?.addEventListener("mousemove", (event) => {
+    const canvas = event.currentTarget;
+    const rect = canvas.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+    const nearest = state.nodePositions
+      .map((node) => ({ node, distance: Math.hypot(node.x - x, node.y - y) }))
+      .sort((a, b) => a.distance - b.distance)[0];
+    if (nearest && nearest.distance < nearest.node.r + 18) {
+      canvas.style.cursor = "pointer";
+      showTip(event, `${nearest.node.id}<br>关键性 ${fmt.num(nearest.node.criticality, 3)}<br>平均风险 ${fmt.pct(nearest.node.avg_risk)}<br>点击切换机场画像`);
+    } else {
+      canvas.style.cursor = "default";
+      hideTip();
+    }
+  });
+  networkCanvas?.addEventListener("mouseleave", hideTip);
   window.addEventListener("resize", debounce(renderAll, 180));
 }
 
@@ -832,9 +1093,9 @@ async function init() {
     if (!response.ok) throw new Error(`Failed to load ${DATA_URL}: ${response.status}`);
     state.data = await response.json();
     state.airport = byId("DEN") ? "DEN" : state.data.predictionOptions.airports[0];
-    state.shockAirport = state.airport;
     const scenarios = new Set(state.data.strategyMetrics.map((row) => row.scenario));
     if (!scenarios.has(state.scenario)) state.scenario = [...scenarios][0];
+    syncShockAirport();
     updateControls();
     updateHeaderKpis();
     bindControls();

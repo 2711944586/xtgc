@@ -22,9 +22,9 @@ http://127.0.0.1:4173/
 
 - `index.html`：页面结构与演示模块。
 - `assets/css/styles.css`：航空运行控制台风格样式。
-- `assets/js/app.js`：静态数据加载、图表绘制和控件联动。
+- `assets/js/app.js`：静态数据加载、SVG/Canvas 图表绘制和控件联动。
 - `assets/data/flightresilience-data.json`：由仓库预计算结果导出的静态数据。
-- `assets/media/`：报告关键图表备份。
+- `assets/media/`：报告图表备份和二维码；页面主体图表由 JSON 即时绘制。
 - `assets/media/github-pages-qr.svg`：正式 GitHub Pages 地址二维码。
 
 ## 重新导出数据
@@ -71,5 +71,5 @@ https://2711944586.github.io/xtgc/
 2. 数据：选择 MIA 或 DEN，展示时间热力图和机场风险排名。
 3. 预测：调节小时、距离和拥堵水平，说明风险输入的变化。
 4. 网络：点击机场节点，说明关键性不等同于单纯航班量。
-5. 仿真：切换天气冲击和四类策略，比较恢复曲线。
+5. 仿真：切换天气冲击和四类策略，比较恢复曲线与恢复热力图。
 6. 决策：调节 λ 权重，展示 dynamic_combo 和 baseline 的排名反转边界。

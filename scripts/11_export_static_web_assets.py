@@ -83,10 +83,10 @@ def main() -> None:
 
     payload: dict[str, Any] = {
         "meta": {
-            "exported_at": datetime.now(timezone.utc).isoformat(),
+            "snapshot_time": datetime.now(timezone.utc).isoformat(),
             "source": "U.S. DOT BTS TranStats, 2024-01 to 2024-03",
             "scope": f"Top {airport_count} airports by traffic in the selected sample",
-            "static_site_note": "All values are exported from repository precomputed artifacts.",
+            "scope_note": "Values come from project tables and demo data files.",
         },
         "audit": audit,
         "kpi": read_json(DEMO_DIR / "kpi_summary.json"),
