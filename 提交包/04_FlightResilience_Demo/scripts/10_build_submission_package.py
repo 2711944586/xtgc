@@ -34,7 +34,7 @@ def ignore_names(_dir: str, names: list[str]) -> set[str]:
             ignored.add(name)
         elif path.suffix.lower() in IGNORED_SUFFIXES:
             ignored.add(name)
-        elif name == "github_pages_qr_access.png":
+        elif name.startswith("github_pages") and name.endswith("_access.png"):
             ignored.add(name)
         elif name.startswith("screen_") and name.endswith("_raw.png"):
             ignored.add(name)

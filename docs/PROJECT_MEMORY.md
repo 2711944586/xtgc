@@ -21,7 +21,7 @@ should treat these rules as project memory.
   parameters unless observed data supports them.
 - Interpret SHAP, lag relations, ISM, and simulation as structural evidence or
   association, not strict causal identification.
-- Web pages must use computed/precomputed results, not placeholder screens.
+- Web pages must use computed/precomputed results, not stub or empty screens.
 - Report, PPT, script, Demo, screenshots, and tables must use the same numbers.
 
 ## Current Frozen Scope
@@ -45,4 +45,3 @@ streamlit run app/Home.py
 ```
 
 Then verify screenshots, report, slides, and script before submission.
-

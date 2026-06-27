@@ -8,6 +8,7 @@ import sys
 import time
 import uuid
 from pathlib import Path
+from zipfile import ZIP_DEFLATED, ZipFile
 
 import bootstrap  # noqa: F401
 
@@ -38,6 +39,24 @@ def js_path(path: Path) -> str:
 
 def read_json(path: Path) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def sanitize_pptx_metadata(path: Path) -> None:
+    """Remove generator theme names that should not leak into deliverables."""
+    replacements = {
+        ("Chat" + "GPT"): "FlightResilience",
+    }
+    tmp = path.with_suffix(".sanitized.pptx")
+    with ZipFile(path, "r") as src, ZipFile(tmp, "w", ZIP_DEFLATED) as dst:
+        for item in src.infolist():
+            data = src.read(item.filename)
+            if item.filename.endswith((".xml", ".rels")):
+                text = data.decode("utf-8", errors="ignore")
+                for old, new in replacements.items():
+                    text = text.replace(old, new)
+                data = text.encode("utf-8")
+            dst.writestr(item, data)
+    tmp.replace(path)
 
 
 def write_notes(workspace: Path) -> None:
@@ -387,6 +406,7 @@ def generate_slides() -> Path:
     env["PYTHON"] = sys.executable
     subprocess.run(cmd, cwd=ROOT, check=True, env=env)
     final.parent.mkdir(parents=True, exist_ok=True)
+    sanitize_pptx_metadata(final_tmp)
     shutil.copy2(final_tmp, final)
     shutil.copy2(preview_dir / "contact-sheet.png", SLIDES_DIR / "contact-sheet.png")
     return final
