@@ -1,4 +1,4 @@
-# FlightResilience 静态 Web Demo
+# FlightResilience 静态研究控制台
 
 本目录是可静态部署版本，不依赖 Python 后端或 Streamlit 服务。
 
@@ -35,7 +35,7 @@ http://127.0.0.1:4173/
 python scripts/11_export_static_web_assets.py
 ```
 
-该脚本会读取 `data/demo/` 与 `reports/tables/`，重新生成
+该脚本会读取预计算数据目录与 `reports/tables/`，重新生成
 `web/assets/data/flightresilience-data.json` 并复制核心图表到 `web/assets/media/`。
 
 ## 部署到 GitHub Pages

@@ -32,14 +32,56 @@ const GRADE_COLORS = {
 
 const state = {
   data: null,
-  airport: "DEN",
+  airport: "MIA",
   scenario: "weather",
   strategy: "dynamic_combo",
-  shockAirport: "DEN",
+  shockAirport: "MIA",
   lambda: 0.9,
+  tourIndex: 0,
+  tourPlaying: false,
+  tourTimer: 0,
   nodePositions: [],
   prefersReducedMotion: window.matchMedia("(prefers-reduced-motion: reduce)").matches,
 };
+
+const TOUR_STEPS = [
+  {
+    id: "overview",
+    title: "系统总览",
+    brief: "先确认样本范围、网络规模和主结论：恢复优先时动态组合领先，成本保守时基准策略回到前列。",
+    state: { airport: "MIA", scenario: "weather", strategy: "dynamic_combo", shockAirport: "MIA", lambda: 0.9 },
+  },
+  {
+    id: "dashboard",
+    title: "运行数据",
+    brief: "观察每日趋势、星期小时热力和机场关键性。这里证明延误不是平均噪声。",
+    state: { airport: "MIA", scenario: "weather", strategy: "dynamic_combo", shockAirport: "MIA", lambda: 0.9 },
+  },
+  {
+    id: "prediction",
+    title: "计划风险",
+    brief: "调节小时、距离和拥堵，展示计划阶段风险怎样进入后续网络与仿真模块。",
+    state: { airport: "MIA", scenario: "peak", strategy: "dynamic_combo", shockAirport: "MIA", lambda: 0.8 },
+  },
+  {
+    id: "network",
+    title: "网络结构",
+    brief: "点击关键机场，说明高流量、高风险和高中心性并不总是一回事。",
+    state: { airport: "DEN", scenario: "weather", strategy: "hub_priority", shockAirport: "MIA", lambda: 0.8 },
+  },
+  {
+    id: "simulation",
+    title: "扰动仿真",
+    brief: "切到天气冲击和枢纽容量下降，看恢复曲线、热力图和策略成本如何分离。",
+    state: { airport: "MIA", scenario: "hub_failure", strategy: "dynamic_combo", shockAirport: "MIA", lambda: 0.9 },
+  },
+  {
+    id: "decision",
+    title: "策略决策",
+    brief: "调节 λ 权重，展示动态组合和基准策略的换位边界。",
+    state: { airport: "MIA", scenario: "weather", strategy: "baseline", shockAirport: "MIA", lambda: 0.2 },
+  },
+];
 
 const $ = (id) => document.getElementById(id);
 
@@ -198,6 +240,79 @@ function setText(id, text) {
   if (node) node.textContent = text;
 }
 
+function topAirport() {
+  return [...state.data.airportNodes].sort((a, b) => b.criticality - a.criticality)[0];
+}
+
+function updateEvidenceBrief() {
+  const host = $("evidence-brief");
+  if (!host || !state.data) return;
+  const best = [...state.data.modelMetrics].sort((a, b) => b.test_roc_auc - a.test_roc_auc)[0];
+  const top = topAirport();
+  const dynamic = state.data.strategyRankings.find((row) => row.strategy === "dynamic_combo");
+  const riskWinner = [...state.data.riskDecision].sort((a, b) => a.expected_loss - b.expected_loss)[0];
+  host.innerHTML = [
+    ["样本", `${fmt.int(state.data.kpi.flights)} 航班 / ${state.data.kpi.airport_count} 机场`],
+    ["关键节点", `${top.airport} · K=${fmt.num(top.criticality, 2)}`],
+    ["排序能力", `${best.model} · AUC ${fmt.num(best.test_roc_auc, 3)}`],
+    ["决策边界", `${STRATEGY_LABELS.dynamic_combo} #${dynamic?.overall_rank ?? 1} / 风险 ${STRATEGY_LABELS[riskWinner?.strategy] || riskWinner?.strategy}`],
+  ].map(([label, value]) => `<div class="brief-chip"><span>${label}</span><strong>${value}</strong></div>`).join("");
+}
+
+function updateTourUi() {
+  const step = TOUR_STEPS[state.tourIndex] || TOUR_STEPS[0];
+  setText("tour-step-label", `${String(state.tourIndex + 1).padStart(2, "0")} / ${String(TOUR_STEPS.length).padStart(2, "0")}`);
+  setText("tour-title", step.title);
+  setText("tour-brief", step.brief);
+  setText("mission-status", state.tourPlaying ? "自动演示中" : "人工控制");
+  const progress = $("tour-progress");
+  if (progress) progress.style.width = `${((state.tourIndex + 1) / TOUR_STEPS.length) * 100}%`;
+  const play = $("tour-play");
+  if (play) {
+    play.textContent = state.tourPlaying ? "暂停" : "自动演示";
+    play.classList.toggle("is-playing", state.tourPlaying);
+  }
+  document.querySelectorAll("[data-step]").forEach((node) => {
+    node.classList.toggle("is-active", Number(node.dataset.step) === state.tourIndex);
+  });
+}
+
+function applyTourStep(index, { scroll = true } = {}) {
+  state.tourIndex = (index + TOUR_STEPS.length) % TOUR_STEPS.length;
+  const step = TOUR_STEPS[state.tourIndex];
+  Object.assign(state, step.state);
+  syncShockAirport();
+  updateControls();
+  const lambdaInput = $("lambda-input");
+  if (lambdaInput) lambdaInput.value = String(state.lambda);
+  updateTourUi();
+  renderAll();
+  if (scroll) {
+    document.getElementById(step.id)?.scrollIntoView({ behavior: state.prefersReducedMotion ? "auto" : "smooth", block: "start" });
+  }
+}
+
+function stopTour() {
+  state.tourPlaying = false;
+  window.clearInterval(state.tourTimer);
+  updateTourUi();
+}
+
+function startTour() {
+  state.tourPlaying = true;
+  updateTourUi();
+  applyTourStep(state.tourIndex);
+  window.clearInterval(state.tourTimer);
+  state.tourTimer = window.setInterval(() => {
+    applyTourStep(state.tourIndex + 1);
+  }, 7000);
+}
+
+function toggleTour() {
+  if (state.tourPlaying) stopTour();
+  else startTour();
+}
+
 function updateHeaderKpis() {
   const { kpi, decision, modelMetrics } = state.data;
   const best = [...modelMetrics].sort((a, b) => b.test_roc_auc - a.test_roc_auc)[0];
@@ -210,6 +325,11 @@ function updateHeaderKpis() {
   setText("kpi-avg-delay", `${fmt.num(kpi.avg_arr_delay, 1)} min`);
   setText("kpi-cancel-rate", fmt.pct(kpi.cancel_rate));
   setText("kpi-auc", fmt.num(best?.test_roc_auc, 3));
+  const riskWinner = [...state.data.riskDecision].sort((a, b) => a.expected_loss - b.expected_loss)[0];
+  setText(
+    "hero-verdict",
+    `${STRATEGY_LABELS[decision.recommended_strategy]}在恢复优先口径下领先；期望损失口径下${STRATEGY_LABELS[riskWinner.strategy]}更稳。`,
+  );
 }
 
 function availableShockAirports(scenario = state.scenario) {
@@ -634,7 +754,13 @@ function updateRiskEstimator() {
   const level = risk > 0.35 ? "高风险" : risk > 0.22 ? "中等风险" : "较低风险";
   setText(
     "risk-interpretation",
-    `${level}：${origin?.airport || "--"} → ${dest?.airport || "--"}，${hour}:00，拥堵 ${Math.round(congestion * 100)}%。该结果用于解释计划阶段风险输入，不替代实时调度系统。`,
+    `${level}：${origin?.airport || "--"} → ${dest?.airport || "--"}，${hour}:00，拥堵 ${Math.round(congestion * 100)}%。`,
+  );
+  setText(
+    "risk-operator-note",
+    risk > 0.35
+      ? "演示建议：切到网络模块，查看该机场是否同时具备高中心性；若是，应进入恢复仿真。"
+      : "演示建议：风险未必来自单一航班，继续比较机场小时热力和航线气泡。"
   );
 }
 
@@ -763,7 +889,8 @@ function drawCriticalityBars() {
   addText(svg, "关键性 = 流量 + 介数中心性 + 预测风险 + 历史延误率", plot.x, 248, { size: 11, fill: "#6c7b80" });
 }
 
-function selectAirport(airport) {
+function selectAirport(airport, { keepTour = false } = {}) {
+  if (!keepTour) stopTour();
   state.airport = airport;
   const airportSelect = $("airport-select");
   if (airportSelect) airportSelect.value = airport;
@@ -976,6 +1103,8 @@ function renderEvidence() {
 
 function renderAll() {
   if (!state.data) return;
+  updateEvidenceBrief();
+  updateTourUi();
   renderEvidence();
   drawDailyChart();
   drawHeatmap();
@@ -990,11 +1119,31 @@ function renderAll() {
 }
 
 function bindControls() {
+  $("hero-tour")?.addEventListener("click", () => {
+    state.tourIndex = 0;
+    startTour();
+  });
+  $("tour-play")?.addEventListener("click", toggleTour);
+  $("tour-prev")?.addEventListener("click", () => {
+    stopTour();
+    applyTourStep(state.tourIndex - 1);
+  });
+  $("tour-next")?.addEventListener("click", () => {
+    stopTour();
+    applyTourStep(state.tourIndex + 1);
+  });
+  document.querySelectorAll("[data-step]").forEach((node) => {
+    node.addEventListener("click", () => {
+      stopTour();
+      applyTourStep(Number(node.dataset.step));
+    });
+  });
   $("airport-select")?.addEventListener("change", (event) => selectAirport(event.target.value));
   $("origin-input")?.addEventListener("change", updateRiskEstimator);
   $("dest-input")?.addEventListener("change", updateRiskEstimator);
   ["hour-input", "distance-input", "congestion-input"].forEach((id) => $(id)?.addEventListener("input", updateRiskEstimator));
   $("scenario-select")?.addEventListener("change", (event) => {
+    stopTour();
     state.scenario = event.target.value;
     syncShockAirport();
     populateSelect($("shock-airport-select"), availableShockAirports(), state.shockAirport);
@@ -1002,16 +1151,19 @@ function bindControls() {
     renderEvidence();
   });
   $("strategy-select")?.addEventListener("change", (event) => {
+    stopTour();
     state.strategy = event.target.value;
     renderSimulation();
     renderEvidence();
   });
   $("shock-airport-select")?.addEventListener("change", (event) => {
+    stopTour();
     state.shockAirport = event.target.value;
     renderSimulation();
     renderEvidence();
   });
   $("lambda-input")?.addEventListener("input", (event) => {
+    stopTour();
     state.lambda = Number(event.target.value);
     updateLambda();
   });
@@ -1092,7 +1244,7 @@ async function init() {
     const response = await fetch(DATA_URL, { cache: "no-store" });
     if (!response.ok) throw new Error(`Failed to load ${DATA_URL}: ${response.status}`);
     state.data = await response.json();
-    state.airport = byId("DEN") ? "DEN" : state.data.predictionOptions.airports[0];
+    state.airport = byId("MIA") ? "MIA" : topAirport()?.airport || state.data.predictionOptions.airports[0];
     const scenarios = new Set(state.data.strategyMetrics.map((row) => row.scenario));
     if (!scenarios.has(state.scenario)) state.scenario = [...scenarios][0];
     syncShockAirport();
