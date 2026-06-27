@@ -27,6 +27,7 @@
       </div>
       <nav class="nav-links" aria-label="模块导航">
         <a href="#overview">总览</a>
+        <a href="#evidence">证据</a>
         <a href="#dashboard">数据</a>
         <a href="#prediction">预测</a>
         <a href="#network">网络</a>
@@ -40,8 +41,8 @@
 
     <aside class="presentation-dock" aria-label="演示控制">
       <div class="dock-copy">
-        <span id="tour-step-label">01 / 06</span>
-        <strong id="tour-title">系统总览</strong>
+        <span id="tour-step-label">01 / 07</span>
+        <strong id="tour-title">边界定义</strong>
       </div>
       <div class="dock-progress" aria-hidden="true"><span id="tour-progress"></span></div>
       <div class="dock-actions">
@@ -51,6 +52,13 @@
       </div>
     </aside>
 
+    <aside class="demo-caption" id="demo-caption" aria-live="polite" aria-label="自动演示讲解">
+      <span id="demo-caption-step">01 / 07</span>
+      <strong id="demo-caption-title">边界定义</strong>
+      <p id="demo-caption-line">先定义系统边界，再进入定量证据、传播仿真和条件决策。</p>
+      <small id="demo-caption-action">点击“自动演示”后按顺序操作。</small>
+    </aside>
+
     <main id="main">
       <section class="hero" id="overview">
         <div class="hero-copy">
@@ -58,13 +66,13 @@
           <h1>把航班延误放回网络里判断。</h1>
           <p class="lede">
             2024 年一季度 BTS 航班运行数据、30 个主要机场、824 条有向航线。
-            页面按“数据审计 - 计划风险 - 网络传播 - 扰动仿真 - 策略决策”组织，
-            每一步都能追溯到表、矩阵和情景结果。
+            页面按“系统边界 - 定量证据 - 计划风险 - 网络传播 - 扰动仿真 - 条件决策”组织，
+            用可点击的证据链说明如何把系统工程方法落到真实恢复策略。
           </p>
           <div class="hero-actions">
             <button class="button primary" id="hero-tour" type="button">开始现场演示</button>
             <a class="button secondary" href="#simulation">扰动仿真</a>
-            <a class="button secondary" href="#decision">策略决策</a>
+            <a class="button secondary" href="#decision">条件决策</a>
           </div>
           <div class="hero-note" aria-label="研究判断">
             <span>当前判断</span>
@@ -102,24 +110,25 @@
 
       <section class="section tight" aria-label="系统工程流程">
         <div class="flow" id="tour-flow">
-          <button type="button" data-step="0"><span>01</span>系统总览</button>
-          <button type="button" data-step="1"><span>02</span>运行数据</button>
-          <button type="button" data-step="2"><span>03</span>计划风险</button>
-          <button type="button" data-step="3"><span>04</span>网络结构</button>
-          <button type="button" data-step="4"><span>05</span>扰动仿真</button>
-          <button type="button" data-step="5"><span>06</span>策略决策</button>
+          <button type="button" data-step="0"><span>01</span>边界定义</button>
+          <button type="button" data-step="1"><span>02</span>证据边界</button>
+          <button type="button" data-step="2"><span>03</span>运行数据</button>
+          <button type="button" data-step="3"><span>04</span>计划风险</button>
+          <button type="button" data-step="4"><span>05</span>网络结构</button>
+          <button type="button" data-step="5"><span>06</span>扰动仿真</button>
+          <button type="button" data-step="6"><span>07</span>条件决策</button>
         </div>
       </section>
 
-      <section class="section proof-section" aria-label="交互证据图板">
+      <section class="section proof-section" id="evidence" aria-label="交互证据图板">
         <div class="section-heading split">
           <div>
             <p class="eyebrow">Interactive evidence</p>
-            <h2>四张证据图先给出边界。</h2>
+            <h2>先把问题证据压成四个可检查对象。</h2>
           </div>
           <p>
-            悬停看数值，点击航线或策略会联动下方模块。现场只看四件事：
-            风险在哪里、模型能否排序、扰动怎样扩散、策略为什么换位。
+            现场不追求把所有图都讲完，而是用四个对象把系统工程链路钉住：
+            风险位置、模型排序、传播收敛、策略换位。
           </p>
         </div>
         <div class="brief-row" id="evidence-brief"></div>
@@ -406,32 +415,32 @@
             <h3>风险预测</h3>
             <p>模型输出计划阶段到达延误概率，实际起降时间和延误原因不进入训练，避免信息泄漏。</p>
             <div class="formula-line">
-              <span>p<sub>i</sub> = P(y<sub>i</sub>=1 | x<sub>i</sub>)</span>
-              <span>y<sub>i</sub> = I(ArrDel15<sub>i</sub>=1)</span>
+              <span class="formula-text">p<sub>i</sub> = P(Y<sub>i</sub>=1 | X<sub>i</sub><sup>plan</sup>, H<sub>route</sub>, H<sub>airport</sub>)</span>
+              <span class="formula-text">Y<sub>i</sub> = I(ArrDelay<sub>i</sub> ≥ 15min)</span>
             </div>
           </article>
           <article class="method-block">
             <h3>网络传播</h3>
             <p>机场小时状态由传播矩阵、恢复控制、外部冲击和误差共同驱动，传播矩阵只保留网络邻接关系。</p>
             <div class="formula-line">
-              <span>x(t+1) = A x(t) + B u(t) + G w(t) + epsilon(t)</span>
-              <span>rho(A) &lt; 1</span>
+              <span class="formula-text">x<sub>t+1</sub> = A x<sub>t</sub> + B u<sub>t</sub> + G w<sub>t</sub> + ε<sub>t</sub>, ρ(A) &lt; 1</span>
+              <span class="formula-text">A<sub>ij</sub> = 0, if route(j → i) ∉ E and i ≠ j</span>
             </div>
           </article>
           <article class="method-block">
             <h3>多准则评价</h3>
             <p>成本型指标正向化后组合 AHP 主观权重与熵权客观权重，再计算 TOPSIS 接近度。</p>
             <div class="formula-line">
-              <span>w = lambda w<sup>AHP</sup> + (1-lambda) w<sup>Entropy</sup></span>
-              <span>C<sub>i</sub> = D<sub>i</sub><sup>-</sup> / (D<sub>i</sub><sup>+</sup> + D<sub>i</sub><sup>-</sup>)</span>
+              <span class="formula-text">w(λ) = λw<sup>AHP</sup> + (1-λ)w<sup>Entropy</sup></span>
+              <span class="formula-text">C<sub>i</sub> = D<sub>i</sub><sup>-</sup> / (D<sub>i</sub><sup>+</sup> + D<sub>i</sub><sup>-</sup>)</span>
             </div>
           </article>
           <article class="method-block">
             <h3>结论边界</h3>
             <p>推荐策略随情景、偏好权重和损失矩阵改变，最终结论写成条件判断而不是绝对最优。</p>
             <div class="formula-line">
-              <span>s* = argmax<sub>s in S</sub> score(s | scenario, w)</span>
-              <span>L(s) = sum<sub>k</sub> P(k) loss(s,k)</span>
+              <span class="formula-text">s* = argmax<sub>s in S</sub> score(s | scenario, w) when resilience-first</span>
+              <span class="formula-text">R(s) = Σ<sub>k</sub> P(k)L(s,k), choose argmin<sub>s</sub> R(s) when loss-first</span>
             </div>
           </article>
         </div>

@@ -1,9 +1,9 @@
 {
   "meta": {
-    "snapshot_time": "2026-06-26T05:16:11.187866+00:00",
+    "snapshot_time": "2026-06-27T17:36:16.463418+00:00",
     "source": "U.S. DOT BTS TranStats, 2024-01 to 2024-03",
     "scope": "Top 30 airports by traffic in the selected sample",
-    "scope_note": "Values come from project tables and prepared analysis data files."
+    "scope_note": "Values come from project tables and demo data files."
   },
   "audit": {
     "raw_rows": 1658259,

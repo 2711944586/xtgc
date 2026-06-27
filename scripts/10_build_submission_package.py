@@ -3,7 +3,7 @@ from __future__ import annotations
 import shutil
 from pathlib import Path
 
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFont
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -64,6 +64,18 @@ def copy_dir(src: Path, dst: Path) -> None:
 
 def build_demo_backup_gif() -> Path:
     frames = []
+    labels = {
+        "screen_01_home": "01 总览：系统边界与主推荐",
+        "screen_02_dashboard": "02 证据：四个可检查对象",
+        "screen_03_prediction": "03 预测：计划阶段风险输入",
+        "screen_04_network": "04 网络：关键机场与传播位置",
+        "screen_05_simulation": "05 仿真：情景、冲击机场与策略",
+        "screen_06_decision": "06 决策：TOPSIS 与风险准则",
+        "screen_07_method": "07 方法：系统工程链路与结论边界",
+    }
+    font_path = Path("C:/Windows/Fonts/msyh.ttc")
+    title_font = ImageFont.truetype(str(font_path), 28) if font_path.exists() else ImageFont.load_default()
+    small_font = ImageFont.truetype(str(font_path), 18) if font_path.exists() else ImageFont.load_default()
     for path in sorted((ROOT / "reports" / "screenshots").glob("screen_*.png")):
         if path.name.endswith("_raw.png"):
             continue
@@ -74,12 +86,14 @@ def build_demo_backup_gif() -> Path:
         y = (720 - img.height) // 2
         canvas.paste(img, (x, y))
         draw = ImageDraw.Draw(canvas)
-        draw.rectangle((0, 674, 1280, 720), fill=(22, 58, 70))
-        draw.text((36, 690), path.stem, fill=(255, 255, 255))
+        draw.rectangle((0, 650, 1280, 720), fill=(18, 45, 58))
+        draw.rectangle((0, 650, 1280, 654), fill=(201, 111, 45))
+        draw.text((34, 664), labels.get(path.stem, path.stem), fill=(255, 255, 255), font=title_font)
+        draw.text((910, 672), "FlightResilience Web Demo", fill=(205, 222, 222), font=small_font)
         frames.append(canvas)
     out = ROOT / "slides" / "demo_backup.gif"
     if frames:
-        frames[0].save(out, save_all=True, append_images=frames[1:], duration=1700, loop=0)
+        frames[0].save(out, save_all=True, append_images=frames[1:], duration=1250, loop=0)
     return out
 
 
@@ -162,6 +176,8 @@ def main() -> None:
     supplement = PACKAGE / "06_补充图表与矩阵"
     copytree(ROOT / "reports" / "figures", supplement / "figures")
     copytree(ROOT / "reports" / "tables", supplement / "tables")
+    if (ROOT / "slides" / "contact-sheet.png").exists():
+        shutil.copy2(ROOT / "slides" / "contact-sheet.png", supplement / "figures" / "ppt_contact_sheet.png")
     shutil.copy2(ROOT / "data" / "data_manifest.csv", supplement / "data_manifest.csv")
     shutil.copy2(ROOT / "data" / "data_dictionary.csv", supplement / "data_dictionary.csv")
     shutil.copy2(ROOT / "data" / "data_audit.json", supplement / "data_audit.json")

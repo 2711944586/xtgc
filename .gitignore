@@ -17,6 +17,10 @@ reports/*.pdf
 reports/*.docx
 slides/*.pptx
 slides/*.mp4
+output/
 tmp/
 outputs/
+.playwright-mcp/
+~$*
 /系统工程/
+docs/system_engineering_reference/source_pdfs/

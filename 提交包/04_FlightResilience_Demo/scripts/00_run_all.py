@@ -16,8 +16,12 @@ STEPS = [
     "05_run_simulation.py",
     "06_rank_strategies.py",
     "07_export_demo_assets.py",
-    "08_generate_report.py",
+    "11_export_static_web_assets.py",
+    "13_capture_web_screenshots.py",
+    "12_upgrade_word_report.py",
     "09_generate_slides.py",
+    "14_update_presentation_script.py",
+    "10_build_submission_package.py",
 ]
 
 
@@ -29,4 +33,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

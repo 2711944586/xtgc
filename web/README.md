@@ -37,6 +37,16 @@ python scripts/11_export_static_web_assets.py
 该脚本会读取预计算数据目录与 `reports/tables/`，重新生成
 `web/assets/data/flightresilience-data.json` 并复制核心图表到 `web/assets/media/`。
 
+## 重新生成截图
+
+报告、PPT 和 GIF 使用的 Web 截图由根目录脚本统一生成：
+
+```powershell
+python scripts/13_capture_web_screenshots.py
+```
+
+输出目录为 `reports/screenshots/`，包括桌面、移动、全页截图以及总览、数据、预测、网络、仿真、决策、方法 7 个模块截图。提交包重建时会把这些截图复制到 `提交包/07_Web截图/`。
+
 ## 部署到 GitHub Pages
 
 目标仓库为：

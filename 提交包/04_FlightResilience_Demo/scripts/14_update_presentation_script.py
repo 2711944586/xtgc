@@ -1,0 +1,153 @@
+from __future__ import annotations
+
+import json
+from pathlib import Path
+
+import pandas as pd
+
+
+ROOT = Path(__file__).resolve().parents[1]
+OUT = ROOT / "slides" / "script.md"
+
+
+def read_json(path: Path) -> dict:
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def strategy_label(value: str) -> str:
+    return {
+        "baseline": "基准策略",
+        "uniform_buffer": "统一缓冲",
+        "hub_priority": "关键枢纽优先",
+        "dynamic_combo": "动态组合",
+    }.get(value, value)
+
+
+def main() -> None:
+    audit = read_json(ROOT / "data" / "data_audit.json")
+    kpi = read_json(ROOT / "data" / "demo" / "kpi_summary.json")
+    decision = read_json(ROOT / "data" / "demo" / "decision_summary.json")
+    model = read_json(ROOT / "models" / "model_summary.json")
+    prop = read_json(ROOT / "reports" / "tables" / "propagation_validation.json")
+    network = read_json(ROOT / "reports" / "tables" / "network_summary.json")
+    ranking = pd.read_csv(ROOT / "reports" / "tables" / "strategy_rankings.csv").iloc[0]
+    risk = pd.read_csv(ROOT / "reports" / "tables" / "risk_decision.csv").sort_values("expected_loss").iloc[0]
+
+    top_airports = "、".join(network.get("top_critical_airports", [])[:5])
+    recommended = strategy_label(decision["recommended_strategy"])
+    risk_strategy = strategy_label(str(risk["strategy"]))
+    risk_recommended = strategy_label(decision["risk_recommended_strategy"])
+
+    text = f"""# FlightResilience 约7分30秒讲稿（13页版）
+
+> 总时长控制：主稿约 455 秒，即 7 分 35 秒；正常快语速约 7 分 20 秒。第 11 页配合 Web 自动演示，若现场点击或网络较慢，删除每页“压缩句”即可。
+
+## 第 1 页｜20 秒
+核心句：我们研究的不是某个航班会不会晚点，而是局部扰动怎样变成航空网络恢复问题。
+
+讲稿：大家好，我们的题目是“面向突发扰动的航空网络延误传播识别与恢复策略决策”。一个机场的局部延误，会通过航线连接、飞机轮转和旅客衔接继续传导，所以本项目关注三个问题：延误会传到哪里，哪些机场优先恢复，有限资源下选择哪种策略。
+
+过渡：因此，我们先定义系统边界，再进入模型和决策。
+
+压缩句：预测只是入口，恢复策略才是系统工程问题。
+
+## 第 2 页｜20 秒
+核心句：汇报按“问题界定 - 方法链 - 数据证据 - 传播仿真 - 条件决策”推进。
+
+讲稿：前两部分说明为什么不能只看单航班预测，以及如何用系统工程方法组织问题；中间部分展示 BTS 数据、ISM、预测模型和机场网络；后两部分用状态空间模型比较恢复策略，再用 TOPSIS、风险决策和 Web Demo 收束结论。
+
+过渡：先看问题为什么必须从单航班扩展到网络。
+
+## 第 3 页｜30 秒
+核心句：单航班预测不能回答传播路径、优先节点和资源分配。
+
+讲稿：传统预测给出某个航班是否延误 15 分钟，适合做风险提示，但运行控制真正关心的是系统后果：延误是否扩散、哪个节点影响最大、缓冲资源均匀投放还是投向关键枢纽。所以本文把预测概率作为输入，把网络传播和恢复策略作为最终决策对象。
+
+过渡：这个转变需要先明确系统边界。
+
+压缩句：预测回答“会不会”，系统工程回答“怎么办”。
+
+## 第 4 页｜30 秒
+核心句：系统边界让多主体目标冲突可以被分析。
+
+讲稿：系统内部包括机场容量、航线连接、航班计划、运行状态和恢复资源；外部扰动包括天气、高峰需求、空域限制和枢纽容量下降。旅客希望少延误，航司关注成本和轮转，机场关注容量恢复，监管者关注安全与公平，所以评价指标必须同时覆盖效率、韧性、影响、成本和复杂度。
+
+过渡：接下来用系统工程方法把这些因素串起来。
+
+## 第 5 页｜35 秒
+核心句：霍尔三维结构给主线，切克兰德方法处理价值冲突。
+
+讲稿：我们用霍尔三维结构组织全过程：问题定义、系统设计、方案综合、建模、优化评价和反馈。切克兰德软系统方法帮助处理“恢复最快”“成本最低”“公平可实施”等不同价值取向。模型层面，结构分析用鱼骨图和 ISM，数据层用风险预测和 SHAP，网络层用中心性，动态层用状态空间，决策层用 AHP、熵权、TOPSIS、模糊评价和风险决策。
+
+过渡：方法链建立后，先验证延误是不是均匀发生。
+
+压缩句：这一页重点是方法之间有接口，不是算法堆叠。
+
+## 第 6 页｜35 秒
+核心句：BTS 数据显示，延误在时间、机场和航线之间高度不均匀。
+
+讲稿：数据来自美国交通部 BTS 航班准点数据，样本窗口为 {audit['date_min']} 到 {audit['date_max']}，覆盖前 {kpi['airport_count']} 个主要机场、{kpi['flights']:,} 条记录。热力图显示不同时段延误率差异明显，机场排序说明节点之间差异很大，散点图也说明航班量高不等于延误率最高。
+
+过渡：因此我们需要解释延误因素如何层层传导。
+
+## 第 7 页｜35 秒
+核心句：ISM 用递阶结构解释延误因素如何传导到恢复时间。
+
+讲稿：我们先用鱼骨图整理天气、容量、计划、缓冲、前序延误和信息协同，再构造 ISM 邻接矩阵和可达矩阵。底层因素通过机场拥堵和上游晚到向上传导，最后表现为跨机场传播和恢复时间增加。这里不把 ISM 夸大为严格因果，而把它作为系统结构解释框架。
+
+过渡：结构解释之后，需要一个计划阶段风险输入。
+
+## 第 8 页｜40 秒
+核心句：预测模型的价值是提供风险输入，而不是替代调度决策。
+
+讲稿：预测目标是 ArrDel15，也就是到达延误是否超过 15 分钟。我们采用时间顺序切分，避免随机切分造成信息泄漏；实际起降时间、实际延误分钟数和延误原因字段都不进入训练。最终 {model['best_model']} 在时间外测试集上的 ROC-AUC 为 {model['best_test_metrics']['roc_auc']:.3f}，PR-AUC 为 {model['best_test_metrics']['pr_auc']:.3f}。SHAP 显示航线历史延误率、机场小时历史延误率和时间特征贡献较高。
+
+过渡：有了风险输入，下一步看风险在网络中的位置。
+
+## 第 9 页｜40 秒
+核心句：关键机场不是按航班量简单排序，而是由流量、风险和网络位置共同决定。
+
+讲稿：我们把机场作为节点、航线作为有向边，计算中心性、PageRank、预测风险和历史延误，再合成综合关键性。当前样本中 {top_airports} 位于前列。这说明同样的延误发生在不同机场，传播后果并不相同；高中心性节点更可能把局部冲击放大为全网恢复问题。
+
+过渡：识别关键节点后，就可以比较不同恢复策略。
+
+## 第 10 页｜45 秒
+核心句：状态空间模型让四种恢复策略在同一冲击下公平比较。
+
+讲稿：我们用机场小时级平均正延误作为状态，核心方程是 x(t+1)=A x(t)+B u(t)+G w(t)+epsilon(t)。A 是带网络掩码估计的传播矩阵，只允许自身和有航线连接的上游机场影响当前机场。估计后谱半径为 {prop['spectral_radius_final']:.3f}，单步 MAE 为 {prop['mae']:.2f} 分钟。四种策略在相同初始状态、相同冲击和统一预算口径下比较。
+
+过渡：下面进入 Web Demo，把这条模型链真实演示一遍。
+
+## 第 11 页｜60 秒
+核心句：Web Demo 不是往下翻页，而是按讲稿真实触发控件。
+
+讲稿：点击“自动演示”后，页面会按固定路径推进：先确认样本边界，再点击航线风险气泡，切换关注机场；随后拖动起飞小时、航线距离和拥堵滑杆，看到风险概率刷新；再点击网络节点，联动机场画像；进入仿真页后，切换天气冲击、冲击机场 DFW 和动态组合策略；最后在决策页把 lambda 从恢复优先调到成本保守，并点击风险-TOPSIS 点。当前主排序中，{strategy_label(str(ranking['strategy']))} 的 TOPSIS 得分最高，累计延误约 {ranking['cumulative_delay']:.0f}，恢复时间约 {ranking['recovery_time']:.1f} 小时。
+
+演示口径：这条路径对应“数据规律 - 计划风险 - 网络结构 - 扰动仿真 - 条件决策”，每个动作都在验证一个系统工程环节。
+
+过渡：Demo 展示策略会变，最终推荐还要看偏好和风险态度。
+
+压缩句：时间不足时，只演示仿真页和决策页。
+
+## 第 12 页｜35 秒
+核心句：{recommended} 在韧性优先下领先，但推荐不是无条件最优。
+
+讲稿：主偏好下，AHP 与熵权组合后的 TOPSIS 推荐 {recommended}，因为它在恢复速度和系统性能上表现更好。但风险型决策按情景概率和损失矩阵计算时，会偏向 {risk_strategy}；不确定型决策也提示成本保守时 {risk_recommended} 更稳妥。因此我们最终写成条件式推荐：恢复和韧性优先时选动态组合，预算极紧或风险规避时保留基准策略。
+
+过渡：最后总结贡献、局限和系统工程体会。
+
+## 第 13 页｜30 秒
+核心句：项目价值在于把系统工程闭环落到可复现、可演示的成果。
+
+讲稿：第一，问题上把延误从单航班预测扩展到网络恢复；第二，技术上把真实数据、ISM、预测模型、机场网络、传播仿真和多准则评价连接起来；第三，交付上提供 Word/PDF 报告、PPT、讲稿、补充矩阵、核心代码和静态 Web Demo。局限也明确：公开数据缺少真实恢复成本、机组轮转和容量约束，所以成本与资源参数是相对情景设定。
+
+结束句：系统工程项目最重要的不是堆模型，而是把系统边界、目标冲突、证据链和结论边界讲清楚。谢谢大家。
+"""
+
+    OUT.parent.mkdir(parents=True, exist_ok=True)
+    OUT.write_text(text, encoding="utf-8")
+    print(OUT)
+
+
+if __name__ == "__main__":
+    main()

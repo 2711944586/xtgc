@@ -18,8 +18,10 @@ from docx.shared import Inches, Pt, RGBColor
 
 
 ROOT = Path(__file__).resolve().parents[1]
-OUT = ROOT / "提交包" / "航空网络延误传播与恢复策略报告.docx"
+OUT = ROOT / "reports" / "report.docx"
+REPORT_PDF = ROOT / "reports" / "report.pdf"
 CANONICAL_OUT = ROOT / "提交包" / "01_航空网络延误传播与恢复策略_报告.docx"
+CANONICAL_PDF = ROOT / "提交包" / "01_航空网络延误传播与恢复策略_报告.pdf"
 FIG = ROOT / "提交包" / "06_补充图表与矩阵" / "figures"
 SCREEN = ROOT / "提交包" / "07_Web截图"
 TABLES = ROOT / "reports" / "tables"
@@ -670,25 +672,29 @@ def refresh_with_word(path: Path) -> None:
     input_docx = work / "input.docx"
     refreshed_docx = work / "refreshed.docx"
     shutil.copy2(path, input_docx)
-    word = win32com.client.DispatchEx("Word.Application")
-    word.Visible = False
-    word.DisplayAlerts = 0
     try:
+        word = win32com.client.DispatchEx("Word.Application")
+        word.Visible = False
+        word.DisplayAlerts = 0
         try:
-            word.AutomationSecurity = 3
-        except Exception:
-            pass
-        doc = word.Documents.Open(str(input_docx.resolve()), False, False, False)
-        try:
-            doc.Fields.Update()
-            for i in range(1, doc.TablesOfContents.Count + 1):
-                doc.TablesOfContents(i).Update()
-            doc.SaveAs2(str(refreshed_docx.resolve()), FileFormat=16)
+            try:
+                word.AutomationSecurity = 3
+            except Exception:
+                pass
+            doc = word.Documents.Open(str(input_docx.resolve()), False, False, False)
+            try:
+                doc.Fields.Update()
+                for i in range(1, doc.TablesOfContents.Count + 1):
+                    doc.TablesOfContents(i).Update()
+                doc.SaveAs2(str(refreshed_docx.resolve()), FileFormat=16)
+            finally:
+                doc.Close(False)
         finally:
-            doc.Close(False)
+            word.Quit()
     finally:
-        word.Quit()
-    shutil.copy2(refreshed_docx, path)
+        if refreshed_docx.exists():
+            shutil.copy2(refreshed_docx, path)
+        shutil.rmtree(work, ignore_errors=True)
 
 
 def export_pdf_with_word(docx: Path, pdf: Path) -> None:
@@ -1790,9 +1796,15 @@ def build_report() -> Path:
     )
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
+    CANONICAL_OUT.parent.mkdir(parents=True, exist_ok=True)
     doc.save(OUT)
     refresh_with_word(OUT)
     shutil.copy2(OUT, CANONICAL_OUT)
+    try:
+        export_pdf_with_word(OUT, REPORT_PDF)
+        shutil.copy2(REPORT_PDF, CANONICAL_PDF)
+    except Exception as exc:
+        print(f"Word PDF export unavailable: {exc!r}")
     return OUT
 
 
