@@ -42,6 +42,7 @@ const state = {
   tourTimer: 0,
   tourTimers: [],
   tourInteracting: false,
+  tourAction: "点击“自动演示”后按顺序操作。",
   nodePositions: [],
   prefersReducedMotion: window.matchMedia("(prefers-reduced-motion: reduce)").matches,
 };
@@ -151,9 +152,10 @@ const TOUR_STEPS = [
     state: { airport: "MIA", scenario: "weather", strategy: "baseline", shockAirport: "MIA", lambda: 0.9 },
     actions: [
       { type: "setSelect", target: "#scenario-select", value: "weather", delay: 420, label: "选择天气冲击情景。" },
-      { type: "setSelect", target: "#strategy-select", value: "baseline", delay: 940, label: "先看基准策略的恢复曲线。" },
-      { type: "click", target: "#scenario-options .option-chip[data-kind='strategy'][data-value='dynamic_combo']", delay: 1540, label: "点击动态组合策略，比较恢复曲线和成本。" },
-      { type: "click", target: "#recovery-chart circle[data-strategy='dynamic_combo']", delay: 2400, label: "点击恢复曲线末端的动态组合点，确认策略切换真实生效。" },
+      { type: "setSelect", target: "#shock-airport-select", value: "DFW", delay: 980, label: "切换冲击机场为 DFW，观察关键节点扰动。" },
+      { type: "setSelect", target: "#strategy-select", value: "baseline", delay: 1540, label: "先看基准策略的恢复曲线。" },
+      { type: "click", target: "#scenario-options .option-chip[data-kind='strategy'][data-value='dynamic_combo']", delay: 2140, label: "点击动态组合策略，比较恢复曲线和成本。" },
+      { type: "click", target: "#recovery-chart circle[data-strategy='dynamic_combo']", delay: 2960, label: "点击恢复曲线末端，确认策略切换真实生效。" },
     ],
   },
   {
@@ -168,7 +170,7 @@ const TOUR_STEPS = [
     },
     decision: "恢复优先选动态组合；预算紧或风险保守时保留基准策略，结论必须条件化。",
     duration: 4300,
-    state: { airport: "MIA", scenario: "weather", strategy: "baseline", shockAirport: "MIA", lambda: 0.2 },
+    state: { airport: "MIA", scenario: "weather", strategy: "baseline", shockAirport: "DFW", lambda: 0.2 },
     actions: [
       { type: "setRange", target: "#lambda-input", value: "0.9", delay: 420, label: "先把 λ 调高，模拟恢复/韧性优先。" },
       { type: "setRange", target: "#lambda-input", value: "0.2", delay: 1040, label: "再把 λ 调低，模拟成本和客观权重占优。" },
@@ -361,11 +363,12 @@ function updateTourUi() {
   setText("tour-step-label", `${String(state.tourIndex + 1).padStart(2, "0")} / ${String(TOUR_STEPS.length).padStart(2, "0")}`);
   setText("tour-title", step.title);
   setText("tour-brief", step.brief);
-  setText("tour-question", resolve(step.question) || "沿系统工程链路推进。");
-  setText("tour-method", resolve(step.method) || "用结构化方法连接数据、模型和决策。");
-  setText("tour-evidence", resolve(step.evidence) || "等待数据加载。");
-  setText("tour-decision", resolve(step.decision) || "形成带边界的策略建议。");
+  setText("demo-caption-step", `${String(state.tourIndex + 1).padStart(2, "0")} / ${String(TOUR_STEPS.length).padStart(2, "0")}`);
+  setText("demo-caption-title", step.title);
+  setText("demo-caption-line", resolve(step.evidence) || step.brief);
+  setText("demo-caption-action", state.tourAction || resolve(step.method) || "按系统工程链路推进。");
   setText("mission-status", state.tourPlaying ? "自动演示中" : "人工控制");
+  document.body.classList.toggle("tour-is-playing", state.tourPlaying);
   const progress = $("tour-progress");
   if (progress) progress.style.width = `${((state.tourIndex + 1) / TOUR_STEPS.length) * 100}%`;
   const play = $("tour-play");
@@ -379,7 +382,8 @@ function updateTourUi() {
 }
 
 function setTourAction(text) {
-  setText("tour-action", text || "按系统工程链路真实操作控件。");
+  state.tourAction = text || "按系统工程链路真实操作控件。";
+  setText("demo-caption-action", state.tourAction);
 }
 
 function clearTourTimers() {
@@ -431,6 +435,17 @@ function pulseDemoTarget(node, duration = 820) {
   scheduleTour(() => node.classList.remove("is-demo-target"), duration);
 }
 
+function scrollToTourTarget(id) {
+  const target = document.getElementById(id);
+  if (!target) return;
+  const topbar = document.querySelector(".topbar")?.getBoundingClientRect().height || 0;
+  const top = target.getBoundingClientRect().top + window.scrollY - topbar - 16;
+  window.scrollTo({
+    top: Math.max(0, top),
+    behavior: state.prefersReducedMotion ? "auto" : "smooth",
+  });
+}
+
 function demoClickNode(node) {
   if (!node) return;
   pulseDemoTarget(node);
@@ -450,11 +465,31 @@ function demoClickNode(node) {
 function setControlValue(selector, value, eventName) {
   const node = document.querySelector(selector);
   if (!node) return;
-  pulseDemoTarget(node);
-  withTourInteraction(() => {
-    node.value = value;
-    node.dispatchEvent(new Event(eventName, { bubbles: true }));
-  });
+  const isRange = node.matches("input[type='range']");
+  pulseDemoTarget(node, isRange ? 1180 : 920);
+  if (isRange) {
+    const start = Number(node.value);
+    const end = Number(value);
+    const steps = 8;
+    for (let i = 1; i <= steps; i += 1) {
+      scheduleTour(() => {
+        withTourInteraction(() => {
+          const raw = start + ((end - start) * i) / steps;
+          const step = Number(node.step || 1);
+          node.value = String(step >= 1 ? Math.round(raw) : Number(raw.toFixed(2)));
+          node.dispatchEvent(new Event(eventName, { bubbles: true }));
+        });
+      }, i * 80);
+    }
+    return;
+  }
+  scheduleTour(() => {
+    withTourInteraction(() => {
+      const values = [...(node.options || [])].map((option) => option.value);
+      node.value = values.includes(value) ? value : values[0] || value;
+      node.dispatchEvent(new Event(eventName, { bubbles: true }));
+    });
+  }, 260);
 }
 
 function clickNetworkNode(id) {
@@ -529,7 +564,7 @@ function applyTourStep(index, { scroll = true } = {}) {
   updateTourUi();
   renderAll();
   if (scroll) {
-    document.getElementById(step.id)?.scrollIntoView({ behavior: state.prefersReducedMotion ? "auto" : "smooth", block: "start" });
+    scrollToTourTarget(step.id);
   }
 }
 
@@ -538,7 +573,7 @@ function stopTour() {
   clearTourTimers();
   demoCursor()?.classList.remove("is-visible", "is-clicking");
   document.querySelectorAll(".is-demo-target").forEach((node) => node.classList.remove("is-demo-target"));
-  setTourAction("演示已停在当前状态，可继续手动点击图表追问。");
+  setTourAction("演示已停在当前状态，可继续手动追问图表。");
   updateTourUi();
 }
 
@@ -546,7 +581,7 @@ function startTour() {
   state.tourPlaying = true;
   state.tourIndex = 0;
   clearTourTimers();
-  setTourAction("开始按系统工程链路自动演示。");
+  setTourAction("开始：先界定系统，再进入证据、模型、仿真和决策。");
   updateTourUi();
   runTourStep(0);
 }
@@ -592,6 +627,13 @@ function updateHeaderKpis() {
 }
 
 function availableShockAirports(scenario = state.scenario) {
+  const airportNodes = state.data?.airportNodes || [];
+  if (airportNodes.length) {
+    return [...airportNodes]
+      .sort((a, b) => b.criticality - a.criticality)
+      .map((node) => node.airport || node.id)
+      .filter(Boolean);
+  }
   const scoped = state.data.scenarioResults
     .filter((row) => row.scenario === scenario)
     .map((row) => row.shock_airport)
@@ -599,6 +641,28 @@ function availableShockAirports(scenario = state.scenario) {
   const values = [...new Set(scoped)];
   if (values.length) return values;
   return [...new Set(state.data.scenarioResults.map((row) => row.shock_airport).filter(Boolean))];
+}
+
+function featuredShockAirports() {
+  const values = availableShockAirports().slice(0, 6);
+  if (state.shockAirport && !values.includes(state.shockAirport)) values.push(state.shockAirport);
+  return values;
+}
+
+function hasExactShockScenario(scenario = state.scenario, shockAirport = state.shockAirport) {
+  return state.data.scenarioResults.some((row) => row.scenario === scenario && row.shock_airport === shockAirport);
+}
+
+function shockScale(airport = state.shockAirport) {
+  const node = byId(airport) || topAirport();
+  const base = byId("MIA") || topAirport();
+  const criticalityRatio = Number(node?.criticality || 1) / Math.max(Number(base?.criticality || 1), 0.001);
+  const riskRatio = Number(node?.avg_risk || 0.1) / Math.max(Number(base?.avg_risk || 0.1), 0.001);
+  return clamp(0.78 + criticalityRatio * 0.17 + riskRatio * 0.08, 0.72, 1.28);
+}
+
+function shockModeLabel() {
+  return hasExactShockScenario() ? "实测冲击轨迹" : "关键性校准轨迹";
 }
 
 function syncShockAirport() {
@@ -636,6 +700,7 @@ function renderOptionLedger(
   const groups = [
     { title: "情景可选项", kind: "scenario", values: scenarios, labels: SCENARIO_LABELS, active: state.scenario },
     { title: "策略可选项", kind: "strategy", values: strategies, labels: STRATEGY_LABELS, active: state.strategy },
+    { title: "冲击机场", kind: "shock", values: featuredShockAirports(), labels: {}, active: state.shockAirport },
   ];
 
   groups.forEach((group) => {
@@ -662,9 +727,13 @@ function renderOptionLedger(
           populateSelect($("shock-airport-select"), availableShockAirports(), state.shockAirport);
           const select = $("scenario-select");
           if (select) select.value = value;
-        } else {
+        } else if (group.kind === "strategy") {
           state.strategy = value;
           const select = $("strategy-select");
+          if (select) select.value = value;
+        } else {
+          state.shockAirport = value;
+          const select = $("shock-airport-select");
           if (select) select.value = value;
         }
         renderSimulation();
@@ -828,7 +897,7 @@ function drawRecoveryHeatChart() {
     });
   });
   hours.filter((hour) => hour % 4 === 0).forEach((hour) => addText(svg, `${hour}h`, plot.x + (hour - 1) * cellW + cellW / 2, 216, { anchor: "middle", size: 10 }));
-  addText(svg, `${SCENARIO_LABELS[state.scenario] || state.scenario} / ${state.shockAirport} / ${STRATEGY_LABELS[state.strategy]}`, plot.x, 20, { fill: "#c96f2d", weight: 850 });
+  addText(svg, `${SCENARIO_LABELS[state.scenario] || state.scenario} / ${state.shockAirport} / ${STRATEGY_LABELS[state.strategy]} · ${shockModeLabel()}`, plot.x, 20, { fill: "#c96f2d", weight: 850 });
 }
 
 function drawRiskTopsisChart() {
@@ -1224,17 +1293,59 @@ function selectAirport(airport, { keepTour = false } = {}) {
 }
 
 function scenarioRows() {
-  let rows = state.data.scenarioResults.filter((row) => row.scenario === state.scenario && row.shock_airport === state.shockAirport);
-  if (!rows.length) rows = state.data.scenarioResults.filter((row) => row.scenario === state.scenario);
+  const exact = state.data.scenarioResults.filter((row) => row.scenario === state.scenario && row.shock_airport === state.shockAirport);
+  if (exact.length) return exact.map((row) => ({ ...row, _proxyShock: false }));
+  let rows = state.data.scenarioResults.filter((row) => row.scenario === state.scenario);
   if (!rows.length) rows = state.data.scenarioResults;
-  return rows;
+  const scale = shockScale();
+  const sourceShock = rows[0]?.shock_airport || "MIA";
+  return rows.map((row) => {
+    const adjusted = {
+      ...row,
+      shock_airport: state.shockAirport,
+      _proxyShock: true,
+      total_delay: Number(row.total_delay || 0) * scale,
+      avg_delay: Number(row.avg_delay || 0) * scale,
+      spread_range: Number(row.spread_range || 0) * scale,
+      cost: Number(row.cost || 0) * (0.92 + scale * 0.08),
+      performance: clamp(Number(row.performance ?? 1) - (scale - 1) * 0.06, 0.48, 1),
+    };
+    state.data.airportNodes.forEach((node) => {
+      const airport = node.airport || node.id;
+      const key = `state_${airport}`;
+      const value = Number(row[key] || 0);
+      const sourceValue = Number(row[`state_${sourceShock}`] || value);
+      if (airport === state.shockAirport) {
+        adjusted[key] = Math.max(value * 0.52, sourceValue * scale);
+      } else if (airport === sourceShock && sourceShock !== state.shockAirport) {
+        adjusted[key] = value * 0.62;
+      } else {
+        adjusted[key] = value * (0.96 + scale * 0.04);
+      }
+    });
+    return adjusted;
+  });
 }
 
 function metricRows() {
-  let rows = state.data.strategyMetrics.filter((row) => row.scenario === state.scenario && row.shock_airport === state.shockAirport);
-  if (!rows.length) rows = state.data.strategyMetrics.filter((row) => row.scenario === state.scenario);
+  const exact = state.data.strategyMetrics.filter((row) => row.scenario === state.scenario && row.shock_airport === state.shockAirport);
+  if (exact.length) return exact.map((row) => ({ ...row, _proxyShock: false }));
+  let rows = state.data.strategyMetrics.filter((row) => row.scenario === state.scenario);
   if (!rows.length) rows = state.data.strategyMetrics;
-  return rows;
+  const scale = shockScale();
+  return rows.map((row) => ({
+    ...row,
+    shock_airport: state.shockAirport,
+    _proxyShock: true,
+    cumulative_delay: Number(row.cumulative_delay || 0) * scale,
+    avg_delay: Number(row.avg_delay || 0) * scale,
+    recovery_time: Number(row.recovery_time || 0) * Math.sqrt(scale),
+    min_performance: clamp(Number(row.min_performance ?? 1) - (scale - 1) * 0.04, 0.52, 0.99),
+    loss_area: Number(row.loss_area || 0) * scale,
+    spread_range: Number(row.spread_range || 0) * scale,
+    delay_flight_ratio: clamp(Number(row.delay_flight_ratio || 0) * scale, 0, 1),
+    strategy_cost: Number(row.strategy_cost || 0) * (0.92 + scale * 0.08),
+  }));
 }
 
 function drawRecoveryChart() {
@@ -1294,12 +1405,12 @@ function drawRecoveryChart() {
   });
   hours.filter((h) => h % 4 === 0).forEach((hour) => addText(svg, `${hour}h`, xScale.map(hour), 318, { size: 11, anchor: "middle" }));
   addText(svg, "累计延误状态（分钟，越低越好）", plot.x, 22, { fill: "#c96f2d", weight: 800 });
-  addText(svg, `情景：${SCENARIO_LABELS[state.scenario] || state.scenario}，冲击机场：${state.shockAirport}`, plot.x, 342, { size: 11, fill: "#6c7b80" });
+  addText(svg, `情景：${SCENARIO_LABELS[state.scenario] || state.scenario}，冲击机场：${state.shockAirport}，${shockModeLabel()}`, plot.x, 342, { size: 11, fill: "#6c7b80" });
 }
 
 function updateStrategySummary() {
   const rows = metricRows().sort((a, b) => a.strategy_cost - b.strategy_cost);
-  setText("scenario-caption", `${SCENARIO_LABELS[state.scenario] || state.scenario} / ${state.shockAirport}`);
+  setText("scenario-caption", `${SCENARIO_LABELS[state.scenario] || state.scenario} / ${state.shockAirport} · ${shockModeLabel()}`);
   const host = $("strategy-summary");
   if (!host) return;
   host.innerHTML = rows.map((row) => {
