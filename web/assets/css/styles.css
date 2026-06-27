@@ -25,8 +25,9 @@
   --radius: 8px;
   --radius-lg: 8px;
   --max: 1260px;
-  --font: "MiSans", "HarmonyOS Sans SC", "Microsoft YaHei UI", "PingFang SC", "Segoe UI", Arial, sans-serif;
-  --mono: "Cascadia Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  --font: "Aptos", "Source Han Sans SC", "Noto Sans CJK SC", "HarmonyOS Sans SC", "Microsoft YaHei UI", "PingFang SC", "Segoe UI", Arial, sans-serif;
+  --font-heading: "Source Han Serif SC", "Noto Serif CJK SC", "STZhongsong", "Microsoft YaHei UI", serif;
+  --mono: "Cascadia Mono", "JetBrains Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
   --ease: cubic-bezier(0.2, 0.82, 0.18, 1);
 }
 
@@ -41,7 +42,7 @@ html {
 body {
   margin: 0;
   min-width: 320px;
-  padding-bottom: 86px;
+  padding-bottom: 0;
   background:
     linear-gradient(180deg, rgba(250, 252, 251, 0.98), rgba(243, 247, 246, 0.98) 46%, rgba(234, 241, 240, 0.99)),
     repeating-linear-gradient(90deg, rgba(18, 43, 42, 0.03) 0 1px, transparent 1px 76px),
@@ -50,6 +51,7 @@ body {
   color: var(--ink);
   font-family: var(--font);
   line-height: 1.55;
+  font-variant-numeric: tabular-nums;
   text-rendering: optimizeLegibility;
 }
 
@@ -152,20 +154,19 @@ svg .is-demo-target {
 }
 
 .presentation-dock {
-  position: fixed;
-  right: clamp(0.75rem, 2vw, 1.4rem);
-  top: 86px;
-  bottom: auto;
-  z-index: 70;
+  position: sticky;
+  top: 72px;
+  z-index: 45;
   display: grid;
-  grid-template-columns: minmax(130px, 190px) 76px auto;
+  grid-template-columns: minmax(150px, 210px) minmax(96px, 1fr) auto;
   align-items: center;
-  gap: 0.55rem;
-  max-width: calc(100vw - 1.5rem);
-  padding: 0.48rem;
+  gap: 0.65rem;
+  max-width: var(--max);
+  margin: 0.65rem auto 0;
+  padding: 0.65rem clamp(0.8rem, 2vw, 1rem);
   border: 1px solid rgba(23, 27, 25, 0.16);
   border-radius: var(--radius);
-  background: rgba(255, 253, 247, 0.92);
+  background: rgba(255, 253, 247, 0.94);
   backdrop-filter: blur(14px);
   box-shadow: 0 10px 28px rgba(26, 29, 27, 0.15);
 }
@@ -211,6 +212,48 @@ svg .is-demo-target {
 .dock-actions {
   display: flex;
   gap: 0.35rem;
+}
+
+.tour-story {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1px;
+  overflow: hidden;
+  border: 1px solid rgba(23, 27, 25, 0.1);
+  border-radius: var(--radius-sm);
+  background: rgba(23, 27, 25, 0.12);
+}
+
+.tour-story div {
+  min-height: 72px;
+  padding: 0.62rem 0.68rem;
+  background: rgba(255, 255, 255, 0.82);
+}
+
+.tour-story span,
+.tour-action {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 850;
+}
+
+.tour-story strong {
+  display: block;
+  margin-top: 0.25rem;
+  color: var(--ink);
+  font-size: 0.86rem;
+  font-weight: 760;
+  line-height: 1.38;
+}
+
+.tour-action {
+  grid-column: 1 / -1;
+  min-height: 30px;
+  padding: 0.42rem 0.6rem;
+  border-left: 3px solid var(--copper);
+  background: rgba(243, 216, 189, 0.42);
+  color: var(--ink-soft);
 }
 
 .dock-actions button,
@@ -361,6 +404,8 @@ p {
 h1 {
   max-width: 880px;
   margin: 0;
+  font-family: var(--font-heading);
+  font-weight: 800;
   font-size: clamp(2.55rem, 6vw, 5.15rem);
   line-height: 1.02;
   letter-spacing: 0;
@@ -537,6 +582,8 @@ h1 {
 .section-heading h2 {
   margin: 0;
   color: var(--ink);
+  font-family: var(--font-heading);
+  font-weight: 800;
   font-size: clamp(1.65rem, 4vw, 3.05rem);
   line-height: 1.08;
   letter-spacing: 0;
@@ -551,7 +598,7 @@ h1 {
 
 .flow {
   display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-columns: repeat(7, minmax(0, 1fr));
   gap: 1px;
   overflow: hidden;
   border: 1px solid var(--line);
@@ -997,9 +1044,21 @@ select:hover {
 }
 
 .strategy-card {
+  width: 100%;
   padding: 0.75rem;
+  border: 0;
   border-left: 4px solid rgba(23, 27, 25, 0.2);
   background: var(--panel-soft);
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 160ms var(--ease), background 160ms var(--ease), border-color 160ms var(--ease);
+}
+
+.strategy-card:hover {
+  transform: translateY(-2px);
+  background: #f6fbf9;
 }
 
 .strategy-card.active {
@@ -1101,7 +1160,8 @@ select:hover {
 }
 
 .formula-line {
-  display: block;
+  display: grid;
+  gap: 0.22rem;
   max-width: 100%;
   padding: 0.64rem 0.72rem;
   border: 1px solid rgba(23, 27, 25, 0.14);
@@ -1109,15 +1169,20 @@ select:hover {
   background: #10201e;
   color: #eaf7f0;
   font-family: var(--mono);
-  font-size: 0.76rem;
-  line-height: 1.6;
-  overflow-x: auto;
-  white-space: nowrap;
+  font-size: clamp(0.72rem, 1.5vw, 0.82rem);
+  line-height: 1.56;
+  overflow-wrap: anywhere;
+  white-space: normal;
 }
 
-.formula-line span {
+.formula-text {
   display: block;
-  min-width: max-content;
+  max-width: 100%;
+}
+
+.formula-line sub,
+.formula-line sup {
+  line-height: 0;
 }
 
 code {
@@ -1245,12 +1310,14 @@ code {
   }
 
   .presentation-dock {
-    left: 0.75rem;
-    right: 0.75rem;
-    top: auto;
-    bottom: 0.75rem;
+    top: 0;
     grid-template-columns: minmax(0, 1fr) 72px auto;
     gap: 0.42rem;
+    margin: 0.5rem 0.75rem 0;
+  }
+
+  .tour-story {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .hero {
@@ -1330,13 +1397,17 @@ code {
 
   .presentation-dock {
     position: sticky;
-    top: auto;
+    top: 0;
     bottom: auto;
     left: 0.5rem;
     right: 0.5rem;
     margin: 0.5rem;
     grid-template-columns: minmax(0, 1fr) 64px;
     padding: 0.38rem;
+  }
+
+  .tour-story {
+    grid-template-columns: 1fr;
   }
 
   .dock-actions {

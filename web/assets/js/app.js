@@ -49,67 +49,132 @@ const state = {
 const TOUR_STEPS = [
   {
     id: "overview",
-    title: "系统总览",
-    brief: "先确认样本范围、网络规模和主结论：恢复优先时动态组合领先，成本保守时基准策略回到前列。",
+    title: "边界定义",
+    brief: "从单航班延误转为机场网络恢复问题，先确定系统边界、外部扰动和评价目标。",
+    question: "局部延误什么时候会变成网络恢复问题？",
+    method: "系统边界 + 多主体目标冲突：旅客、航司、机场和监管者不能只用一个指标评价。",
+    evidence: (data) => `${fmt.int(data.kpi.flights)} 条航班、${data.kpi.airport_count} 个机场、${fmt.int(data.kpi.route_count || data.airportEdges?.length || data.networkEdges?.length)} 条有向航线。`,
+    decision: "先把问题定义为“网络恢复策略选择”，预测只是输入，不是最终答案。",
+    duration: 3600,
     state: { airport: "MIA", scenario: "weather", strategy: "dynamic_combo", shockAirport: "MIA", lambda: 0.9 },
     actions: [
-      { type: "pulse", target: "#hero-tour", delay: 280 },
-      { type: "pulse", target: ".mission-board", delay: 760 },
+      { type: "pulse", target: ".mission-board", delay: 420, label: "确认样本、机场/航线规模和主推荐。" },
+      { type: "pulse", target: ".hero-note", delay: 1120, label: "把结论写成条件判断，而不是绝对最优。" },
+    ],
+  },
+  {
+    id: "evidence",
+    title: "证据边界",
+    brief: "先用四个可检查对象说明：风险在哪、模型能否排序、扰动如何衰减、策略为什么换位。",
+    question: "哪些证据能证明这是系统工程问题？",
+    method: "证据链压缩：航线气泡、ROC/PR、恢复热力、风险-TOPSIS 同屏交叉验证。",
+    evidence: (data) => {
+      const best = [...data.modelMetrics].sort((a, b) => b.test_roc_auc - a.test_roc_auc)[0];
+      return `${best.model} AUC=${fmt.num(best.test_roc_auc, 3)}，同时保留风险损失与 TOPSIS 的冲突。`;
+    },
+    decision: "先看边界和矛盾，再进入模块细节，避免演示变成逐页翻图。",
+    duration: 3900,
+    state: { airport: "MIA", scenario: "weather", strategy: "dynamic_combo", shockAirport: "MIA", lambda: 0.9 },
+    actions: [
+      { type: "click", target: "#route-risk-chart circle[role='button']", delay: 520, label: "点击高风险航线气泡，联动出发机场和预测输入。" },
+      { type: "pulse", target: "#curve-chart", delay: 1300, label: "检查模型是否有足够排序能力。" },
+      { type: "click", target: "#risk-topsis-chart circle[role='button']", delay: 2140, label: "点击风险-TOPSIS 点，观察策略推荐的矛盾边界。" },
     ],
   },
   {
     id: "dashboard",
     title: "运行数据",
-    brief: "切换关注机场并点击关键性条形，说明延误具有明显的时间、机场和网络异质性。",
+    brief: "用机场、星期小时和关键性排序证明延误不是平均发生，恢复资源不能平均摊派。",
+    question: "延误是不是均匀分布，能不能按航班量简单排队？",
+    method: "描述性统计 + 时间热力 + 机场关键性排序，先做系统异质性诊断。",
+    evidence: (data) => {
+      const top = topAirport();
+      return `${top.airport} 综合关键性 ${fmt.num(top.criticality, 3)}；总体 ArrDel15=${fmt.pct(data.kpi.delay_rate)}。`;
+    },
+    decision: "如果节点差异显著，恢复策略必须进入网络结构和传播仿真。",
+    duration: 3800,
     state: { airport: "MIA", scenario: "weather", strategy: "dynamic_combo", shockAirport: "MIA", lambda: 0.9 },
     actions: [
-      { type: "setSelect", target: "#airport-select", value: "DEN", delay: 420 },
-      { type: "click", target: "#airport-bars rect[role='button']", delay: 980 },
+      { type: "setSelect", target: "#airport-select", value: "DEN", delay: 520, label: "切换关注机场，比较不同节点的历史风险。" },
+      { type: "click", target: "#airport-bars rect[role='button']", delay: 1220, label: "点击关键性条形，联动机场画像、网络和预测模块。" },
+      { type: "pulse", target: "#heatmap-chart", delay: 2180, label: "用星期-小时热力确认延误存在时间异质性。" },
     ],
   },
   {
     id: "prediction",
     title: "计划风险",
-    brief: "点击航线气泡后调节小时、距离和拥堵，展示计划阶段风险怎样进入后续网络与仿真模块。",
+    brief: "调节计划阶段变量，展示风险概率如何被量化，再把局部风险送入网络层。",
+    question: "计划阶段能不能提前识别高风险航班？",
+    method: "时间顺序切分 + 计划可得特征 + SHAP 解释，避免使用实际延误泄漏。",
+    evidence: (data) => {
+      const best = [...data.modelMetrics].sort((a, b) => b.test_roc_auc - a.test_roc_auc)[0];
+      return `时间外测试 ROC-AUC ${fmt.num(best.test_roc_auc, 3)}，PR-AUC ${fmt.num(best.test_pr_auc, 3)}。`;
+    },
+    decision: "风险模型不替代调度，而是为关键节点识别和扰动仿真提供输入。",
+    duration: 3800,
     state: { airport: "MIA", scenario: "peak", strategy: "dynamic_combo", shockAirport: "MIA", lambda: 0.8 },
     actions: [
-      { type: "scroll", target: "#route-risk-chart", delay: 280 },
-      { type: "click", target: "#route-risk-chart circle[role='button']", delay: 780 },
-      { type: "setRange", target: "#hour-input", value: "19", delay: 1380 },
-      { type: "setRange", target: "#congestion-input", value: "74", delay: 1680 },
+      { type: "setRange", target: "#hour-input", value: "19", delay: 520, label: "拖动起飞小时，模拟晚高峰计划风险。" },
+      { type: "setRange", target: "#distance-input", value: "1450", delay: 1040, label: "拖动航线距离，观察长航线风险修正。" },
+      { type: "setRange", target: "#congestion-input", value: "74", delay: 1560, label: "拖动机场拥堵，风险概率即时刷新。" },
+      { type: "pulse", target: ".risk-result", delay: 2260, label: "读取风险概率，并决定是否进入网络层追踪后果。" },
     ],
   },
   {
     id: "network",
     title: "网络结构",
-    brief: "真实点击网络节点，说明高流量、高风险和高中心性并不总是一回事。",
+    brief: "点击网络节点，说明高风险节点如果同时处在关键位置，就会放大为传播问题。",
+    question: "同样的延误发生在不同机场，系统后果是否相同？",
+    method: "复杂网络中心性 + 平均预测风险 + 历史延误率，合成机场关键性。",
+    evidence: () => {
+      const node = byId(state.airport) || topAirport();
+      return `${node.airport}：介数 ${fmt.num(node.betweenness, 4)}，平均风险 ${fmt.pct(node.avg_risk)}，关键性 ${fmt.num(node.criticality, 3)}。`;
+    },
+    decision: "关键机场优先恢复不是凭直觉，而是由网络位置、风险和流量共同决定。",
+    duration: 3700,
     state: { airport: "DEN", scenario: "weather", strategy: "hub_priority", shockAirport: "MIA", lambda: 0.8 },
     actions: [
-      { type: "networkClick", value: "DFW", delay: 560 },
-      { type: "pulse", target: "#airport-profile", delay: 1160 },
+      { type: "networkClick", value: "DFW", delay: 620, label: "点击网络节点，切换机场画像。" },
+      { type: "pulse", target: "#airport-profile", delay: 1280, label: "读取机场画像：流量、风险、介数和关键性。" },
+      { type: "pulse", target: "#criticality-bars", delay: 2160, label: "对比关键性排名，确认优先恢复节点。" },
     ],
   },
   {
     id: "simulation",
     title: "扰动仿真",
-    brief: "切换情景、冲击机场和策略，比较恢复曲线、热力图和相对成本如何分离。",
-    state: { airport: "MIA", scenario: "hub_failure", strategy: "dynamic_combo", shockAirport: "MIA", lambda: 0.9 },
+    brief: "切换情景和策略，在同一冲击下比较恢复曲线、传播热力和成本差异。",
+    question: "识别关键节点后，哪种恢复策略真正降低系统损失？",
+    method: "状态空间传播模型：x(t+1)=Ax(t)+Bu(t)+Gw(t)+ε(t)，统一冲击和预算口径。",
+    evidence: (data) => `传播矩阵谱半径 ${fmt.num(data.propagationValidation.spectral_radius_final, 3)}，单步 MAE ${fmt.num(data.propagationValidation.mae, 2)} min。`,
+    decision: "同一扰动下比较恢复路径，而不是只看一个均值或单点排名。",
+    duration: 4100,
+    state: { airport: "MIA", scenario: "weather", strategy: "baseline", shockAirport: "MIA", lambda: 0.9 },
     actions: [
-      { type: "setSelect", target: "#scenario-select", value: "weather", delay: 420 },
-      { type: "setSelect", target: "#strategy-select", value: "hub_priority", delay: 900 },
-      { type: "setSelect", target: "#shock-airport-select", value: "MIA", delay: 1340 },
-      { type: "click", target: "#scenario-options .option-chip[data-kind='strategy'][data-value='dynamic_combo']", delay: 1780 },
+      { type: "setSelect", target: "#scenario-select", value: "weather", delay: 420, label: "选择天气冲击情景。" },
+      { type: "setSelect", target: "#strategy-select", value: "baseline", delay: 940, label: "先看基准策略的恢复曲线。" },
+      { type: "click", target: "#scenario-options .option-chip[data-kind='strategy'][data-value='dynamic_combo']", delay: 1540, label: "点击动态组合策略，比较恢复曲线和成本。" },
+      { type: "click", target: "#recovery-chart circle[data-strategy='dynamic_combo']", delay: 2400, label: "点击恢复曲线末端的动态组合点，确认策略切换真实生效。" },
     ],
   },
   {
     id: "decision",
-    title: "策略决策",
-    brief: "拖动 λ 权重并点击风险-TOPSIS 点，展示动态组合和基准策略的换位边界。",
+    title: "条件决策",
+    brief: "拖动 λ 权重并点击风险-TOPSIS 点，展示为什么推荐必须写成有边界的管理判断。",
+    question: "恢复最快的策略是否总是最终推荐？",
+    method: "AHP/熵权/TOPSIS + 风险期望损失 + 不确定准则，交叉检验推荐稳定性。",
+    evidence: (data) => {
+      const riskWinner = [...data.riskDecision].sort((a, b) => a.expected_loss - b.expected_loss)[0];
+      return `主偏好推荐 ${STRATEGY_LABELS[data.decision.recommended_strategy]}；期望损失口径偏向 ${STRATEGY_LABELS[riskWinner.strategy]}。`;
+    },
+    decision: "恢复优先选动态组合；预算紧或风险保守时保留基准策略，结论必须条件化。",
+    duration: 4300,
     state: { airport: "MIA", scenario: "weather", strategy: "baseline", shockAirport: "MIA", lambda: 0.2 },
     actions: [
-      { type: "setRange", target: "#lambda-input", value: "0.9", delay: 360 },
-      { type: "setRange", target: "#lambda-input", value: "0.2", delay: 860 },
-      { type: "click", target: "#risk-topsis-chart circle[role='button']", delay: 1360 },
+      { type: "setRange", target: "#lambda-input", value: "0.9", delay: 420, label: "先把 λ 调高，模拟恢复/韧性优先。" },
+      { type: "setRange", target: "#lambda-input", value: "0.2", delay: 1040, label: "再把 λ 调低，模拟成本和客观权重占优。" },
+      { type: "click", target: "#lambda-chart circle[data-lambda='0.2']", delay: 1680, label: "点击 λ=0.2 的敏感性点，验证推荐换位。" },
+      { type: "click", target: "#risk-topsis-chart circle[data-strategy='baseline']", delay: 2360, label: "点击基准策略的风险-TOPSIS 点，说明风险口径会保守。" },
+      { type: "pulse", target: "#risk-table", delay: 3060, label: "用风险表收束最终管理建议。" },
     ],
   },
 ];
@@ -292,9 +357,14 @@ function updateEvidenceBrief() {
 
 function updateTourUi() {
   const step = TOUR_STEPS[state.tourIndex] || TOUR_STEPS[0];
+  const resolve = (value) => (typeof value === "function" && state.data ? value(state.data, state) : value);
   setText("tour-step-label", `${String(state.tourIndex + 1).padStart(2, "0")} / ${String(TOUR_STEPS.length).padStart(2, "0")}`);
   setText("tour-title", step.title);
   setText("tour-brief", step.brief);
+  setText("tour-question", resolve(step.question) || "沿系统工程链路推进。");
+  setText("tour-method", resolve(step.method) || "用结构化方法连接数据、模型和决策。");
+  setText("tour-evidence", resolve(step.evidence) || "等待数据加载。");
+  setText("tour-decision", resolve(step.decision) || "形成带边界的策略建议。");
   setText("mission-status", state.tourPlaying ? "自动演示中" : "人工控制");
   const progress = $("tour-progress");
   if (progress) progress.style.width = `${((state.tourIndex + 1) / TOUR_STEPS.length) * 100}%`;
@@ -306,6 +376,10 @@ function updateTourUi() {
   document.querySelectorAll("[data-step]").forEach((node) => {
     node.classList.toggle("is-active", Number(node.dataset.step) === state.tourIndex);
   });
+}
+
+function setTourAction(text) {
+  setText("tour-action", text || "按系统工程链路真实操作控件。");
 }
 
 function clearTourTimers() {
@@ -410,6 +484,7 @@ function clickNetworkNode(id) {
 
 function executeTourAction(action) {
   if (!state.tourPlaying && !state.tourInteracting) return;
+  setTourAction(action.label || "正在操作页面控件。");
   const target = action.target ? document.querySelector(action.target) : null;
   if (action.type === "scroll") {
     target?.scrollIntoView({ behavior: state.prefersReducedMotion ? "auto" : "smooth", block: "center" });
@@ -463,6 +538,7 @@ function stopTour() {
   clearTourTimers();
   demoCursor()?.classList.remove("is-visible", "is-clicking");
   document.querySelectorAll(".is-demo-target").forEach((node) => node.classList.remove("is-demo-target"));
+  setTourAction("演示已停在当前状态，可继续手动点击图表追问。");
   updateTourUi();
 }
 
@@ -470,6 +546,7 @@ function startTour() {
   state.tourPlaying = true;
   state.tourIndex = 0;
   clearTourTimers();
+  setTourAction("开始按系统工程链路自动演示。");
   updateTourUi();
   runTourStep(0);
 }
@@ -632,7 +709,9 @@ function drawRouteRiskChart() {
       selectAirport(row.Origin, { keepTour: state.tourInteracting });
       $("dest-input").value = row.Dest;
       updateRiskEstimator();
-      document.querySelector("#prediction")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      if (!state.tourInteracting) {
+        document.querySelector("#prediction")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
     };
     circle.addEventListener("click", selectRoute);
     circle.addEventListener("keydown", (event) => {
@@ -777,6 +856,7 @@ function drawRiskTopsisChart() {
       "stroke-width": 2,
       tabindex: 0,
       role: "button",
+      "data-strategy": row.strategy,
       "aria-label": `选择策略 ${STRATEGY_LABELS[row.strategy] || row.strategy}`,
     });
     const selectStrategy = () => {
@@ -1181,6 +1261,31 @@ function drawRecoveryChart() {
       "stroke-linecap": "round",
     }));
     const last = series[series.length - 1];
+    const finalDot = svgNode("circle", {
+      cx: xScale.map(last.hour),
+      cy: yScale.map(last.total_delay),
+      r: strategy === state.strategy ? 7 : 5,
+      fill: STRATEGY_COLORS[strategy] || "#405156",
+      stroke: "#ffffff",
+      "stroke-width": 2,
+      tabindex: 0,
+      role: "button",
+      "data-strategy": strategy,
+      "aria-label": `选择恢复策略 ${STRATEGY_LABELS[strategy] || strategy}`,
+    });
+    const selectStrategy = () => {
+      state.strategy = strategy;
+      const select = $("strategy-select");
+      if (select) select.value = strategy;
+      renderSimulation();
+      renderEvidence();
+    };
+    finalDot.addEventListener("click", selectStrategy);
+    finalDot.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") selectStrategy();
+    });
+    bindTip(finalDot, () => `${STRATEGY_LABELS[strategy] || strategy}<br>${last.hour}h 累计延误 ${fmt.short(last.total_delay)}<br>点击切换为重点策略`);
+    svg.appendChild(finalDot);
     addText(svg, STRATEGY_LABELS[strategy] || strategy, xScale.map(last.hour) + 8, yScale.map(last.total_delay) + 4, {
       size: 11,
       fill: STRATEGY_COLORS[strategy] || "#405156",
@@ -1200,13 +1305,23 @@ function updateStrategySummary() {
   host.innerHTML = rows.map((row) => {
     const active = row.strategy === state.strategy;
     return `
-      <div class="strategy-card${active ? " active" : ""}">
+      <button type="button" class="strategy-card${active ? " active" : ""}" data-strategy="${row.strategy}">
         <span>${STRATEGY_LABELS[row.strategy] || row.strategy}</span>
         <strong>${fmt.short(row.cumulative_delay)} min / ${fmt.num(row.recovery_time, 1)}h</strong>
         <small>最低性能 ${fmt.pct(row.min_performance)} · 成本 ${fmt.short(row.strategy_cost)}</small>
-      </div>
+      </button>
     `;
   }).join("");
+  host.querySelectorAll(".strategy-card").forEach((button) => {
+    button.addEventListener("click", () => {
+      maybeStopTour();
+      state.strategy = button.dataset.strategy;
+      const select = $("strategy-select");
+      if (select) select.value = state.strategy;
+      renderSimulation();
+      renderEvidence();
+    });
+  });
 }
 
 function drawScenarioBars() {
@@ -1261,6 +1376,20 @@ function drawLambdaChart() {
       fill: row.recommended_strategy === "dynamic_combo" ? "#c96f2d" : "#326d92",
       stroke: "#ffffff",
       "stroke-width": 2,
+      tabindex: 0,
+      role: "button",
+      "data-lambda": row.lambda_ahp,
+      "aria-label": `选择 λ ${row.lambda_ahp}`,
+    });
+    const selectLambda = () => {
+      state.lambda = Number(row.lambda_ahp);
+      const input = $("lambda-input");
+      if (input) input.value = String(state.lambda);
+      updateLambda();
+    };
+    dot.addEventListener("click", selectLambda);
+    dot.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") selectLambda();
     });
     bindTip(dot, () => `λ=${row.lambda_ahp}<br>推荐：${STRATEGY_LABELS[row.recommended_strategy] || row.recommended_strategy}<br>top score ${fmt.num(row.top_score, 3)}<br>dynamic rank ${row.dynamic_combo_rank}`);
     svg.appendChild(dot);
