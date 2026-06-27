@@ -40,6 +40,8 @@ const state = {
   tourIndex: 0,
   tourPlaying: false,
   tourTimer: 0,
+  tourTimers: [],
+  tourInteracting: false,
   nodePositions: [],
   prefersReducedMotion: window.matchMedia("(prefers-reduced-motion: reduce)").matches,
 };
@@ -50,36 +52,65 @@ const TOUR_STEPS = [
     title: "系统总览",
     brief: "先确认样本范围、网络规模和主结论：恢复优先时动态组合领先，成本保守时基准策略回到前列。",
     state: { airport: "MIA", scenario: "weather", strategy: "dynamic_combo", shockAirport: "MIA", lambda: 0.9 },
+    actions: [
+      { type: "pulse", target: "#hero-tour", delay: 280 },
+      { type: "pulse", target: ".mission-board", delay: 760 },
+    ],
   },
   {
     id: "dashboard",
     title: "运行数据",
-    brief: "观察每日趋势、星期小时热力和机场关键性。这里证明延误不是平均噪声。",
+    brief: "切换关注机场并点击关键性条形，说明延误具有明显的时间、机场和网络异质性。",
     state: { airport: "MIA", scenario: "weather", strategy: "dynamic_combo", shockAirport: "MIA", lambda: 0.9 },
+    actions: [
+      { type: "setSelect", target: "#airport-select", value: "DEN", delay: 420 },
+      { type: "click", target: "#airport-bars rect[role='button']", delay: 980 },
+    ],
   },
   {
     id: "prediction",
     title: "计划风险",
-    brief: "调节小时、距离和拥堵，展示计划阶段风险怎样进入后续网络与仿真模块。",
+    brief: "点击航线气泡后调节小时、距离和拥堵，展示计划阶段风险怎样进入后续网络与仿真模块。",
     state: { airport: "MIA", scenario: "peak", strategy: "dynamic_combo", shockAirport: "MIA", lambda: 0.8 },
+    actions: [
+      { type: "scroll", target: "#route-risk-chart", delay: 280 },
+      { type: "click", target: "#route-risk-chart circle[role='button']", delay: 780 },
+      { type: "setRange", target: "#hour-input", value: "19", delay: 1380 },
+      { type: "setRange", target: "#congestion-input", value: "74", delay: 1680 },
+    ],
   },
   {
     id: "network",
     title: "网络结构",
-    brief: "点击关键机场，说明高流量、高风险和高中心性并不总是一回事。",
+    brief: "真实点击网络节点，说明高流量、高风险和高中心性并不总是一回事。",
     state: { airport: "DEN", scenario: "weather", strategy: "hub_priority", shockAirport: "MIA", lambda: 0.8 },
+    actions: [
+      { type: "networkClick", value: "DFW", delay: 560 },
+      { type: "pulse", target: "#airport-profile", delay: 1160 },
+    ],
   },
   {
     id: "simulation",
     title: "扰动仿真",
-    brief: "切到天气冲击和枢纽容量下降，看恢复曲线、热力图和策略成本如何分离。",
+    brief: "切换情景、冲击机场和策略，比较恢复曲线、热力图和相对成本如何分离。",
     state: { airport: "MIA", scenario: "hub_failure", strategy: "dynamic_combo", shockAirport: "MIA", lambda: 0.9 },
+    actions: [
+      { type: "setSelect", target: "#scenario-select", value: "weather", delay: 420 },
+      { type: "setSelect", target: "#strategy-select", value: "hub_priority", delay: 900 },
+      { type: "setSelect", target: "#shock-airport-select", value: "MIA", delay: 1340 },
+      { type: "click", target: "#scenario-options .option-chip[data-kind='strategy'][data-value='dynamic_combo']", delay: 1780 },
+    ],
   },
   {
     id: "decision",
     title: "策略决策",
-    brief: "调节 λ 权重，展示动态组合和基准策略的换位边界。",
+    brief: "拖动 λ 权重并点击风险-TOPSIS 点，展示动态组合和基准策略的换位边界。",
     state: { airport: "MIA", scenario: "weather", strategy: "baseline", shockAirport: "MIA", lambda: 0.2 },
+    actions: [
+      { type: "setRange", target: "#lambda-input", value: "0.9", delay: 360 },
+      { type: "setRange", target: "#lambda-input", value: "0.2", delay: 860 },
+      { type: "click", target: "#risk-topsis-chart circle[role='button']", delay: 1360 },
+    ],
   },
 ];
 
@@ -277,6 +308,141 @@ function updateTourUi() {
   });
 }
 
+function clearTourTimers() {
+  window.clearInterval(state.tourTimer);
+  state.tourTimers.forEach((timer) => window.clearTimeout(timer));
+  state.tourTimers = [];
+}
+
+function scheduleTour(fn, delay) {
+  const timer = window.setTimeout(fn, delay);
+  state.tourTimers.push(timer);
+  return timer;
+}
+
+function withTourInteraction(fn) {
+  state.tourInteracting = true;
+  try {
+    fn();
+  } finally {
+    window.setTimeout(() => {
+      state.tourInteracting = false;
+    }, 0);
+  }
+}
+
+function maybeStopTour() {
+  if (!state.tourInteracting) stopTour();
+}
+
+function demoCursor() {
+  return $("demo-cursor");
+}
+
+function moveDemoCursorTo(node) {
+  const cursor = demoCursor();
+  if (!cursor || !node) return;
+  const rect = node.getBoundingClientRect();
+  const x = rect.left + rect.width / 2;
+  const y = rect.top + rect.height / 2;
+  cursor.style.left = `${x}px`;
+  cursor.style.top = `${y}px`;
+  cursor.classList.add("is-visible");
+}
+
+function pulseDemoTarget(node, duration = 820) {
+  if (!node) return;
+  moveDemoCursorTo(node);
+  node.classList.add("is-demo-target");
+  scheduleTour(() => node.classList.remove("is-demo-target"), duration);
+}
+
+function demoClickNode(node) {
+  if (!node) return;
+  pulseDemoTarget(node);
+  const cursor = demoCursor();
+  cursor?.classList.add("is-clicking");
+  withTourInteraction(() => {
+    node.dispatchEvent(new MouseEvent("click", {
+      bubbles: true,
+      cancelable: true,
+      clientX: node.getBoundingClientRect().left + node.getBoundingClientRect().width / 2,
+      clientY: node.getBoundingClientRect().top + node.getBoundingClientRect().height / 2,
+    }));
+  });
+  scheduleTour(() => cursor?.classList.remove("is-clicking"), 180);
+}
+
+function setControlValue(selector, value, eventName) {
+  const node = document.querySelector(selector);
+  if (!node) return;
+  pulseDemoTarget(node);
+  withTourInteraction(() => {
+    node.value = value;
+    node.dispatchEvent(new Event(eventName, { bubbles: true }));
+  });
+}
+
+function clickNetworkNode(id) {
+  const canvas = $("network-canvas");
+  if (!canvas) return;
+  const node = state.nodePositions.find((item) => item.id === id || item.airport === id) || state.nodePositions[0];
+  if (!node) return;
+  const rect = canvas.getBoundingClientRect();
+  const clientX = rect.left + node.x;
+  const clientY = rect.top + node.y;
+  const cursor = demoCursor();
+  if (cursor) {
+    cursor.style.left = `${clientX}px`;
+    cursor.style.top = `${clientY}px`;
+    cursor.classList.add("is-visible", "is-clicking");
+  }
+  canvas.classList.add("is-demo-target");
+  withTourInteraction(() => {
+    canvas.dispatchEvent(new MouseEvent("mousemove", { bubbles: true, clientX, clientY }));
+    canvas.dispatchEvent(new MouseEvent("click", { bubbles: true, clientX, clientY }));
+  });
+  scheduleTour(() => {
+    cursor?.classList.remove("is-clicking");
+    canvas.classList.remove("is-demo-target");
+  }, 520);
+}
+
+function executeTourAction(action) {
+  if (!state.tourPlaying && !state.tourInteracting) return;
+  const target = action.target ? document.querySelector(action.target) : null;
+  if (action.type === "scroll") {
+    target?.scrollIntoView({ behavior: state.prefersReducedMotion ? "auto" : "smooth", block: "center" });
+    if (target) pulseDemoTarget(target, 620);
+    return;
+  }
+  if (action.type === "pulse") {
+    pulseDemoTarget(target);
+    return;
+  }
+  if (action.type === "click") {
+    demoClickNode(target);
+    return;
+  }
+  if (action.type === "setSelect") {
+    setControlValue(action.target, action.value, "change");
+    return;
+  }
+  if (action.type === "setRange") {
+    setControlValue(action.target, action.value, "input");
+    return;
+  }
+  if (action.type === "networkClick") {
+    clickNetworkNode(action.value);
+  }
+}
+
+function runTourActions(step) {
+  (step.actions || []).forEach((action) => {
+    scheduleTour(() => executeTourAction(action), action.delay || 0);
+  });
+}
+
 function applyTourStep(index, { scroll = true } = {}) {
   state.tourIndex = (index + TOUR_STEPS.length) % TOUR_STEPS.length;
   const step = TOUR_STEPS[state.tourIndex];
@@ -294,18 +460,34 @@ function applyTourStep(index, { scroll = true } = {}) {
 
 function stopTour() {
   state.tourPlaying = false;
-  window.clearInterval(state.tourTimer);
+  clearTourTimers();
+  demoCursor()?.classList.remove("is-visible", "is-clicking");
+  document.querySelectorAll(".is-demo-target").forEach((node) => node.classList.remove("is-demo-target"));
   updateTourUi();
 }
 
 function startTour() {
   state.tourPlaying = true;
+  state.tourIndex = 0;
+  clearTourTimers();
   updateTourUi();
-  applyTourStep(state.tourIndex);
-  window.clearInterval(state.tourTimer);
-  state.tourTimer = window.setInterval(() => {
-    applyTourStep(state.tourIndex + 1);
-  }, 7000);
+  runTourStep(0);
+}
+
+function runTourStep(index) {
+  if (!state.tourPlaying) return;
+  applyTourStep(index);
+  const step = TOUR_STEPS[state.tourIndex];
+  runTourActions(step);
+  scheduleTour(() => {
+    if (!state.tourPlaying) return;
+    const next = state.tourIndex + 1;
+    if (next >= TOUR_STEPS.length) {
+      stopTour();
+      return;
+    }
+    runTourStep(next);
+  }, step.duration || 3200);
 }
 
 function toggleTour() {
@@ -363,6 +545,60 @@ function updateControls() {
   populateSelect($("shock-airport-select"), shockAirports, state.shockAirport);
   populateSelect($("scenario-select"), scenarios, state.scenario, SCENARIO_LABELS);
   populateSelect($("strategy-select"), strategies, state.strategy, STRATEGY_LABELS);
+  renderOptionLedger(scenarios, strategies);
+}
+
+function renderOptionLedger(
+  scenarios = [...new Set(state.data.strategyMetrics.map((row) => row.scenario))],
+  strategies = [...new Set(state.data.strategyMetrics.map((row) => row.strategy))],
+) {
+  const host = $("scenario-options");
+  if (!host) return;
+  host.innerHTML = "";
+
+  const groups = [
+    { title: "情景可选项", kind: "scenario", values: scenarios, labels: SCENARIO_LABELS, active: state.scenario },
+    { title: "策略可选项", kind: "strategy", values: strategies, labels: STRATEGY_LABELS, active: state.strategy },
+  ];
+
+  groups.forEach((group) => {
+    const box = document.createElement("div");
+    box.className = "option-group";
+    const title = document.createElement("span");
+    title.textContent = group.title;
+    box.appendChild(title);
+    const buttons = document.createElement("div");
+    buttons.className = "option-buttons";
+    group.values.forEach((value) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "option-chip";
+      button.dataset.kind = group.kind;
+      button.dataset.value = value;
+      button.textContent = group.labels[value] || value;
+      button.classList.toggle("is-active", value === group.active);
+      button.addEventListener("click", () => {
+        maybeStopTour();
+        if (group.kind === "scenario") {
+          state.scenario = value;
+          syncShockAirport();
+          populateSelect($("shock-airport-select"), availableShockAirports(), state.shockAirport);
+          const select = $("scenario-select");
+          if (select) select.value = value;
+        } else {
+          state.strategy = value;
+          const select = $("strategy-select");
+          if (select) select.value = value;
+        }
+        renderSimulation();
+        renderEvidence();
+        renderOptionLedger();
+      });
+      buttons.appendChild(button);
+    });
+    box.appendChild(buttons);
+    host.appendChild(box);
+  });
 }
 
 function drawRouteRiskChart() {
@@ -393,7 +629,7 @@ function drawRouteRiskChart() {
       "aria-label": `选择航线 ${row.Origin} 到 ${row.Dest}`,
     });
     const selectRoute = () => {
-      selectAirport(row.Origin);
+      selectAirport(row.Origin, { keepTour: state.tourInteracting });
       $("dest-input").value = row.Dest;
       updateRiskEstimator();
       document.querySelector("#prediction")?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -650,11 +886,14 @@ function drawHeatmap() {
 }
 
 function drawAirportBars() {
-  const rows = [...state.data.airportNodes].sort((a, b) => b.criticality - a.criticality);
-  const svg = clearChart("airport-bars", 330);
-  const plot = { x: 94, y: 28, w: 720, h: 248 };
+  const sorted = [...state.data.airportNodes].sort((a, b) => b.criticality - a.criticality);
+  const selected = sorted.find((row) => row.airport === state.airport);
+  const rows = sorted.slice(0, 14);
+  if (selected && !rows.some((row) => row.airport === selected.airport)) rows.push(selected);
+  const svg = clearChart("airport-bars", 372);
+  const plot = { x: 104, y: 42, w: 660, h: 252 };
   const max = Math.max(...rows.map((d) => d.criticality));
-  const barH = plot.h / rows.length - 5;
+  const barH = Math.max(10, Math.min(16, plot.h / rows.length - 5));
 
   rows.forEach((row, i) => {
     const y = plot.y + i * (barH + 5);
@@ -672,16 +911,17 @@ function drawAirportBars() {
       role: "button",
       "aria-label": `选择 ${row.airport}`,
     });
-    rect.addEventListener("click", () => selectAirport(row.airport));
+    rect.addEventListener("click", () => selectAirport(row.airport, { keepTour: state.tourInteracting }));
     rect.addEventListener("keydown", (event) => {
       if (event.key === "Enter" || event.key === " ") selectAirport(row.airport);
     });
     bindTip(rect, () => `${row.airport}<br>关键性 ${fmt.num(row.criticality, 3)}<br>延误率 ${fmt.pct(row.delay_rate)}<br>平均风险 ${fmt.pct(row.avg_risk)}`);
     svg.appendChild(rect);
-    addText(svg, row.airport, plot.x - 12, y + barH / 2 + 4, { anchor: "end", weight: active ? 900 : 700, fill: active ? "#c96f2d" : "#405156" });
+    const rank = sorted.findIndex((item) => item.airport === row.airport) + 1;
+    addText(svg, `${String(rank).padStart(2, "0")} ${row.airport}`, plot.x - 12, y + barH / 2 + 4, { anchor: "end", size: 11, weight: active ? 900 : 700, fill: active ? "#c96f2d" : "#405156" });
     addText(svg, fmt.num(row.criticality, 2), plot.x + w + 8, y + barH / 2 + 4, { size: 11 });
   });
-  addText(svg, "点击条形可切换机场画像和网络高亮", plot.x, 314, { size: 12, fill: "#6c7b80" });
+  addText(svg, "展示 Top 14 关键机场；若当前选择不在前列，会追加到末行。点击条形联动画像、网络和预测。", plot.x, 334, { size: 12, fill: "#6c7b80" });
 }
 
 function drawModelBars() {
@@ -890,7 +1130,7 @@ function drawCriticalityBars() {
 }
 
 function selectAirport(airport, { keepTour = false } = {}) {
-  if (!keepTour) stopTour();
+  if (!keepTour && !state.tourInteracting) stopTour();
   state.airport = airport;
   const airportSelect = $("airport-select");
   if (airportSelect) airportSelect.value = airport;
@@ -1092,6 +1332,7 @@ function renderSimulation() {
   drawRecoveryChart();
   updateStrategySummary();
   drawScenarioBars();
+  renderOptionLedger();
 }
 
 function renderEvidence() {
@@ -1143,7 +1384,7 @@ function bindControls() {
   $("dest-input")?.addEventListener("change", updateRiskEstimator);
   ["hour-input", "distance-input", "congestion-input"].forEach((id) => $(id)?.addEventListener("input", updateRiskEstimator));
   $("scenario-select")?.addEventListener("change", (event) => {
-    stopTour();
+    maybeStopTour();
     state.scenario = event.target.value;
     syncShockAirport();
     populateSelect($("shock-airport-select"), availableShockAirports(), state.shockAirport);
@@ -1151,19 +1392,19 @@ function bindControls() {
     renderEvidence();
   });
   $("strategy-select")?.addEventListener("change", (event) => {
-    stopTour();
+    maybeStopTour();
     state.strategy = event.target.value;
     renderSimulation();
     renderEvidence();
   });
   $("shock-airport-select")?.addEventListener("change", (event) => {
-    stopTour();
+    maybeStopTour();
     state.shockAirport = event.target.value;
     renderSimulation();
     renderEvidence();
   });
   $("lambda-input")?.addEventListener("input", (event) => {
-    stopTour();
+    maybeStopTour();
     state.lambda = Number(event.target.value);
     updateLambda();
   });
@@ -1176,7 +1417,7 @@ function bindControls() {
     const nearest = state.nodePositions
       .map((node) => ({ node, distance: Math.hypot(node.x - x, node.y - y) }))
       .sort((a, b) => a.distance - b.distance)[0];
-    if (nearest && nearest.distance < nearest.node.r + 18) selectAirport(nearest.node.id);
+    if (nearest && nearest.distance < nearest.node.r + 18) selectAirport(nearest.node.id, { keepTour: state.tourInteracting });
   });
   networkCanvas?.addEventListener("mousemove", (event) => {
     const canvas = event.currentTarget;

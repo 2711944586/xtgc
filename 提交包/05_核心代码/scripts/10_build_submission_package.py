@@ -34,6 +34,8 @@ def ignore_names(_dir: str, names: list[str]) -> set[str]:
             ignored.add(name)
         elif path.suffix.lower() in IGNORED_SUFFIXES:
             ignored.add(name)
+        elif name == "github_pages_qr_access.png":
+            ignored.add(name)
         elif name.startswith("screen_") and name.endswith("_raw.png"):
             ignored.add(name)
         elif name.endswith(".zip") and "On_Time_Reporting" in name:
@@ -89,7 +91,7 @@ def write_division(path: Path) -> None:
 
 成员 B：数据与模型负责人，负责 BTS 数据获取、清洗、特征工程、EDA、预测模型、SHAP、复杂网络和 PPT 第 5-8 页。
 
-成员 C：仿真、评价与 Demo 负责人，负责传播模型、四策略仿真、AHP/熵权/TOPSIS、风险决策、静态 Web Demo 和 PPT 第 9-12 页。
+成员 C：仿真、评价与 Demo 负责人，负责传播模型、四策略仿真、AHP/熵权/TOPSIS、风险决策、静态 Web Demo 和 PPT 第 10-13 页。
 
 交叉复核：A 复核模型解释，B 复核仿真输入，C 复核报告、Web 和 PPT 核心数字一致性。
 """,

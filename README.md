@@ -100,14 +100,14 @@ python -m http.server 4173 -d web
 http://127.0.0.1:4173/
 ```
 
-静态站包含总览、交互证据图板、数据驾驶舱、风险预测、机场网络、扰动仿真、综合决策和方法说明。页面只读取本地 JSON，不依赖后端；核心图表由 SVG/Canvas 即时绘制，支持悬停查看和点击联动。
+静态站包含总览、交互证据图板、数据驾驶舱、风险预测、机场网络、扰动仿真、综合决策和方法说明。页面只读取本地 JSON，不依赖后端；核心图表由 SVG/Canvas 即时绘制，支持悬停查看、点击联动和自动演示。
 正式发布地址为：
 
 ```text
 https://2711944586.github.io/xtgc/
 ```
 
-页面内已加入现场扫码入口，二维码文件为 `web/assets/media/github-pages-qr.svg`。
+新版页面已取消单独现场入口区，答辩现场直接使用正式发布地址或本地预览地址；“自动演示”会按讲稿真实触发选择、点击和滑杆交互。
 
 ## GitHub Pages 部署
 
@@ -122,7 +122,7 @@ https://github.com/2711944586/xtgc
 1. 本仓库推送到 `2711944586/xtgc` 的 `main` 分支。
 2. `.github/workflows/pages.yml` 会把 `web/` 目录打包为 Pages artifact。
 3. GitHub 仓库 Settings -> Pages 的 Source 使用 `GitHub Actions`。
-4. 发布完成后访问 `https://2711944586.github.io/xtgc/`，或扫描页面内二维码。
+4. 发布完成后访问 `https://2711944586.github.io/xtgc/`。
 
 ## Streamlit 原型
 

@@ -63,17 +63,18 @@ def write_notes(workspace: Path) -> None:
                 "audience: system engineering course presentation, 7 minutes 30 seconds.",
                 "arc: local delay -> network propagation -> data risk -> dynamic simulation -> conditional recovery decision.",
                 "01 claim: A hub delay can become a network recovery problem.",
-                "02 claim: Prediction alone cannot answer propagation and resource allocation.",
-                "03 claim: The system boundary makes conflicting stakeholder goals explicit.",
-                "04 claim: Hall plus Checkland organizes the complete method chain.",
-                "05 claim: BTS data reveals temporal and airport heterogeneity.",
-                "06 claim: ISM explains how root factors propagate through congestion.",
-                "07 claim: The plan-stage model supplies calibrated risk inputs.",
-                "08 claim: Criticality differs from pure traffic volume.",
-                "09 claim: A stable propagation model supports fair strategy comparison.",
-                "10 claim: The demo turns the model chain into an interactive decision flow.",
-                "11 claim: Dynamic recovery wins under resilience priority, but not under every preference.",
-                "12 claim: The project contribution is the connected system-engineering loop.",
+                "02 claim: The talk follows a complete system-engineering route from boundary to feedback.",
+                "03 claim: Prediction alone cannot answer propagation and resource allocation.",
+                "04 claim: The system boundary makes conflicting stakeholder goals explicit.",
+                "05 claim: Hall plus Checkland organizes the complete method chain.",
+                "06 claim: BTS data reveals temporal and airport heterogeneity.",
+                "07 claim: ISM explains how root factors propagate through congestion.",
+                "08 claim: The plan-stage model supplies calibrated risk inputs.",
+                "09 claim: Criticality differs from pure traffic volume.",
+                "10 claim: A stable propagation model supports fair strategy comparison.",
+                "11 claim: The demo turns the model chain into an interactive decision flow.",
+                "12 claim: Dynamic recovery wins under resilience priority, but not under every preference.",
+                "13 claim: The project contribution is the connected system-engineering loop.",
             ]
         ),
         encoding="utf-8",
@@ -98,17 +99,18 @@ def write_notes(workspace: Path) -> None:
             [
                 "layout families:",
                 "01 cover with network visual",
-                "02 two-column problem gap",
-                "03 boundary map and KPI rail",
-                "04 horizontal method chain",
-                "05 three evidence figures",
-                "06 ISM hierarchy",
-                "07 metrics plus SHAP",
-                "08 network proof",
-                "09 equation plus curves",
-                "10 screenshot-led demo path",
-                "11 ranking and sensitivity",
-                "12 concise conclusion",
+                "02 chapter agenda / route map",
+                "03 two-column problem gap",
+                "04 boundary map and KPI rail",
+                "05 horizontal method chain",
+                "06 three evidence figures",
+                "07 ISM hierarchy",
+                "08 metrics plus SHAP",
+                "09 network proof",
+                "10 equation plus curves",
+                "11 screenshot-led demo path",
+                "12 ranking and sensitivity",
+                "13 concise conclusion",
             ]
         ),
         encoding="utf-8",
@@ -185,6 +187,27 @@ export { C };
   text(slide, ctx, 72, 288, 500, 92, '从 BTS 真实数据出发，把延误预测、机场网络、动态仿真和恢复策略评价连成系统工程闭环。', 20);
   band(slide, ctx, 72, 430, 470, 92, '#FFFFFF');
   text(slide, ctx, 96, 446, 420, 58, '公开数据 → 风险识别 → 网络传播 → 策略恢复 → 综合决策 → Web Demo', 20, C.orange, true);
+  text(slide, ctx, 72, 562, 480, 24, '系统工程课程项目 | 2026', 16, C.slate);
+""",
+        ),
+        (
+            "汇报目录：从系统边界走到条件式策略推荐",
+            """
+  const chapters = [
+    ['01', '问题界定', '为什么单航班预测不足以支撑恢复决策'],
+    ['02', '系统方法', '系统边界、主体目标、霍尔三维结构与软系统思想'],
+    ['03', '证据建模', 'BTS 数据、ISM 结构、计划风险与机场网络'],
+    ['04', '传播仿真', '状态空间模型、扰动情景与四类恢复策略'],
+    ['05', '评价交付', 'AHP/熵权/TOPSIS、风险边界与点击式 Web Demo']
+  ];
+  for (let i=0;i<chapters.length;i++) {
+    const y = 154 + i*82;
+    band(slide, ctx, 78, y, 1040, 58, i===4 ? '#EAF4F8' : '#FFFFFF');
+    text(slide, ctx, 104, y+17, 54, 22, chapters[i][0], 16, C.orange, true);
+    text(slide, ctx, 178, y+14, 180, 26, chapters[i][1], 20, C.navy, true);
+    text(slide, ctx, 390, y+16, 660, 24, chapters[i][2], 18, C.ink);
+  }
+  text(slide, ctx, 88, 594, 1030, 42, '讲述节奏：先把问题放回系统，再用结构-数据-网络-仿真-决策逐层收束，最后用 Web Demo 完成现场验证。', 21, C.orange, true);
 """,
         ),
         (
@@ -356,7 +379,7 @@ def generate_slides() -> Path:
         "--contact-sheet",
         str(preview_dir / "contact-sheet.png"),
         "--slide-count",
-        "12",
+        "13",
     ]
     env = os.environ.copy()
     env["HOME"] = str(Path.home())

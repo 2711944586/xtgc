@@ -32,10 +32,11 @@
         <a href="#network">网络</a>
         <a href="#simulation">仿真</a>
         <a href="#decision">决策</a>
-        <a href="#access">现场入口</a>
         <a href="#method">方法</a>
       </nav>
     </header>
+
+    <div class="demo-cursor" id="demo-cursor" aria-hidden="true"></div>
 
     <aside class="presentation-dock" aria-label="演示控制">
       <div class="dock-copy">
@@ -327,6 +328,7 @@
             <select id="shock-airport-select"></select>
           </label>
         </div>
+        <div class="option-ledger" id="scenario-options" aria-label="情景与策略快捷选择"></div>
 
         <div class="analysis-grid two">
           <article class="panel">
@@ -390,25 +392,6 @@
         </div>
       </section>
 
-      <section class="section access-section" id="access" aria-label="移动端扫码访问">
-        <div class="access-panel">
-          <div>
-            <p class="eyebrow">Live entry</p>
-            <h2>现场扫码进入同一套页面。</h2>
-            <p>
-              页面部署在 GitHub Pages。手机端和投屏端使用同一份静态数据，便于现场同步查看。
-            </p>
-            <a class="deploy-link" href="https://2711944586.github.io/xtgc/" target="_blank" rel="noreferrer">
-              https://2711944586.github.io/xtgc/
-            </a>
-          </div>
-          <figure class="qr-card">
-            <img src="assets/media/github-pages-qr.svg" alt="访问 FlightResilience GitHub Pages 静态站的二维码" />
-            <figcaption>现场入口</figcaption>
-          </figure>
-        </div>
-      </section>
-
       <section class="section" id="method">
         <div class="section-heading">
           <p class="eyebrow">Method notes</p>
@@ -421,31 +404,55 @@
         <div class="method-grid">
           <article class="method-block">
             <h3>风险预测</h3>
-            <p>模型输出计划阶段到达延误概率，实际运行和延误原因字段不进入训练。</p>
-            <code>p_i = P(y_i=1 | x_i), y_i = 1(ArrDel15)</code>
+            <p>模型输出计划阶段到达延误概率，实际起降时间和延误原因不进入训练，避免信息泄漏。</p>
+            <div class="formula-line">
+              <span>p<sub>i</sub> = P(y<sub>i</sub>=1 | x<sub>i</sub>)</span>
+              <span>y<sub>i</sub> = I(ArrDel15<sub>i</sub>=1)</span>
+            </div>
           </article>
           <article class="method-block">
             <h3>网络传播</h3>
-            <p>机场小时状态由传播矩阵、恢复控制和外部冲击共同驱动。</p>
-            <code>x(t+1) = A x(t) + B u(t) + G w(t)</code>
+            <p>机场小时状态由传播矩阵、恢复控制、外部冲击和误差共同驱动，传播矩阵只保留网络邻接关系。</p>
+            <div class="formula-line">
+              <span>x(t+1) = A x(t) + B u(t) + G w(t) + epsilon(t)</span>
+              <span>rho(A) &lt; 1</span>
+            </div>
           </article>
           <article class="method-block">
             <h3>多准则评价</h3>
-            <p>成本型指标正向化后组合 AHP 与熵权，再计算 TOPSIS 接近度。</p>
-            <code>C_i = D_i^- / (D_i^+ + D_i^-)</code>
+            <p>成本型指标正向化后组合 AHP 主观权重与熵权客观权重，再计算 TOPSIS 接近度。</p>
+            <div class="formula-line">
+              <span>w = lambda w<sup>AHP</sup> + (1-lambda) w<sup>Entropy</sup></span>
+              <span>C<sub>i</sub> = D<sub>i</sub><sup>-</sup> / (D<sub>i</sub><sup>+</sup> + D<sub>i</sub><sup>-</sup>)</span>
+            </div>
           </article>
           <article class="method-block">
             <h3>结论边界</h3>
-            <p>推荐策略随情景和偏好改变，最终结论必须写成条件判断。</p>
-            <code>s* = argmax score(s | scenario, weights)</code>
+            <p>推荐策略随情景、偏好权重和损失矩阵改变，最终结论写成条件判断而不是绝对最优。</p>
+            <div class="formula-line">
+              <span>s* = argmax<sub>s in S</sub> score(s | scenario, w)</span>
+              <span>L(s) = sum<sub>k</sub> P(k) loss(s,k)</span>
+            </div>
           </article>
         </div>
       </section>
     </main>
 
     <footer class="footer">
-      <span>FlightResilience static research console</span>
-      <span>Data: U.S. DOT BTS TranStats, repository artifacts</span>
+      <div class="footer-summary">
+        <p class="eyebrow">Closing brief</p>
+        <h2>恢复优先时选动态组合，成本保守时保留基准策略。</h2>
+        <p>
+          这个静态控制台把报告中的数据审计、风险预测、ISM 结构解释、状态空间传播仿真和多准则决策放在同一条证据链里。
+          课堂演示时先跑自动讲解，再按评委追问进入对应图表。
+        </p>
+      </div>
+      <div class="footer-grid" aria-label="交付物索引">
+        <div><span>数据</span><strong>U.S. DOT BTS TranStats 2024Q1</strong></div>
+        <div><span>模型</span><strong>风险预测 + 网络传播 + TOPSIS</strong></div>
+        <div><span>演示</span><strong>点击式自动讲解，约 25 秒走完整链路</strong></div>
+        <div><span>部署</span><strong>GitHub Pages 静态站</strong></div>
+      </div>
     </footer>
 
     <script src="assets/js/app.js" defer></script>

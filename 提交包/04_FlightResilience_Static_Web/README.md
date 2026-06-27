@@ -24,8 +24,7 @@ http://127.0.0.1:4173/
 - `assets/css/styles.css`：航空运行控制台风格样式。
 - `assets/js/app.js`：静态数据加载、SVG/Canvas 图表绘制和控件联动。
 - `assets/data/flightresilience-data.json`：由仓库预计算结果导出的静态数据。
-- `assets/media/`：报告图表备份和二维码；页面主体图表由 JSON 即时绘制。
-- `assets/media/github-pages-qr.svg`：正式 GitHub Pages 地址二维码。
+- `assets/media/`：报告图表备份和页面图标；页面主体图表由 JSON 即时绘制。
 
 ## 重新导出数据
 
@@ -59,7 +58,7 @@ https://github.com/2711944586/xtgc
 https://2711944586.github.io/xtgc/
 ```
 
-页面「扫码」模块中的二维码即指向该地址，可用于答辩现场手机扫码访问。
+新版页面已取消单独现场入口模块，答辩现场直接使用正式访问地址或本地预览地址；“自动演示”会按讲稿真实触发选择、点击和滑杆交互。
 
 也可以手动将 `web/` 目录内容复制到 Pages 分支或其他静态托管平台。
 
