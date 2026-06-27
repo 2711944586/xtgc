@@ -1169,6 +1169,10 @@ code {
 }
 
 @media (max-width: 640px) {
+  body {
+    padding-bottom: 24px;
+  }
+
   .topbar {
     position: static;
   }
@@ -1223,20 +1227,28 @@ code {
   }
 
   .presentation-dock {
-    position: fixed;
+    position: sticky;
     top: auto;
-    bottom: 0.5rem;
-    margin: 0;
-    grid-template-columns: 1fr;
-    padding: 0.46rem;
+    bottom: auto;
+    left: 0.5rem;
+    right: 0.5rem;
+    margin: 0.5rem;
+    grid-template-columns: minmax(0, 1fr) 64px;
+    padding: 0.38rem;
   }
 
   .dock-actions {
     display: grid;
+    grid-column: 1 / -1;
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
+  .dock-copy strong {
+    font-size: 0.78rem;
+  }
+
   .dock-actions button {
+    min-height: 30px;
     padding-inline: 0.35rem;
     font-size: 0.72rem;
   }
