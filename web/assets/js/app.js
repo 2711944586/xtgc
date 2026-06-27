@@ -43,6 +43,7 @@ const state = {
   tourTimers: [],
   tourInteracting: false,
   tourAction: "点击“自动演示”后按顺序操作。",
+  tooltipTimer: 0,
   nodePositions: [],
   prefersReducedMotion: window.matchMedia("(prefers-reduced-motion: reduce)").matches,
 };
@@ -56,11 +57,12 @@ const TOUR_STEPS = [
     method: "系统边界 + 多主体目标冲突：旅客、航司、机场和监管者不能只用一个指标评价。",
     evidence: (data) => `${fmt.int(data.kpi.flights)} 条航班、${data.kpi.airport_count} 个机场、${fmt.int(data.kpi.route_count || data.airportEdges?.length || data.networkEdges?.length)} 条有向航线。`,
     decision: "先把问题定义为“网络恢复策略选择”，预测只是输入，不是最终答案。",
-    duration: 3600,
+    duration: 5200,
     state: { airport: "MIA", scenario: "weather", strategy: "dynamic_combo", shockAirport: "MIA", lambda: 0.9 },
     actions: [
-      { type: "pulse", target: ".mission-board", delay: 420, label: "确认样本、机场/航线规模和主推荐。" },
-      { type: "pulse", target: ".hero-note", delay: 1120, label: "把结论写成条件判断，而不是绝对最优。" },
+      { type: "pulse", target: ".mission-board", delay: 520, label: "第一步确认样本边界：航班、机场、航线和数据窗口。" },
+      { type: "pulse", target: "#tour-flow", delay: 1780, label: "演示路线固定为系统边界、证据、风险、网络、仿真、决策。" },
+      { type: "pulse", target: ".hero-note", delay: 3200, label: "先声明结论边界：恢复优先与成本保守会给出不同推荐。" },
     ],
   },
   {
@@ -74,12 +76,13 @@ const TOUR_STEPS = [
       return `${best.model} AUC=${fmt.num(best.test_roc_auc, 3)}，同时保留风险损失与 TOPSIS 的冲突。`;
     },
     decision: "先看边界和矛盾，再进入模块细节，避免演示变成逐页翻图。",
-    duration: 3900,
+    duration: 5600,
     state: { airport: "MIA", scenario: "weather", strategy: "dynamic_combo", shockAirport: "MIA", lambda: 0.9 },
     actions: [
       { type: "click", target: "#route-risk-chart circle[role='button']", delay: 520, label: "点击高风险航线气泡，联动出发机场和预测输入。" },
-      { type: "pulse", target: "#curve-chart", delay: 1300, label: "检查模型是否有足够排序能力。" },
-      { type: "click", target: "#risk-topsis-chart circle[role='button']", delay: 2140, label: "点击风险-TOPSIS 点，观察策略推荐的矛盾边界。" },
+      { type: "pulse", target: "#curve-chart", delay: 1640, label: "检查 ROC/PR 曲线，确认风险模型具备排序能力。" },
+      { type: "pulse", target: "#recovery-heat-chart", delay: 2840, label: "观察恢复热力图，把单点风险接到传播过程。" },
+      { type: "click", target: "#risk-topsis-chart circle[role='button']", delay: 4040, label: "点击风险-TOPSIS 点，说明低损失与高综合得分并不总一致。" },
     ],
   },
   {
@@ -93,12 +96,13 @@ const TOUR_STEPS = [
       return `${top.airport} 综合关键性 ${fmt.num(top.criticality, 3)}；总体 ArrDel15=${fmt.pct(data.kpi.delay_rate)}。`;
     },
     decision: "如果节点差异显著，恢复策略必须进入网络结构和传播仿真。",
-    duration: 3800,
+    duration: 5600,
     state: { airport: "MIA", scenario: "weather", strategy: "dynamic_combo", shockAirport: "MIA", lambda: 0.9 },
     actions: [
-      { type: "setSelect", target: "#airport-select", value: "DEN", delay: 520, label: "切换关注机场，比较不同节点的历史风险。" },
-      { type: "click", target: "#airport-bars rect[role='button']", delay: 1220, label: "点击关键性条形，联动机场画像、网络和预测模块。" },
-      { type: "pulse", target: "#heatmap-chart", delay: 2180, label: "用星期-小时热力确认延误存在时间异质性。" },
+      { type: "pulse", target: "#daily-chart", delay: 520, label: "先看日尺度波动，确认运行状态不是静态均值。" },
+      { type: "pulse", target: "#heatmap-chart", delay: 1560, label: "再看星期-小时热力，确认延误存在时间异质性。" },
+      { type: "setSelect", target: "#airport-select", value: "DEN", delay: 2760, label: "切换关注机场，比较不同节点的历史风险。" },
+      { type: "click", target: "#airport-bars rect[role='button']", delay: 3920, label: "点击关键性条形，联动机场画像、网络和预测模块。" },
     ],
   },
   {
@@ -112,13 +116,14 @@ const TOUR_STEPS = [
       return `时间外测试 ROC-AUC ${fmt.num(best.test_roc_auc, 3)}，PR-AUC ${fmt.num(best.test_pr_auc, 3)}。`;
     },
     decision: "风险模型不替代调度，而是为关键节点识别和扰动仿真提供输入。",
-    duration: 3800,
+    duration: 5800,
     state: { airport: "MIA", scenario: "peak", strategy: "dynamic_combo", shockAirport: "MIA", lambda: 0.8 },
     actions: [
-      { type: "setRange", target: "#hour-input", value: "19", delay: 520, label: "拖动起飞小时，模拟晚高峰计划风险。" },
-      { type: "setRange", target: "#distance-input", value: "1450", delay: 1040, label: "拖动航线距离，观察长航线风险修正。" },
-      { type: "setRange", target: "#congestion-input", value: "74", delay: 1560, label: "拖动机场拥堵，风险概率即时刷新。" },
-      { type: "pulse", target: ".risk-result", delay: 2260, label: "读取风险概率，并决定是否进入网络层追踪后果。" },
+      { type: "pulse", target: "#model-bars", delay: 480, label: "先看时间外测试指标，确认预测模型不是只拟合训练集。" },
+      { type: "setRange", target: "#hour-input", value: "19", delay: 1420, label: "拖动起飞小时，模拟晚高峰计划风险。" },
+      { type: "setRange", target: "#distance-input", value: "1450", delay: 2240, label: "拖动航线距离，观察长航线风险修正。" },
+      { type: "setRange", target: "#congestion-input", value: "74", delay: 3060, label: "拖动机场拥堵，风险概率即时刷新。" },
+      { type: "pulse", target: ".risk-result", delay: 4120, label: "读取风险概率，并决定是否进入网络层追踪后果。" },
     ],
   },
   {
@@ -132,12 +137,13 @@ const TOUR_STEPS = [
       return `${node.airport}：介数 ${fmt.num(node.betweenness, 4)}，平均风险 ${fmt.pct(node.avg_risk)}，关键性 ${fmt.num(node.criticality, 3)}。`;
     },
     decision: "关键机场优先恢复不是凭直觉，而是由网络位置、风险和流量共同决定。",
-    duration: 3700,
+    duration: 5600,
     state: { airport: "DEN", scenario: "weather", strategy: "hub_priority", shockAirport: "MIA", lambda: 0.8 },
     actions: [
       { type: "networkClick", value: "DFW", delay: 620, label: "点击网络节点，切换机场画像。" },
-      { type: "pulse", target: "#airport-profile", delay: 1280, label: "读取机场画像：流量、风险、介数和关键性。" },
-      { type: "pulse", target: "#criticality-bars", delay: 2160, label: "对比关键性排名，确认优先恢复节点。" },
+      { type: "pulse", target: "#airport-profile", delay: 1740, label: "读取机场画像：流量、风险、介数和关键性。" },
+      { type: "pulse", target: "#network-canvas", delay: 2920, label: "回到网络图，说明同一延误在不同位置后果不同。" },
+      { type: "pulse", target: "#criticality-bars", delay: 4040, label: "对比关键性排名，确认优先恢复节点。" },
     ],
   },
   {
@@ -148,14 +154,16 @@ const TOUR_STEPS = [
     method: "状态空间传播模型：x(t+1)=Ax(t)+Bu(t)+Gw(t)+ε(t)，统一冲击和预算口径。",
     evidence: (data) => `传播矩阵谱半径 ${fmt.num(data.propagationValidation.spectral_radius_final, 3)}，单步 MAE ${fmt.num(data.propagationValidation.mae, 2)} min。`,
     decision: "同一扰动下比较恢复路径，而不是只看一个均值或单点排名。",
-    duration: 4100,
+    duration: 7200,
     state: { airport: "MIA", scenario: "weather", strategy: "baseline", shockAirport: "MIA", lambda: 0.9 },
     actions: [
-      { type: "setSelect", target: "#scenario-select", value: "weather", delay: 420, label: "选择天气冲击情景。" },
-      { type: "setSelect", target: "#shock-airport-select", value: "DFW", delay: 980, label: "切换冲击机场为 DFW，观察关键节点扰动。" },
-      { type: "setSelect", target: "#strategy-select", value: "baseline", delay: 1540, label: "先看基准策略的恢复曲线。" },
-      { type: "click", target: "#scenario-options .option-chip[data-kind='strategy'][data-value='dynamic_combo']", delay: 2140, label: "点击动态组合策略，比较恢复曲线和成本。" },
-      { type: "click", target: "#recovery-chart circle[data-strategy='dynamic_combo']", delay: 2960, label: "点击恢复曲线末端，确认策略切换真实生效。" },
+      { type: "setSelect", target: "#scenario-select", value: "weather", delay: 480, label: "选择天气冲击情景，固定外部扰动口径。" },
+      { type: "setSelect", target: "#shock-airport-select", value: "DEN", delay: 1380, label: "先切到 DEN，看冲击机场确实可被选择。" },
+      { type: "click", target: "#scenario-options .option-chip[data-kind='shock'][data-value='DFW']", delay: 2380, label: "再点击 DFW 冲击机场，观察关键节点扰动。" },
+      { type: "setSelect", target: "#strategy-select", value: "baseline", delay: 3360, label: "先看基准策略的恢复曲线，建立对照组。" },
+      { type: "click", target: "#scenario-options .option-chip[data-kind='strategy'][data-value='dynamic_combo']", delay: 4380, label: "点击动态组合策略，比较恢复速度与成本。" },
+      { type: "click", target: "#recovery-chart circle[data-strategy='dynamic_combo']", delay: 5480, label: "点击恢复曲线末端，确认策略切换真实生效。" },
+      { type: "pulse", target: "#scenario-bars", delay: 6420, label: "最后看指标柱状图，比较累计延误与相对成本。" },
     ],
   },
   {
@@ -169,14 +177,15 @@ const TOUR_STEPS = [
       return `主偏好推荐 ${STRATEGY_LABELS[data.decision.recommended_strategy]}；期望损失口径偏向 ${STRATEGY_LABELS[riskWinner.strategy]}。`;
     },
     decision: "恢复优先选动态组合；预算紧或风险保守时保留基准策略，结论必须条件化。",
-    duration: 4300,
+    duration: 6800,
     state: { airport: "MIA", scenario: "weather", strategy: "baseline", shockAirport: "DFW", lambda: 0.2 },
     actions: [
       { type: "setRange", target: "#lambda-input", value: "0.9", delay: 420, label: "先把 λ 调高，模拟恢复/韧性优先。" },
-      { type: "setRange", target: "#lambda-input", value: "0.2", delay: 1040, label: "再把 λ 调低，模拟成本和客观权重占优。" },
-      { type: "click", target: "#lambda-chart circle[data-lambda='0.2']", delay: 1680, label: "点击 λ=0.2 的敏感性点，验证推荐换位。" },
-      { type: "click", target: "#risk-topsis-chart circle[data-strategy='baseline']", delay: 2360, label: "点击基准策略的风险-TOPSIS 点，说明风险口径会保守。" },
-      { type: "pulse", target: "#risk-table", delay: 3060, label: "用风险表收束最终管理建议。" },
+      { type: "pulse", target: "#topsis-chart", delay: 1460, label: "读取 TOPSIS 主偏好排序，说明恢复优先的推荐来源。" },
+      { type: "setRange", target: "#lambda-input", value: "0.2", delay: 2600, label: "再把 λ 调低，模拟成本和客观权重占优。" },
+      { type: "click", target: "#lambda-chart circle[data-lambda='0.2']", delay: 3720, label: "点击 λ=0.2 的敏感性点，验证推荐换位。" },
+      { type: "click", target: "#risk-topsis-chart circle[data-strategy='baseline']", delay: 4860, label: "点击基准策略的风险-TOPSIS 点，说明风险口径会保守。" },
+      { type: "pulse", target: "#risk-table", delay: 5900, label: "用风险表收束最终管理建议：结论必须条件化。" },
     ],
   },
 ];
@@ -302,16 +311,24 @@ function tooltip() {
 
 function showTip(event, html) {
   const tip = tooltip();
+  window.clearTimeout(state.tooltipTimer);
   tip.innerHTML = html;
   tip.hidden = false;
+  tip.classList.add("is-visible");
   const x = clamp(event.clientX + 14, 8, window.innerWidth - 280);
   const y = clamp(event.clientY + 14, 8, window.innerHeight - 120);
   tip.style.left = `${x}px`;
   tip.style.top = `${y}px`;
+  if (state.tourPlaying || state.tourInteracting) {
+    state.tooltipTimer = window.setTimeout(hideTip, 1150);
+  }
 }
 
 function hideTip() {
-  const tip = tooltip();
+  window.clearTimeout(state.tooltipTimer);
+  const tip = document.querySelector(".tooltip");
+  if (!tip) return;
+  tip.classList.remove("is-visible");
   tip.hidden = true;
 }
 
@@ -438,6 +455,7 @@ function pulseDemoTarget(node, duration = 820) {
 function scrollToTourTarget(id) {
   const target = document.getElementById(id);
   if (!target) return;
+  hideTip();
   const topbar = document.querySelector(".topbar")?.getBoundingClientRect().height || 0;
   const top = target.getBoundingClientRect().top + window.scrollY - topbar - 16;
   window.scrollTo({
@@ -448,6 +466,7 @@ function scrollToTourTarget(id) {
 
 function demoClickNode(node) {
   if (!node) return;
+  hideTip();
   pulseDemoTarget(node);
   const cursor = demoCursor();
   cursor?.classList.add("is-clicking");
@@ -465,6 +484,7 @@ function demoClickNode(node) {
 function setControlValue(selector, value, eventName) {
   const node = document.querySelector(selector);
   if (!node) return;
+  hideTip();
   const isRange = node.matches("input[type='range']");
   pulseDemoTarget(node, isRange ? 1180 : 920);
   if (isRange) {
@@ -495,6 +515,7 @@ function setControlValue(selector, value, eventName) {
 function clickNetworkNode(id) {
   const canvas = $("network-canvas");
   if (!canvas) return;
+  hideTip();
   const node = state.nodePositions.find((item) => item.id === id || item.airport === id) || state.nodePositions[0];
   if (!node) return;
   const rect = canvas.getBoundingClientRect();
@@ -514,6 +535,7 @@ function clickNetworkNode(id) {
   scheduleTour(() => {
     cursor?.classList.remove("is-clicking");
     canvas.classList.remove("is-demo-target");
+    hideTip();
   }, 520);
 }
 
@@ -554,6 +576,7 @@ function runTourActions(step) {
 }
 
 function applyTourStep(index, { scroll = true } = {}) {
+  hideTip();
   state.tourIndex = (index + TOUR_STEPS.length) % TOUR_STEPS.length;
   const step = TOUR_STEPS[state.tourIndex];
   Object.assign(state, step.state);
@@ -571,6 +594,7 @@ function applyTourStep(index, { scroll = true } = {}) {
 function stopTour() {
   state.tourPlaying = false;
   clearTourTimers();
+  hideTip();
   demoCursor()?.classList.remove("is-visible", "is-clicking");
   document.querySelectorAll(".is-demo-target").forEach((node) => node.classList.remove("is-demo-target"));
   setTourAction("演示已停在当前状态，可继续手动追问图表。");
@@ -581,6 +605,7 @@ function startTour() {
   state.tourPlaying = true;
   state.tourIndex = 0;
   clearTourTimers();
+  hideTip();
   setTourAction("开始：先界定系统，再进入证据、模型、仿真和决策。");
   updateTourUi();
   runTourStep(0);
@@ -1569,6 +1594,7 @@ function renderDecision() {
 }
 
 function renderSimulation() {
+  hideTip();
   drawRecoveryChart();
   updateStrategySummary();
   drawScenarioBars();
@@ -1576,6 +1602,7 @@ function renderSimulation() {
 }
 
 function renderEvidence() {
+  hideTip();
   drawRouteRiskChart();
   drawCurveChart();
   drawRecoveryHeatChart();
@@ -1584,6 +1611,7 @@ function renderEvidence() {
 
 function renderAll() {
   if (!state.data) return;
+  hideTip();
   updateEvidenceBrief();
   updateTourUi();
   renderEvidence();
@@ -1676,6 +1704,8 @@ function bindControls() {
     }
   });
   networkCanvas?.addEventListener("mouseleave", hideTip);
+  window.addEventListener("scroll", hideTip, { passive: true });
+  window.addEventListener("blur", hideTip);
   window.addEventListener("resize", debounce(renderAll, 180));
 }
 

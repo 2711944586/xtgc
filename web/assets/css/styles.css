@@ -224,8 +224,14 @@ svg .is-demo-target {
   width: 0;
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(90deg, var(--teal), var(--copper));
+  background:
+    linear-gradient(90deg, var(--teal), var(--copper)),
+    repeating-linear-gradient(115deg, rgba(255, 255, 255, 0.34) 0 6px, transparent 6px 13px);
   transition: width 280ms var(--ease);
+}
+
+.tour-is-playing .dock-progress span {
+  animation: progress-breathe 1500ms ease-in-out infinite;
 }
 
 .dock-actions {
@@ -249,6 +255,17 @@ svg .is-demo-target {
   pointer-events: none;
   transform: translateY(16px);
   transition: opacity 220ms var(--ease), transform 220ms var(--ease);
+}
+
+.demo-caption::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.72rem;
+  bottom: 0.72rem;
+  width: 3px;
+  border-radius: 0 999px 999px 0;
+  background: linear-gradient(180deg, var(--copper), var(--teal));
 }
 
 .tour-is-playing .demo-caption {
@@ -1331,6 +1348,14 @@ code {
   box-shadow: var(--shadow);
   font-size: 0.8rem;
   pointer-events: none;
+  opacity: 0;
+  transform: translateY(4px) scale(0.98);
+  transition: opacity 120ms var(--ease), transform 120ms var(--ease);
+}
+
+.tooltip.is-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
 }
 
 .motion-ready [data-reveal] {
@@ -1373,6 +1398,16 @@ code {
   to {
     opacity: 1;
     stroke-dasharray: 900 0;
+  }
+}
+
+@keyframes progress-breathe {
+  0%,
+  100% {
+    filter: saturate(1);
+  }
+  50% {
+    filter: saturate(1.24) brightness(1.08);
   }
 }
 
