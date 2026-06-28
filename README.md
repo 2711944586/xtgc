@@ -141,7 +141,7 @@ python -m http.server 4173 -d web
 http://127.0.0.1:4173/
 ```
 
-Web Demo 不依赖后端，只读取 `web/assets/data/flightresilience-data.json`。自动演示会按讲稿真实触发控件：点击航线气泡、切换机场、拖动风险滑杆、点击网络节点、切换情景/策略/冲击机场、拖动 lambda 权重并点击风险-TOPSIS 点。
+Web Demo 不依赖后端，只读取 `web/assets/data/flightresilience-data.json`。新版前端使用 Noto Serif SC / Noto Sans SC / JetBrains Mono 字体组合，整体改为更圆润的玻璃化控制台质感。自动演示约 55 秒，会沿“问题-方法-证据-结论-当前操作”轨道讲解，并真实触发控件：点击航线气泡、切换机场、拖动风险滑杆、点击网络节点、切换情景/策略/冲击机场、拖动 lambda 权重并点击风险-TOPSIS 点。
 
 ## GitHub Pages 部署
 

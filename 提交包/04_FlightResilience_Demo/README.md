@@ -71,7 +71,7 @@ BTS 公开航班数据
   -> Word 报告 / PPT / 讲稿 / Web Demo / 提交包
 ```
 
-课程 PDF 中使用到的系统工程方法包括：霍尔三维结构、切克兰德软系统方法、解释结构模型化技术（ISM）、状态空间模型、AHP（层次分析法）、模糊综合评价、风险型决策和不确定型决策。文本摘录位于 `docs/system_engineering_reference/`，正式报告中已将这些方法映射到项目环节。
+课程 PDF 中使用到的系统工程方法包括：霍尔三维结构、切克兰德软系统方法、解释结构模型化技术（ISM）、状态空间模型、AHP（层次分析法）、模糊综合评价、风险型决策和不确定型决策。文本摘录位于 `docs/system_engineering_reference/chapter*.txt`，正式报告中已将这些方法映射到项目环节。课程 PDF 原件如需本地保留，放在 `docs/system_engineering_reference/source_pdfs/`；该目录为本地参考材料，不提交远程。
 
 ## 环境准备
 
@@ -141,7 +141,7 @@ python -m http.server 4173 -d web
 http://127.0.0.1:4173/
 ```
 
-Web Demo 不依赖后端，只读取 `web/assets/data/flightresilience-data.json`。自动演示会按讲稿真实触发控件：点击航线气泡、切换机场、拖动风险滑杆、点击网络节点、切换情景/策略/冲击机场、拖动 lambda 权重并点击风险-TOPSIS 点。
+Web Demo 不依赖后端，只读取 `web/assets/data/flightresilience-data.json`。新版前端使用 Noto Serif SC / Noto Sans SC / JetBrains Mono 字体组合，整体改为更圆润的玻璃化控制台质感。自动演示约 55 秒，会沿“问题-方法-证据-结论-当前操作”轨道讲解，并真实触发控件：点击航线气泡、切换机场、拖动风险滑杆、点击网络节点、切换情景/策略/冲击机场、拖动 lambda 权重并点击风险-TOPSIS 点。
 
 ## GitHub Pages 部署
 

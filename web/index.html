@@ -12,6 +12,12 @@
     <meta property="og:description" content="BTS 2024 年一季度航班数据、30 个主要机场、824 条有向航线。" />
     <meta property="og:type" content="website" />
     <link rel="icon" href="assets/media/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700;800;900&family=Noto+Serif+SC:wght@600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="assets/css/styles.css" />
   </head>
   <body>
@@ -55,7 +61,24 @@
     <aside class="demo-caption" id="demo-caption" aria-live="polite" aria-label="自动演示讲解">
       <span id="demo-caption-step">01 / 07</span>
       <strong id="demo-caption-title">边界定义</strong>
-      <p id="demo-caption-line">先定义系统边界，再进入定量证据、传播仿真和条件决策。</p>
+      <div class="demo-caption-track">
+        <div>
+          <em>问题</em>
+          <p id="demo-caption-question">局部延误什么时候会变成网络恢复问题？</p>
+        </div>
+        <div>
+          <em>方法</em>
+          <p id="demo-caption-method">系统边界、多主体目标冲突和网络恢复策略选择。</p>
+        </div>
+        <div>
+          <em>证据</em>
+          <p id="demo-caption-line">先定义系统边界，再进入定量证据、传播仿真和条件决策。</p>
+        </div>
+        <div>
+          <em>结论</em>
+          <p id="demo-caption-decision">结论必须带情景和偏好边界。</p>
+        </div>
+      </div>
       <small id="demo-caption-action">点击“自动演示”后按顺序操作。</small>
     </aside>
 
@@ -459,7 +482,7 @@
       <div class="footer-grid" aria-label="交付物索引">
         <div><span>数据</span><strong>U.S. DOT BTS TranStats 2024Q1</strong></div>
         <div><span>模型</span><strong>风险预测 + 网络传播 + TOPSIS</strong></div>
-        <div><span>演示</span><strong>点击式自动讲解，约 25 秒走完整链路</strong></div>
+        <div><span>演示</span><strong>点击式自动讲解，约 55 秒走完整链路</strong></div>
         <div><span>部署</span><strong>GitHub Pages 静态站</strong></div>
       </div>
     </footer>
