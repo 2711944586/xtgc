@@ -48,13 +48,7 @@ body {
   margin: 0;
   min-width: 320px;
   padding-bottom: 92px;
-  background:
-    radial-gradient(circle at 11% 8%, rgba(229, 202, 171, 0.5), transparent 28rem),
-    radial-gradient(circle at 88% 3%, rgba(190, 221, 213, 0.62), transparent 24rem),
-    linear-gradient(180deg, rgba(253, 253, 249, 0.98), rgba(243, 247, 244, 0.98) 46%, rgba(235, 242, 239, 0.99)),
-    repeating-linear-gradient(90deg, rgba(18, 43, 42, 0.026) 0 1px, transparent 1px 76px),
-    repeating-linear-gradient(0deg, rgba(18, 43, 42, 0.02) 0 1px, transparent 1px 76px),
-    var(--bg);
+  background: var(--bg);
   color: var(--ink);
   font-family: var(--font);
   line-height: 1.68;
@@ -65,30 +59,11 @@ body {
 }
 
 body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  background-image:
-    radial-gradient(circle at 1px 1px, rgba(23, 27, 25, 0.06) 1px, transparent 0),
-    linear-gradient(125deg, rgba(184, 111, 56, 0.04), transparent 42%, rgba(22, 124, 118, 0.05));
-  background-size: 20px 20px, 100% 100%;
-  opacity: 0.32;
+  content: none;
 }
 
 body::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  background:
-    linear-gradient(rgba(255, 255, 255, 0.018) 50%, rgba(18, 43, 42, 0.018) 50%),
-    radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.42), transparent 34rem);
-  background-size: 100% 4px, 100% 100%;
-  mix-blend-mode: multiply;
-  opacity: 0.42;
+  content: none;
 }
 
 a {
@@ -149,7 +124,7 @@ select {
   transform: translate(-50%, -50%) scale(0);
   border: 2px solid #ffffff;
   border-radius: 999px;
-  background: radial-gradient(circle at 35% 35%, #f8d7b7, var(--copper) 64%);
+  background: var(--copper);
   box-shadow: 0 0 0 8px rgba(157, 98, 56, 0.17), 0 0 0 18px rgba(23, 111, 104, 0.08), 0 12px 28px rgba(20, 32, 31, 0.24);
   opacity: 0;
   pointer-events: none;
@@ -252,9 +227,7 @@ svg .is-demo-target {
   width: 0;
   height: 100%;
   border-radius: inherit;
-  background:
-    linear-gradient(90deg, var(--teal), var(--copper)),
-    repeating-linear-gradient(115deg, rgba(255, 255, 255, 0.34) 0 6px, transparent 6px 13px);
+  background: var(--teal);
   transition: width 280ms var(--ease);
 }
 
@@ -276,9 +249,7 @@ svg .is-demo-target {
   padding: 0.76rem 0.86rem;
   border: 1px solid rgba(255, 255, 255, 0.22);
   border-radius: 18px;
-  background:
-    linear-gradient(160deg, rgba(18, 47, 42, 0.92), rgba(28, 62, 56, 0.88)),
-    var(--navy);
+  background: rgba(18, 47, 42, 0.94);
   color: #fffdf6;
   box-shadow: 0 20px 52px rgba(20, 32, 31, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.12);
   opacity: 0;
@@ -295,7 +266,7 @@ svg .is-demo-target {
   bottom: 0.72rem;
   width: 3px;
   border-radius: 0 999px 999px 0;
-  background: linear-gradient(180deg, var(--copper), var(--teal));
+  background: var(--copper);
 }
 
 .tour-is-playing .demo-caption {
@@ -414,7 +385,7 @@ svg .is-demo-target {
   height: 44px;
   border: 1px solid rgba(23, 27, 25, 0.14);
   border-radius: 14px;
-  background: linear-gradient(145deg, #173d37, var(--navy));
+  background: var(--navy);
   color: #fff8ea;
   font-family: var(--mono);
   font-size: 0.85rem;
@@ -564,7 +535,7 @@ h1 {
 }
 
 .button.primary {
-  background: linear-gradient(135deg, var(--copper), #b97945);
+  background: var(--copper);
   border-color: var(--copper);
   color: #fffdf8;
 }
@@ -602,9 +573,7 @@ h1 {
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.36);
   border-radius: var(--radius-xl);
-  background:
-    linear-gradient(160deg, rgba(255, 249, 237, 0.98), rgba(230, 220, 202, 0.96)),
-    repeating-linear-gradient(135deg, rgba(18, 43, 42, 0.04) 0 1px, transparent 1px 12px);
+  background: #f1ebdf;
   color: var(--panel-ink);
   box-shadow: var(--shadow);
 }
@@ -921,12 +890,7 @@ h1 {
   width: 100%;
   border: 1px solid rgba(23, 27, 25, 0.12);
   border-radius: var(--radius);
-  background:
-    radial-gradient(circle at 8% 6%, rgba(157, 98, 56, 0.055), transparent 16rem),
-    linear-gradient(rgba(18, 43, 42, 0.026) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(18, 43, 42, 0.022) 1px, transparent 1px),
-    #fcfdf9;
-  background-size: 100% 100%, 32px 32px, 32px 32px;
+  background-color: #fcfdf9;
   overflow: hidden;
   box-shadow: var(--inner-light);
 }
@@ -1016,10 +980,7 @@ select {
   border: 1px solid rgba(23, 27, 25, 0.22);
   border-radius: 12px;
   appearance: none;
-  background:
-    linear-gradient(45deg, transparent 50%, var(--teal) 50%) calc(100% - 17px) 50% / 6px 6px no-repeat,
-    linear-gradient(135deg, var(--teal) 50%, transparent 50%) calc(100% - 12px) 50% / 6px 6px no-repeat,
-    #fffdf8;
+  background: #fffdf8;
   color: var(--panel-ink);
   box-shadow: var(--inner-light);
   cursor: pointer;
@@ -1114,8 +1075,7 @@ select:hover {
   padding: 1rem;
   border: 1px solid rgba(23, 27, 25, 0.14);
   border-radius: var(--radius-lg);
-  background:
-    linear-gradient(145deg, rgba(220, 239, 233, 0.86), rgba(247, 252, 249, 0.92));
+  background: #eef7f2;
   box-shadow: var(--inner-light);
 }
 
@@ -1147,7 +1107,7 @@ select:hover {
   display: block;
   width: 0;
   height: 100%;
-  background: linear-gradient(90deg, var(--teal), var(--copper), var(--red));
+  background: var(--copper);
   transition: width 260ms var(--ease);
 }
 
@@ -1158,9 +1118,7 @@ select:hover {
   min-height: 360px;
   border: 1px solid rgba(23, 27, 25, 0.12);
   border-radius: var(--radius);
-  background:
-    radial-gradient(circle at 15% 12%, rgba(157, 98, 56, 0.08), transparent 18rem),
-    #fff9ec;
+  background: #fff9ec;
   box-shadow: var(--inner-light);
 }
 
@@ -1284,7 +1242,7 @@ select:hover {
 
 .data-table th {
   color: #f8fffd;
-  background: linear-gradient(135deg, var(--navy), #183e38);
+  background: var(--navy);
   font-size: 0.82rem;
 }
 
@@ -1334,7 +1292,7 @@ select:hover {
   padding: 0.64rem 0.72rem;
   border: 1px solid rgba(23, 27, 25, 0.14);
   border-radius: var(--radius);
-  background: linear-gradient(145deg, #10201e, #17362f);
+  background: #10201e;
   color: #eaf7f0;
   font-family: var(--mono);
   font-size: 0.8rem;
