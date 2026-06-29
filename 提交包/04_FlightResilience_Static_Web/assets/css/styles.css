@@ -310,11 +310,13 @@ svg .is-demo-target {
 
 .demo-caption {
   position: fixed;
-  left: clamp(0.9rem, 2vw, 1.35rem);
-  bottom: clamp(0.9rem, 2vw, 1.25rem);
+  top: calc(68px + 0.8rem);
+  right: clamp(0.9rem, 2vw, 1.35rem);
+  left: auto;
+  bottom: auto;
   z-index: 84;
-  width: min(430px, calc(100vw - 2rem));
-  padding: 0.76rem 0.86rem;
+  width: min(520px, calc(100vw - 2rem));
+  padding: 0.66rem 0.78rem;
   border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: 20px;
   background: rgba(17, 43, 39, 0.95);
@@ -359,21 +361,22 @@ svg .is-demo-target {
 
 .demo-caption strong {
   font-family: var(--font-heading);
-  font-size: 1.08rem;
+  font-size: 1rem;
   font-weight: 800;
   line-height: 1.24;
 }
 
 .demo-caption-track {
   display: grid;
-  gap: 0.38rem;
-  margin-top: 0.46rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.32rem 0.48rem;
+  margin-top: 0.42rem;
 }
 
 .demo-caption-track div {
   display: grid;
-  grid-template-columns: 2.6rem minmax(0, 1fr);
-  gap: 0.48rem;
+  grid-template-columns: 2.35rem minmax(0, 1fr);
+  gap: 0.34rem;
   align-items: start;
 }
 
@@ -393,18 +396,38 @@ svg .is-demo-target {
 .demo-caption p {
   margin: 0;
   color: rgba(255, 253, 246, 0.9);
-  font-size: 0.78rem;
-  line-height: 1.46;
+  font-size: 0.74rem;
+  line-height: 1.4;
   text-wrap: pretty;
 }
 
 .demo-caption small {
-  margin-top: 0.45rem;
-  padding-top: 0.45rem;
+  margin-top: 0.38rem;
+  padding-top: 0.38rem;
   border-top: 1px solid rgba(255, 255, 255, 0.14);
   color: rgba(255, 253, 246, 0.72);
-  font-size: 0.76rem;
-  line-height: 1.42;
+  font-size: 0.73rem;
+  line-height: 1.38;
+}
+
+.tour-is-playing[data-tour-phase="scroll"] .demo-caption,
+.tour-is-playing[data-tour-phase="focus"] .demo-caption,
+.tour-is-playing[data-tour-phase="click"] .demo-caption {
+  opacity: 0.9;
+  transform: translateY(6px) scale(0.985);
+}
+
+.tour-is-playing[data-tour-phase="scroll"] .demo-caption-track,
+.tour-is-playing[data-tour-phase="focus"] .demo-caption-track,
+.tour-is-playing[data-tour-phase="click"] .demo-caption-track {
+  display: none;
+}
+
+.tour-is-playing[data-tour-phase="scroll"] .demo-caption small,
+.tour-is-playing[data-tour-phase="focus"] .demo-caption small,
+.tour-is-playing[data-tour-phase="click"] .demo-caption small {
+  margin-top: 0.25rem;
+  padding-top: 0.28rem;
 }
 
 .dock-actions button,
@@ -1822,6 +1845,7 @@ code {
   }
 
   .demo-caption {
+    top: auto;
     left: 0.55rem;
     right: 0.55rem;
     bottom: calc(5.58rem + env(safe-area-inset-bottom));
