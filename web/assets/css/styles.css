@@ -165,13 +165,31 @@ select {
   transition: left 360ms var(--ease), top 360ms var(--ease), opacity 160ms var(--ease), transform 160ms var(--ease);
 }
 
+.demo-cursor::after {
+  content: "";
+  position: absolute;
+  inset: -12px;
+  border: 1px solid rgba(157, 98, 56, 0.38);
+  border-radius: inherit;
+  opacity: 0;
+  transform: scale(0.7);
+}
+
 .demo-cursor.is-visible {
   opacity: 1;
   transform: translate(-50%, -50%) scale(1);
 }
 
+.demo-cursor.is-tracking {
+  transition: left 72ms linear, top 72ms linear, opacity 140ms var(--ease), transform 140ms var(--ease);
+}
+
 .demo-cursor.is-clicking {
   transform: translate(-50%, -50%) scale(0.72);
+}
+
+.demo-cursor.is-clicking::after {
+  animation: cursor-ring 420ms var(--ease) both;
 }
 
 .is-demo-target {
@@ -181,6 +199,10 @@ select {
   box-shadow: 0 0 0 8px rgba(169, 101, 52, 0.12), var(--shadow) !important;
   border-radius: inherit;
   animation: demo-pulse 880ms var(--ease) both;
+}
+
+.tour-is-playing .is-demo-target {
+  scroll-margin-block: 7.5rem;
 }
 
 .is-demo-changing {
@@ -205,6 +227,17 @@ svg .is-demo-target {
   100% {
     outline-color: rgba(169, 101, 52, 0.42);
     box-shadow: 0 0 0 8px rgba(169, 101, 52, 0.1), var(--shadow);
+  }
+}
+
+@keyframes cursor-ring {
+  0% {
+    opacity: 0.85;
+    transform: scale(0.55);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.7);
   }
 }
 
@@ -485,6 +518,10 @@ svg .is-demo-target {
 
 main {
   position: relative;
+}
+
+section[id] {
+  scroll-margin-top: 5.5rem;
 }
 
 .hero {
@@ -1595,34 +1632,83 @@ code {
 }
 
 @media (max-width: 640px) {
+  html,
   body {
-    padding-bottom: 108px;
+    overflow-x: clip;
+  }
+
+  body {
+    padding-bottom: calc(126px + env(safe-area-inset-bottom));
+    line-height: 1.62;
   }
 
   .topbar {
     position: static;
+    gap: 0.64rem;
+    min-height: 0;
+    padding: 0.62rem 0.8rem 0.72rem;
+    overflow: hidden;
   }
 
   .brand {
     min-width: 0;
+    gap: 0.62rem;
   }
 
   .brand span:last-child {
     white-space: normal;
   }
 
+  .brand-mark {
+    width: 40px;
+    height: 40px;
+    border-radius: 14px;
+  }
+
+  .brand strong {
+    font-size: 0.98rem;
+  }
+
+  .brand span:last-child {
+    font-size: 0.74rem;
+    line-height: 1.25;
+  }
+
   .nav-links {
+    width: calc(100vw - 1.6rem);
+    margin-inline: -0.05rem;
+    padding: 0.05rem 0.42rem 0.16rem 0;
     justify-content: flex-start;
+    flex-wrap: nowrap;
+    gap: 0.1rem;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scrollbar-width: none;
+  }
+
+  .nav-links::-webkit-scrollbar {
+    display: none;
+  }
+
+  .nav-links a {
+    flex: 0 0 auto;
+    min-height: 32px;
+    padding: 0.32rem 0.52rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    white-space: nowrap;
   }
 
   h1 {
-    font-size: 2.18rem;
-    line-height: 1.12;
+    max-width: 10.8em;
+    font-size: clamp(2.02rem, 10.4vw, 2.56rem);
+    line-height: 1.08;
   }
 
   .lede {
-    font-size: 0.98rem;
-    line-height: 1.72;
+    margin-top: 0.92rem;
+    font-size: 0.95rem;
+    line-height: 1.66;
   }
 
   .section-heading h2,
@@ -1632,12 +1718,66 @@ code {
 
   .hero-note {
     grid-template-columns: 1fr;
+    gap: 0.35rem;
+    margin-top: 1rem;
+    padding-top: 0.78rem;
+  }
+
+  .hero-note strong {
+    font-size: 0.94rem;
+    line-height: 1.46;
+  }
+
+  .hero-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.58rem;
+    margin-top: 1.08rem;
+  }
+
+  .hero-actions .button {
+    min-height: 44px;
+    padding-inline: 0.72rem;
+    border-radius: 15px;
+    font-size: 0.9rem;
+    white-space: nowrap;
+  }
+
+  .hero-actions .button.primary {
+    grid-column: 1 / -1;
   }
 
   .metric-grid,
-  .flow,
   .strategy-summary {
     grid-template-columns: 1fr;
+  }
+
+  .flow {
+    grid-template-columns: repeat(7, minmax(108px, 1fr));
+    gap: 0.32rem;
+    margin-inline: -0.1rem;
+    padding: 0.32rem;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    overscroll-behavior-inline: contain;
+    scrollbar-width: none;
+  }
+
+  .flow::-webkit-scrollbar {
+    display: none;
+  }
+
+  .flow button {
+    min-height: 56px;
+    padding: 0.52rem 0.58rem;
+    border-radius: 13px;
+    scroll-snap-align: start;
+    font-size: 0.82rem;
+    line-height: 1.25;
+  }
+
+  .flow span {
+    font-size: 0.68rem;
   }
 
   .mission-grid,
@@ -1659,91 +1799,461 @@ code {
     font-size: 1.02rem;
   }
 
+  .mission-board {
+    border-radius: 20px;
+  }
+
+  .mission-head,
+  .tour-brief {
+    padding-inline: 0.86rem;
+  }
+
   .presentation-dock {
     position: fixed;
     right: 0.6rem;
     bottom: max(0.72rem, env(safe-area-inset-bottom));
     left: 0.6rem;
-    grid-template-columns: minmax(0, 1fr) 64px;
-    padding: 0.3rem;
-    border-radius: 18px;
+    grid-template-columns: minmax(0, 1fr) 62px;
+    gap: 0.28rem;
+    max-width: none;
+    padding: 0.28rem;
+    border-radius: 17px;
     box-shadow: 0 14px 32px rgba(26, 35, 31, 0.14), var(--inner-light);
   }
 
   .demo-caption {
     left: 0.55rem;
     right: 0.55rem;
-    bottom: calc(5.55rem + env(safe-area-inset-bottom));
+    bottom: calc(5.58rem + env(safe-area-inset-bottom));
     width: auto;
-    padding: 0.64rem 0.72rem;
+    max-height: min(48svh, 360px);
+    padding: 0.58rem 0.68rem;
+    border-radius: 17px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .demo-caption strong {
+    font-size: 0.94rem;
+    line-height: 1.24;
   }
 
   .demo-caption-track {
-    gap: 0.32rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.3rem 0.42rem;
   }
 
   .demo-caption-track div {
-    grid-template-columns: 2.35rem minmax(0, 1fr);
-    gap: 0.36rem;
+    grid-template-columns: 2.15rem minmax(0, 1fr);
+    gap: 0.3rem;
+  }
+
+  .demo-caption-track em {
+    padding-inline: 0.24rem;
+    font-size: 0.6rem;
   }
 
   .demo-caption p {
-    font-size: 0.76rem;
-    line-height: 1.42;
+    font-size: 0.7rem;
+    line-height: 1.38;
+  }
+
+  .demo-caption small {
+    margin-top: 0.34rem;
+    padding-top: 0.34rem;
+    font-size: 0.7rem;
+    line-height: 1.36;
+  }
+
+  .tour-is-playing[data-tour-phase="scroll"] .demo-caption,
+  .tour-is-playing[data-tour-phase="focus"] .demo-caption,
+  .tour-is-playing[data-tour-phase="click"] .demo-caption {
+    opacity: 0.88;
+    transform: translateY(6px) scale(0.985);
+  }
+
+  .tour-is-playing[data-tour-phase="scroll"] .demo-caption-track,
+  .tour-is-playing[data-tour-phase="focus"] .demo-caption-track,
+  .tour-is-playing[data-tour-phase="click"] .demo-caption-track {
+    display: none;
+  }
+
+  .tour-is-playing[data-tour-phase="scroll"] .demo-caption small,
+  .tour-is-playing[data-tour-phase="focus"] .demo-caption small,
+  .tour-is-playing[data-tour-phase="click"] .demo-caption small {
+    margin-top: 0.22rem;
+    padding-top: 0.28rem;
+  }
+
+  .tour-is-playing[data-tour-phase="click"] .demo-caption {
+    pointer-events: none;
+    opacity: 0.78;
+  }
+
+  .tour-is-playing .is-demo-target {
+    scroll-margin-block: 12rem;
   }
 
   .dock-actions {
     display: grid;
     grid-column: 1 / -1;
     grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.24rem;
   }
 
   .dock-copy strong {
-    font-size: 0.78rem;
+    font-size: 0.74rem;
   }
 
   .dock-actions button {
     min-height: 30px;
     padding-inline: 0.35rem;
-    font-size: 0.72rem;
+    font-size: 0.69rem;
+    border-radius: 12px;
   }
 
   .hero {
     gap: 1.25rem;
-    padding-top: 2.25rem;
+    padding: 2rem 0.8rem 1.12rem;
   }
 
-  .mission-board {
-    margin-bottom: 1rem;
+  .eyebrow {
+    margin-bottom: 0.58rem;
+    font-size: 0.69rem;
   }
 
   .section {
-    padding-left: 0.75rem;
-    padding-right: 0.75rem;
+    padding: 2rem 0.8rem;
+    scroll-margin-top: 1.35rem;
+  }
+
+  .section.tight {
+    padding-top: 0;
+    padding-bottom: 0.86rem;
+  }
+
+  .section-heading {
+    gap: 0.42rem;
+    margin-bottom: 0.95rem;
+  }
+
+  .section-heading h2,
+  .footer-summary h2 {
+    font-size: 1.48rem;
+    line-height: 1.18;
+  }
+
+  .section-heading p:not(.eyebrow),
+  .footer-summary p:not(.eyebrow) {
+    font-size: 0.91rem;
+    line-height: 1.62;
   }
 
   .panel {
-    padding: 0.82rem;
+    padding: 0.78rem;
     border-radius: 17px;
+  }
+
+  .panel + .panel,
+  .analysis-grid + .panel,
+  .panel + .analysis-grid {
+    margin-top: 0.72rem;
   }
 
   .panel-title {
     align-items: flex-start;
     flex-direction: column;
+    gap: 0.32rem;
+    margin-bottom: 0.7rem;
+    padding-bottom: 0.58rem;
+  }
+
+  .panel-title h3 {
+    font-size: 0.96rem;
+  }
+
+  .panel-title span {
+    font-size: 0.73rem;
+    line-height: 1.36;
+  }
+
+  .analysis-grid,
+  .analysis-grid.two,
+  .analysis-grid.compact-left,
+  .evidence-grid,
+  .method-grid,
+  .option-ledger {
+    gap: 0.74rem;
+  }
+
+  .brief-row {
+    gap: 0.58rem;
+  }
+
+  .brief-chip,
+  .metric {
+    min-height: 0;
+    padding: 0.74rem;
+    border-radius: 16px;
+  }
+
+  .metric strong {
+    font-size: 1.56rem;
+  }
+
+  .metric small {
+    margin-top: 0.4rem;
+    line-height: 1.42;
   }
 
   .chart.tall {
-    min-height: 320px;
+    min-height: 276px;
   }
 
   .chart.medium {
-    min-height: 250px;
+    min-height: 224px;
+  }
+
+  .proof-chart {
+    min-height: 238px;
+  }
+
+  .evidence-card.wide .proof-chart {
+    min-height: 330px;
+  }
+
+  .chart svg {
+    min-width: 100%;
+  }
+
+  .chart .axis-label,
+  .chart text {
+    font-size: 10px;
+  }
+
+  .airport-toolbar,
+  .sim-controls {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.52rem;
+    margin-bottom: 0.72rem;
+  }
+
+  .sim-controls label,
+  .airport-toolbar label {
+    display: grid;
+    grid-template-columns: 4.8rem minmax(0, 1fr);
+    align-items: center;
+    gap: 0.5rem;
+    white-space: normal;
+  }
+
+  select {
+    width: 100%;
+    min-width: 0;
+    min-height: 38px;
+    padding-block: 0.42rem;
+    border-radius: 13px;
+  }
+
+  .option-group {
+    padding: 0.72rem;
+    border-radius: 16px;
+  }
+
+  .option-group > span {
+    margin-bottom: 0.45rem;
+  }
+
+  .option-buttons {
+    gap: 0.36rem;
+  }
+
+  .option-chip {
+    min-height: 31px;
+    padding: 0.34rem 0.52rem;
+    border-radius: 12px;
+    font-size: 0.74rem;
+  }
+
+  .risk-form {
+    gap: 0.72rem;
+  }
+
+  .risk-form label,
+  .lambda-control {
+    gap: 0.3rem;
+  }
+
+  .risk-form input[type="range"],
+  .lambda-control input[type="range"] {
+    min-width: 0;
+  }
+
+  .risk-result {
+    margin-top: 0.78rem;
+    padding: 0.78rem;
+  }
+
+  .risk-result strong {
+    font-size: 1.84rem;
+  }
+
+  .network-canvas {
+    min-height: 270px;
+  }
+
+  .airport-profile,
+  .strategy-summary {
+    gap: 1px;
+  }
+
+  .profile-stat,
+  .strategy-card {
+    padding: 0.68rem;
+  }
+
+  .strategy-card {
+    border-radius: 14px;
+  }
+
+  .data-table {
+    min-width: 420px;
+    font-size: 0.8rem;
+  }
+
+  .data-table th,
+  .data-table td {
+    padding: 0.52rem 0.5rem;
+  }
+
+  .method-block {
+    min-height: 0;
+    padding: 0.86rem;
+    border-radius: 17px;
+  }
+
+  .method-block p {
+    font-size: 0.88rem;
+  }
+
+  .formula-line {
+    padding: 0.54rem 0.58rem;
+    border-radius: 12px;
+    font-size: 0.72rem;
+    line-height: 1.5;
+  }
+
+  .footer {
+    gap: 0.86rem;
+    margin-bottom: 0;
+    padding: 1.1rem 0.8rem calc(1.35rem + env(safe-area-inset-bottom));
   }
 
   .footer,
   .footer-grid {
     flex-direction: column;
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 380px) {
+  body {
+    padding-bottom: calc(132px + env(safe-area-inset-bottom));
+  }
+
+  .topbar {
+    padding-inline: 0.72rem;
+  }
+
+  .nav-links {
+    width: calc(100vw - 1.44rem);
+    padding-right: 0.62rem;
+  }
+
+  h1 {
+    font-size: clamp(1.88rem, 10vw, 2.16rem);
+  }
+
+  .lede {
+    font-size: 0.91rem;
+  }
+
+  .hero-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-actions .button.primary {
+    grid-column: auto;
+  }
+
+  .mission-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .mission-grid div,
+  .mission-grid div:nth-child(odd) {
+    border-right: 0;
+  }
+
+  .mission-grid strong {
+    font-size: 1.08rem;
+  }
+
+  .presentation-dock {
+    right: 0.42rem;
+    left: 0.42rem;
+    grid-template-columns: minmax(0, 1fr) 52px;
+  }
+
+  .dock-progress {
+    height: 6px;
+  }
+
+  .dock-actions button {
+    font-size: 0.66rem;
+  }
+
+  .demo-caption {
+    left: 0.42rem;
+    right: 0.42rem;
+    bottom: calc(5.82rem + env(safe-area-inset-bottom));
+    max-height: min(44svh, 320px);
+  }
+
+  .demo-caption-track {
+    grid-template-columns: 1fr;
+  }
+
+  .demo-caption-track div {
+    grid-template-columns: 2rem minmax(0, 1fr);
+  }
+
+  .demo-caption p {
+    font-size: 0.68rem;
+  }
+
+  .sim-controls label,
+  .airport-toolbar label {
+    grid-template-columns: 1fr;
+    gap: 0.32rem;
+  }
+
+  .chart.tall {
+    min-height: 252px;
+  }
+
+  .chart.medium,
+  .proof-chart {
+    min-height: 210px;
+  }
+
+  .evidence-card.wide .proof-chart {
+    min-height: 290px;
+  }
+
+  .network-canvas {
+    min-height: 240px;
   }
 }
 

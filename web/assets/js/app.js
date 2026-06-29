@@ -1,5 +1,6 @@
 const DATA_URL = "assets/data/flightresilience-data.json";
 const SVG_NS = "http://www.w3.org/2000/svg";
+const TOUR_SCROLL_MS = 680;
 
 const STRATEGY_LABELS = {
   baseline: "基准",
@@ -41,8 +42,11 @@ const state = {
   tourPlaying: false,
   tourTimer: 0,
   tourTimers: [],
+  tourScrollFrame: 0,
   tourInteracting: false,
   tourAction: "点击“自动演示”后按顺序操作。",
+  tourPhase: "idle",
+  isMobile: window.matchMedia("(max-width: 640px)").matches,
   tooltipTimer: 0,
   nodePositions: [],
   prefersReducedMotion: window.matchMedia("(prefers-reduced-motion: reduce)").matches,
@@ -57,13 +61,13 @@ const TOUR_STEPS = [
     method: "系统边界 + 多主体目标冲突：旅客、航司、机场和监管者不能只用一个指标评价。",
     evidence: (data) => `${fmt.int(data.kpi.flights)} 条航班、${data.kpi.airport_count} 个机场、${fmt.int(data.kpi.route_count || data.airportEdges?.length || data.networkEdges?.length)} 条有向航线。`,
     decision: "先把问题定义为“网络恢复策略选择”，预测只是输入，不是最终答案。",
-    duration: 7200,
+    duration: 15000,
     state: { airport: "MIA", scenario: "weather", strategy: "dynamic_combo", shockAirport: "MIA", lambda: 0.9 },
     actions: [
-      { type: "pulse", target: ".mission-board", delay: 520, label: "第一步确认样本边界：航班、机场、航线和数据窗口。" },
-      { type: "pulse", target: "#tour-flow", delay: 1920, label: "演示路线固定为系统边界、证据、风险、网络、仿真、决策。" },
-      { type: "pulse", target: ".hero-note", delay: 3420, label: "先声明结论边界：恢复优先与成本保守会给出不同推荐。" },
-      { type: "pulse", target: "#evidence-brief", delay: 5120, label: "接下来用四个证据对象进入定量分析。" },
+      { type: "pulse", target: ".mission-board", delay: 1000, label: "第一步确认样本边界：航班、机场、航线和数据窗口。" },
+      { type: "pulse", target: "#tour-flow", delay: 4300, label: "演示路线固定为系统边界、证据、风险、网络、仿真、决策。" },
+      { type: "pulse", target: ".hero-note", delay: 7600, label: "先声明结论边界：恢复优先与成本保守会给出不同推荐。" },
+      { type: "pulse", target: "#evidence-brief", delay: 11000, label: "接下来用四个证据对象进入定量分析。" },
     ],
   },
   {
@@ -77,14 +81,14 @@ const TOUR_STEPS = [
       return `${best.model} AUC=${fmt.num(best.test_roc_auc, 3)}，同时保留风险损失与 TOPSIS 的冲突。`;
     },
     decision: "先看边界和矛盾，再进入模块细节，避免演示变成逐页翻图。",
-    duration: 7600,
+    duration: 20000,
     state: { airport: "MIA", scenario: "weather", strategy: "dynamic_combo", shockAirport: "MIA", lambda: 0.9 },
     actions: [
-      { type: "click", target: "#route-risk-chart circle[role='button']", delay: 520, label: "点击高风险航线气泡，联动出发机场和预测输入。" },
-      { type: "pulse", target: "#curve-chart", delay: 1780, label: "检查 ROC/PR 曲线，确认风险模型具备排序能力。" },
-      { type: "pulse", target: "#recovery-heat-chart", delay: 3220, label: "观察恢复热力图，把单点风险接到传播过程。" },
-      { type: "click", target: "#risk-topsis-chart circle[role='button']", delay: 4800, label: "点击风险-TOPSIS 点，说明低损失与高综合得分并不总一致。" },
-      { type: "pulse", target: "#evidence-brief", delay: 6200, label: "四个证据对象形成后续模块的入口，而不是孤立截图。" },
+      { type: "click", target: "#route-risk-chart circle[role='button']", delay: 1000, label: "点击高风险航线气泡，联动出发机场和预测输入。" },
+      { type: "pulse", target: "#curve-chart", delay: 4500, label: "检查 ROC/PR 曲线，确认风险模型具备排序能力。" },
+      { type: "pulse", target: "#recovery-heat-chart", delay: 8000, label: "观察恢复热力图，把单点风险接到传播过程。" },
+      { type: "click", target: "#risk-topsis-chart circle[role='button']", delay: 12000, label: "点击风险-TOPSIS 点，说明低损失与高综合得分并不总一致。" },
+      { type: "pulse", target: "#evidence-brief", delay: 16000, label: "四个证据对象形成后续模块的入口，而不是孤立截图。" },
     ],
   },
   {
@@ -98,14 +102,14 @@ const TOUR_STEPS = [
       return `${top.airport} 综合关键性 ${fmt.num(top.criticality, 3)}；总体 ArrDel15=${fmt.pct(data.kpi.delay_rate)}。`;
     },
     decision: "如果节点差异显著，恢复策略必须进入网络结构和传播仿真。",
-    duration: 7800,
+    duration: 15000,
     state: { airport: "MIA", scenario: "weather", strategy: "dynamic_combo", shockAirport: "MIA", lambda: 0.9 },
     actions: [
-      { type: "pulse", target: "#daily-chart", delay: 520, label: "先看日尺度波动，确认运行状态不是静态均值。" },
-      { type: "pulse", target: "#heatmap-chart", delay: 1820, label: "再看星期-小时热力，确认延误存在时间异质性。" },
-      { type: "setSelect", target: "#airport-select", value: "DEN", delay: 3300, label: "切换关注机场，比较不同节点的历史风险。" },
-      { type: "click", target: "#airport-bars rect[role='button']", delay: 5000, label: "点击关键性条形，联动机场画像、网络和预测模块。" },
-      { type: "pulse", target: "#airport-select", delay: 6460, label: "机场选择会贯穿预测、网络和仿真，不是静态展示。" },
+      { type: "pulse", target: "#daily-chart", delay: 900, label: "先看日尺度波动，确认运行状态不是静态均值。" },
+      { type: "pulse", target: "#heatmap-chart", delay: 3700, label: "再看星期-小时热力，确认延误存在时间异质性。" },
+      { type: "setSelect", target: "#airport-select", value: "DEN", delay: 6500, label: "切换关注机场，比较不同节点的历史风险。" },
+      { type: "click", target: "#airport-bars rect[role='button']", delay: 9400, label: "点击关键性条形，联动机场画像、网络和预测模块。" },
+      { type: "pulse", target: "#airport-select", delay: 12300, label: "机场选择会贯穿预测、网络和仿真，不是静态展示。" },
     ],
   },
   {
@@ -119,15 +123,17 @@ const TOUR_STEPS = [
       return `时间外测试 ROC-AUC ${fmt.num(best.test_roc_auc, 3)}，PR-AUC ${fmt.num(best.test_pr_auc, 3)}。`;
     },
     decision: "风险模型不替代调度，而是为关键节点识别和扰动仿真提供输入。",
-    duration: 8200,
+    duration: 15000,
     state: { airport: "MIA", scenario: "peak", strategy: "dynamic_combo", shockAirport: "MIA", lambda: 0.8 },
     actions: [
-      { type: "pulse", target: "#model-bars", delay: 480, label: "先看时间外测试指标，确认预测模型不是只拟合训练集。" },
-      { type: "pulse", target: "#shap-bars", delay: 1580, label: "再看主要特征，说明计划变量如何贡献风险排序。" },
-      { type: "setRange", target: "#hour-input", value: "19", delay: 2820, label: "拖动起飞小时，模拟晚高峰计划风险。" },
-      { type: "setRange", target: "#distance-input", value: "1450", delay: 3960, label: "拖动航线距离，观察长航线风险修正。" },
-      { type: "setRange", target: "#congestion-input", value: "74", delay: 5100, label: "拖动机场拥堵，风险概率即时刷新。" },
-      { type: "pulse", target: ".risk-result", delay: 6580, label: "读取风险概率，并决定是否进入网络层追踪后果。" },
+      { type: "pulse", target: "#model-bars", delay: 800, label: "先看时间外测试指标，确认预测模型不是只拟合训练集。" },
+      { type: "pulse", target: "#shap-bars", delay: 3000, label: "再看主要特征，说明计划变量如何贡献风险排序。" },
+      { type: "setSelect", target: "#origin-input", value: "DEN", delay: 5000, label: "切换出发机场，说明计划输入会改变机场历史风险项。" },
+      { type: "setSelect", target: "#dest-input", value: "LAX", delay: 6500, label: "切换到达机场，补齐航线方向对预测的影响。" },
+      { type: "setRange", target: "#hour-input", value: "19", delay: 8000, label: "拖动起飞小时，模拟晚高峰计划风险。" },
+      { type: "setRange", target: "#distance-input", value: "1450", delay: 9800, label: "拖动航线距离，观察长航线风险修正。" },
+      { type: "setRange", target: "#congestion-input", value: "74", delay: 11600, label: "拖动机场拥堵，风险概率即时刷新。" },
+      { type: "pulse", target: ".risk-result", delay: 13400, label: "读取风险概率，并决定是否进入网络层追踪后果。" },
     ],
   },
   {
@@ -141,14 +147,14 @@ const TOUR_STEPS = [
       return `${node.airport}：介数 ${fmt.num(node.betweenness, 4)}，平均风险 ${fmt.pct(node.avg_risk)}，关键性 ${fmt.num(node.criticality, 3)}。`;
     },
     decision: "关键机场优先恢复不是凭直觉，而是由网络位置、风险和流量共同决定。",
-    duration: 7800,
+    duration: 15000,
     state: { airport: "DEN", scenario: "weather", strategy: "hub_priority", shockAirport: "MIA", lambda: 0.8 },
     actions: [
-      { type: "networkClick", value: "DFW", delay: 620, label: "点击网络节点，切换机场画像。" },
-      { type: "pulse", target: "#airport-profile", delay: 1980, label: "读取机场画像：流量、风险、介数和关键性。" },
-      { type: "networkClick", value: "MIA", delay: 3380, label: "再点击 MIA，对比枢纽位置和平均风险的差异。" },
-      { type: "pulse", target: "#network-canvas", delay: 5000, label: "回到网络图，说明同一延误在不同位置后果不同。" },
-      { type: "pulse", target: "#criticality-bars", delay: 6360, label: "对比关键性排名，确认优先恢复节点。" },
+      { type: "networkClick", value: "DFW", delay: 1000, label: "点击网络节点，切换机场画像。" },
+      { type: "pulse", target: "#airport-profile", delay: 3800, label: "读取机场画像：流量、风险、介数和关键性。" },
+      { type: "networkClick", value: "MIA", delay: 6600, label: "再点击 MIA，对比枢纽位置和平均风险的差异。" },
+      { type: "pulse", target: "#network-canvas", delay: 9500, label: "回到网络图，说明同一延误在不同位置后果不同。" },
+      { type: "pulse", target: "#criticality-bars", delay: 12300, label: "对比关键性排名，确认优先恢复节点。" },
     ],
   },
   {
@@ -159,17 +165,18 @@ const TOUR_STEPS = [
     method: "状态空间传播模型：x(t+1)=Ax(t)+Bu(t)+Gw(t)+ε(t)，统一冲击和预算口径。",
     evidence: (data) => `传播矩阵谱半径 ${fmt.num(data.propagationValidation.spectral_radius_final, 3)}，单步 MAE ${fmt.num(data.propagationValidation.mae, 2)} min。`,
     decision: "同一扰动下比较恢复路径，而不是只看一个均值或单点排名。",
-    duration: 9600,
+    duration: 25000,
     state: { airport: "MIA", scenario: "weather", strategy: "baseline", shockAirport: "MIA", lambda: 0.9 },
     actions: [
-      { type: "setSelect", target: "#scenario-select", value: "weather", delay: 480, label: "选择天气冲击情景，固定外部扰动口径。" },
-      { type: "setSelect", target: "#shock-airport-select", value: "DEN", delay: 1660, label: "先切到 DEN，看冲击机场确实可被选择。" },
-      { type: "click", target: "#scenario-options .option-chip[data-kind='shock'][data-value='DFW']", delay: 3040, label: "再点击 DFW 冲击机场，观察关键节点扰动。" },
-      { type: "setSelect", target: "#strategy-select", value: "baseline", delay: 4420, label: "先看基准策略的恢复曲线，建立对照组。" },
-      { type: "click", target: "#scenario-options .option-chip[data-kind='strategy'][data-value='hub_priority']", delay: 5680, label: "切到枢纽优先，检查关键节点优先恢复的效果。" },
-      { type: "click", target: "#scenario-options .option-chip[data-kind='strategy'][data-value='dynamic_combo']", delay: 6940, label: "点击动态组合策略，比较恢复速度与成本。" },
-      { type: "click", target: "#recovery-chart circle[data-strategy='dynamic_combo']", delay: 8100, label: "点击恢复曲线末端，确认策略切换真实生效。" },
-      { type: "pulse", target: "#scenario-bars", delay: 9040, label: "最后看指标柱状图，比较累计延误与相对成本。" },
+      { type: "setSelect", target: "#scenario-select", value: "weather", delay: 1000, label: "选择天气冲击情景，固定外部扰动口径。" },
+      { type: "setSelect", target: "#shock-airport-select", value: "DEN", delay: 3900, label: "先切到 DEN，看冲击机场确实可被选择。" },
+      { type: "click", target: "#scenario-options .option-chip[data-kind='shock'][data-value='DFW']", delay: 6700, label: "再点击 DFW 冲击机场，观察关键节点扰动。" },
+      { type: "setSelect", target: "#strategy-select", value: "baseline", delay: 9400, label: "先看基准策略的恢复曲线，建立对照组。" },
+      { type: "click", target: "#scenario-options .option-chip[data-kind='strategy'][data-value='hub_priority']", delay: 12200, label: "切到枢纽优先，检查关键节点优先恢复的效果。" },
+      { type: "click", target: "#scenario-options .option-chip[data-kind='strategy'][data-value='dynamic_combo']", delay: 14800, label: "点击动态组合策略，比较恢复速度与成本。" },
+      { type: "click", target: ".strategy-card[data-strategy='uniform_buffer']", delay: 17400, label: "点击策略摘要卡，确认指标卡也能作为策略入口。" },
+      { type: "click", target: "#recovery-chart circle[data-strategy='dynamic_combo']", delay: 20500, label: "点击恢复曲线末端，确认策略切换真实生效。" },
+      { type: "pulse", target: "#scenario-bars", delay: 23000, label: "最后看指标柱状图，比较累计延误与相对成本。" },
     ],
   },
   {
@@ -183,16 +190,16 @@ const TOUR_STEPS = [
       return `主偏好推荐 ${STRATEGY_LABELS[data.decision.recommended_strategy]}；期望损失口径偏向 ${STRATEGY_LABELS[riskWinner.strategy]}。`;
     },
     decision: "恢复优先选动态组合；预算紧或风险保守时保留基准策略，结论必须条件化。",
-    duration: 9200,
+    duration: 15000,
     state: { airport: "MIA", scenario: "weather", strategy: "baseline", shockAirport: "DFW", lambda: 0.2 },
     actions: [
-      { type: "setRange", target: "#lambda-input", value: "0.9", delay: 420, label: "先把 λ 调高，模拟恢复/韧性优先。" },
-      { type: "pulse", target: "#topsis-chart", delay: 1760, label: "读取 TOPSIS 主偏好排序，说明恢复优先的推荐来源。" },
-      { type: "setRange", target: "#lambda-input", value: "0.2", delay: 3260, label: "再把 λ 调低，模拟成本和客观权重占优。" },
-      { type: "click", target: "#lambda-chart circle[data-lambda='0.2']", delay: 4860, label: "点击 λ=0.2 的敏感性点，验证推荐换位。" },
-      { type: "click", target: "#risk-topsis-chart circle[data-strategy='baseline']", delay: 6260, label: "点击基准策略的风险-TOPSIS 点，说明风险口径会保守。" },
-      { type: "pulse", target: "#risk-table", delay: 7620, label: "用风险表收束最终管理建议：结论必须条件化。" },
-      { type: "pulse", target: ".footer-summary", delay: 8580, label: "最后回到管理建议：恢复优先选动态组合，成本保守保留基准策略。" },
+      { type: "setRange", target: "#lambda-input", value: "0.9", delay: 1000, label: "先把 λ 调高，模拟恢复/韧性优先。" },
+      { type: "pulse", target: "#topsis-chart", delay: 3700, label: "读取 TOPSIS 主偏好排序，说明恢复优先的推荐来源。" },
+      { type: "setRange", target: "#lambda-input", value: "0.2", delay: 6500, label: "再把 λ 调低，模拟成本和客观权重占优。" },
+      { type: "click", target: "#lambda-chart circle[data-lambda='0.2']", delay: 8800, label: "点击 λ=0.2 的敏感性点，验证推荐换位。" },
+      { type: "pulse", target: "#risk-table", delay: 11000, label: "切到风险期望损失表，说明风险口径会更保守。" },
+      { type: "pulse", target: "#method .method-block:nth-child(2)", delay: 12600, label: "补看网络传播公式，说明仿真不是简单平均比较。" },
+      { type: "pulse", target: ".footer-summary", delay: 14000, label: "最后回到管理建议：恢复优先选动态组合，成本保守保留基准策略。" },
     ],
   },
 ];
@@ -384,6 +391,7 @@ function updateEvidenceBrief() {
 function updateTourUi() {
   const step = TOUR_STEPS[state.tourIndex] || TOUR_STEPS[0];
   const resolve = (value) => (typeof value === "function" && state.data ? value(state.data, state) : value);
+  document.body.dataset.tourPhase = state.tourPlaying ? state.tourPhase || "play" : "idle";
   setText("tour-step-label", `${String(state.tourIndex + 1).padStart(2, "0")} / ${String(TOUR_STEPS.length).padStart(2, "0")}`);
   setText("tour-title", step.title);
   setText("tour-brief", step.brief);
@@ -413,16 +421,30 @@ function setTourAction(text) {
   setText("demo-caption-action", state.tourAction);
 }
 
+function setTourPhase(phase) {
+  state.tourPhase = phase || (state.tourPlaying ? "play" : "idle");
+  document.body.dataset.tourPhase = state.tourPlaying ? state.tourPhase : "idle";
+}
+
 function clearTourTimers() {
   window.clearInterval(state.tourTimer);
   state.tourTimers.forEach((timer) => window.clearTimeout(timer));
   state.tourTimers = [];
+  cancelTourScroll();
 }
 
 function scheduleTour(fn, delay) {
   const timer = window.setTimeout(fn, delay);
   state.tourTimers.push(timer);
   return timer;
+}
+
+function cancelTourScroll() {
+  if (state.tourScrollFrame) {
+    window.cancelAnimationFrame(state.tourScrollFrame);
+    state.tourScrollFrame = 0;
+  }
+  demoCursor()?.classList.remove("is-tracking");
 }
 
 function withTourInteraction(fn) {
@@ -444,25 +466,109 @@ function demoCursor() {
   return $("demo-cursor");
 }
 
-function moveDemoCursorTo(node) {
+function cursorPointForNode(node, { block = "center" } = {}) {
+  const rect = node.getBoundingClientRect();
+  const x = clamp(rect.left + rect.width / 2, 14, window.innerWidth - 14);
+  let y = rect.top + rect.height / 2;
+  if (block === "start") {
+    const offset = Math.min(Math.max(rect.height * 0.16, 56), Math.max(56, rect.height - 16));
+    y = rect.top + offset;
+  }
+  return { x, y: clamp(y, 14, window.innerHeight - 14) };
+}
+
+function moveDemoCursorTo(node, options = {}) {
   const cursor = demoCursor();
   if (!cursor || !node) return;
-  const rect = node.getBoundingClientRect();
-  const x = rect.left + rect.width / 2;
-  const y = rect.top + rect.height / 2;
+  const { x, y } = cursorPointForNode(node, options);
   moveDemoCursorPoint(x, y);
 }
 
 function moveDemoCursorPoint(x, y) {
   const cursor = demoCursor();
   if (!cursor) return;
-  cursor.style.left = `${x}px`;
-  cursor.style.top = `${y}px`;
+  cursor.style.left = `${clamp(x, 14, window.innerWidth - 14)}px`;
+  cursor.style.top = `${clamp(y, 14, window.innerHeight - 14)}px`;
   cursor.classList.add("is-visible");
 }
 
-function pulseDemoTarget(node, duration = 820) {
+function tourInteractionDelay(extra = 0) {
+  return state.prefersReducedMotion ? extra : TOUR_SCROLL_MS + extra;
+}
+
+function animateTourScrollTo(node, top, options = {}) {
   if (!node) return;
+  if (!state.tourPlaying || state.prefersReducedMotion) {
+    window.scrollTo({ top: Math.max(0, top), behavior: state.prefersReducedMotion ? "auto" : "smooth" });
+    moveDemoCursorTo(node, options);
+    return;
+  }
+
+  const maxTop = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+  const startTop = window.scrollY;
+  const endTop = clamp(top, 0, maxTop);
+  const distance = endTop - startTop;
+  if (Math.abs(distance) < 3) {
+    moveDemoCursorTo(node, options);
+    return;
+  }
+
+  cancelTourScroll();
+  const cursor = demoCursor();
+  cursor?.classList.add("is-visible", "is-tracking");
+  const startedAt = performance.now();
+  const duration = options.duration || TOUR_SCROLL_MS;
+  const easeOut = (t) => 1 - Math.pow(1 - t, 3);
+
+  const tick = (now) => {
+    if (!state.tourPlaying) {
+      cancelTourScroll();
+      return;
+    }
+    const progress = clamp((now - startedAt) / duration, 0, 1);
+    window.scrollTo(0, startTop + distance * easeOut(progress));
+    moveDemoCursorTo(node, options);
+    if (progress < 1) {
+      state.tourScrollFrame = window.requestAnimationFrame(tick);
+    } else {
+      state.tourScrollFrame = 0;
+      moveDemoCursorTo(node, options);
+      scheduleTour(() => cursor?.classList.remove("is-tracking"), 120);
+    }
+  };
+
+  state.tourScrollFrame = window.requestAnimationFrame(tick);
+}
+
+function ensureTourTargetVisible(node, { block = "center" } = {}) {
+  if (!node) return;
+  const rect = node.getBoundingClientRect();
+  const dockHeight = document.querySelector(".presentation-dock")?.getBoundingClientRect().height || 0;
+  const captionHeight = state.tourPlaying ? (document.querySelector(".demo-caption")?.getBoundingClientRect().height || 0) : 0;
+  const topGuard = state.isMobile ? 12 : ((document.querySelector(".topbar")?.getBoundingClientRect().height || 0) + 18);
+  const bottomGuard = state.isMobile ? dockHeight + Math.min(captionHeight, window.innerHeight * 0.36) + 28 : 28;
+  const safeTop = topGuard;
+  const safeBottom = window.innerHeight - bottomGuard;
+  const center = rect.top + rect.height / 2;
+  const targetCenter = block === "start" ? safeTop + Math.min(rect.height / 2, 120) : safeTop + (safeBottom - safeTop) / 2;
+
+  if (rect.top < safeTop || rect.bottom > safeBottom || center < safeTop || center > safeBottom) {
+    animateTourScrollTo(node, Math.max(0, window.scrollY + center - targetCenter), { block });
+  } else {
+    moveDemoCursorTo(node, { block });
+  }
+}
+
+function pulseDemoTarget(node, duration = 820, options = {}) {
+  if (!node) return;
+  ensureTourTargetVisible(node, options);
+  const moveDelay = state.prefersReducedMotion ? 0 : 260;
+  scheduleTour(() => moveDemoCursorTo(node), moveDelay);
+  setTourPhase("focus");
+  scheduleTour(() => setTourPhase("explain"), Math.min(duration, 620));
+  scheduleTour(() => {
+    if (state.tourPlaying) setTourPhase("play");
+  }, duration + 120);
   moveDemoCursorTo(node);
   node.classList.add("is-demo-target");
   scheduleTour(() => node.classList.remove("is-demo-target"), duration);
@@ -472,29 +578,41 @@ function scrollToTourTarget(id) {
   const target = document.getElementById(id);
   if (!target) return;
   hideTip();
-  const topbar = document.querySelector(".topbar")?.getBoundingClientRect().height || 0;
-  const top = target.getBoundingClientRect().top + window.scrollY - topbar - 16;
-  window.scrollTo({
-    top: Math.max(0, top),
-    behavior: state.prefersReducedMotion ? "auto" : "smooth",
-  });
+  setTourPhase("scroll");
+  const cursorTarget = target.querySelector(".section-heading, .hero-copy, .mission-board, .panel") || target;
+  const topbar = state.isMobile ? 0 : (document.querySelector(".topbar")?.getBoundingClientRect().height || 0);
+  const captionOffset = state.isMobile ? Math.round(window.innerHeight * 0.08) : 16;
+  const top = target.getBoundingClientRect().top + window.scrollY - topbar - captionOffset;
+  animateTourScrollTo(cursorTarget, Math.max(0, top), { block: "start", duration: state.isMobile ? 760 : 820 });
+  scheduleTour(() => {
+    if (state.tourPlaying) setTourPhase("play");
+  }, state.prefersReducedMotion ? 80 : 840);
 }
 
 function demoClickNode(node) {
   if (!node) return;
   hideTip();
-  pulseDemoTarget(node);
+  pulseDemoTarget(node, 980);
   const cursor = demoCursor();
-  cursor?.classList.add("is-clicking");
-  withTourInteraction(() => {
-    node.dispatchEvent(new MouseEvent("click", {
-      bubbles: true,
-      cancelable: true,
-      clientX: node.getBoundingClientRect().left + node.getBoundingClientRect().width / 2,
-      clientY: node.getBoundingClientRect().top + node.getBoundingClientRect().height / 2,
-    }));
-  });
-  scheduleTour(() => cursor?.classList.remove("is-clicking"), 180);
+  setTourPhase("click");
+  scheduleTour(() => {
+    const rect = node.getBoundingClientRect();
+    const clientX = clamp(rect.left + rect.width / 2, 8, window.innerWidth - 8);
+    const clientY = clamp(rect.top + rect.height / 2, 8, window.innerHeight - 8);
+    moveDemoCursorPoint(clientX, clientY);
+    cursor?.classList.add("is-clicking");
+    withTourInteraction(() => {
+      node.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true, cancelable: true, clientX, clientY, pointerId: 1, pointerType: "mouse" }));
+      node.dispatchEvent(new MouseEvent("mousedown", { bubbles: true, cancelable: true, clientX, clientY }));
+      node.dispatchEvent(new PointerEvent("pointerup", { bubbles: true, cancelable: true, clientX, clientY, pointerId: 1, pointerType: "mouse" }));
+      node.dispatchEvent(new MouseEvent("mouseup", { bubbles: true, cancelable: true, clientX, clientY }));
+      node.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true, clientX, clientY }));
+    });
+    scheduleTour(() => {
+      cursor?.classList.remove("is-clicking");
+      if (state.tourPlaying) setTourPhase("explain");
+    }, 190);
+  }, tourInteractionDelay(90));
 }
 
 function setControlValue(selector, value, eventName) {
@@ -502,15 +620,17 @@ function setControlValue(selector, value, eventName) {
   if (!node) return;
   hideTip();
   const isRange = node.matches("input[type='range']");
-  pulseDemoTarget(node, isRange ? 1180 : 920);
+  const startDelay = tourInteractionDelay(isRange ? 90 : 120);
+  pulseDemoTarget(node, isRange ? 1280 : 1040);
   node.classList.add("is-demo-changing");
-  scheduleTour(() => node.classList.remove("is-demo-changing"), isRange ? 1220 : 980);
+  scheduleTour(() => node.classList.remove("is-demo-changing"), startDelay + (isRange ? 980 : 540));
   if (isRange) {
     const start = Number(node.value);
     const end = Number(value);
     const min = Number(node.min || 0);
     const max = Number(node.max || 100);
     const steps = 8;
+    const stepMs = 90;
     for (let i = 1; i <= steps; i += 1) {
       scheduleTour(() => {
         withTourInteraction(() => {
@@ -523,7 +643,7 @@ function setControlValue(selector, value, eventName) {
           moveDemoCursorPoint(rect.left + rect.width * ratio, rect.top + rect.height / 2);
           node.dispatchEvent(new Event(eventName, { bubbles: true }));
         });
-      }, i * 80);
+      }, startDelay + i * stepMs);
     }
     return;
   }
@@ -531,36 +651,44 @@ function setControlValue(selector, value, eventName) {
     withTourInteraction(() => {
       const values = [...(node.options || [])].map((option) => option.value);
       node.value = values.includes(value) ? value : values[0] || value;
+      moveDemoCursorTo(node);
+      const rect = node.getBoundingClientRect();
+      node.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true, cancelable: true, clientX: rect.left + rect.width / 2, clientY: rect.top + rect.height / 2, pointerId: 1, pointerType: "mouse" }));
       node.dispatchEvent(new Event(eventName, { bubbles: true }));
+      node.dispatchEvent(new PointerEvent("pointerup", { bubbles: true, cancelable: true, clientX: rect.left + rect.width / 2, clientY: rect.top + rect.height / 2, pointerId: 1, pointerType: "mouse" }));
     });
-  }, 260);
+  }, startDelay);
 }
 
 function clickNetworkNode(id) {
   const canvas = $("network-canvas");
   if (!canvas) return;
   hideTip();
+  ensureTourTargetVisible(canvas);
   const node = state.nodePositions.find((item) => item.id === id || item.airport === id) || state.nodePositions[0];
   if (!node) return;
-  const rect = canvas.getBoundingClientRect();
-  const clientX = rect.left + node.x;
-  const clientY = rect.top + node.y;
   const cursor = demoCursor();
-  if (cursor) {
-    cursor.style.left = `${clientX}px`;
-    cursor.style.top = `${clientY}px`;
-    cursor.classList.add("is-visible", "is-clicking");
-  }
   canvas.classList.add("is-demo-target");
-  withTourInteraction(() => {
-    canvas.dispatchEvent(new MouseEvent("mousemove", { bubbles: true, clientX, clientY }));
-    canvas.dispatchEvent(new MouseEvent("click", { bubbles: true, clientX, clientY }));
-  });
   scheduleTour(() => {
-    cursor?.classList.remove("is-clicking");
-    canvas.classList.remove("is-demo-target");
-    hideTip();
-  }, 520);
+    const rect = canvas.getBoundingClientRect();
+    const clientX = clamp(rect.left + node.x, 8, window.innerWidth - 8);
+    const clientY = clamp(rect.top + node.y, 8, window.innerHeight - 8);
+    moveDemoCursorPoint(clientX, clientY);
+    cursor?.classList.add("is-visible", "is-clicking");
+    setTourPhase("click");
+    withTourInteraction(() => {
+      canvas.dispatchEvent(new MouseEvent("mousemove", { bubbles: true, clientX, clientY }));
+      canvas.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true, cancelable: true, clientX, clientY, pointerId: 1, pointerType: "mouse" }));
+      canvas.dispatchEvent(new PointerEvent("pointerup", { bubbles: true, cancelable: true, clientX, clientY, pointerId: 1, pointerType: "mouse" }));
+      canvas.dispatchEvent(new MouseEvent("click", { bubbles: true, clientX, clientY }));
+    });
+    scheduleTour(() => {
+      cursor?.classList.remove("is-clicking");
+      canvas.classList.remove("is-demo-target");
+      hideTip();
+      if (state.tourPlaying) setTourPhase("explain");
+    }, 520);
+  }, tourInteractionDelay(90));
 }
 
 function executeTourAction(action) {
@@ -568,7 +696,7 @@ function executeTourAction(action) {
   setTourAction(action.label || "正在操作页面控件。");
   const target = action.target ? document.querySelector(action.target) : null;
   if (action.type === "scroll") {
-    target?.scrollIntoView({ behavior: state.prefersReducedMotion ? "auto" : "smooth", block: "center" });
+    if (target) ensureTourTargetVisible(target);
     if (target) pulseDemoTarget(target, 620);
     return;
   }
@@ -601,6 +729,7 @@ function runTourActions(step) {
 
 function applyTourStep(index, { scroll = true } = {}) {
   hideTip();
+  setTourPhase("scroll");
   state.tourIndex = (index + TOUR_STEPS.length) % TOUR_STEPS.length;
   const step = TOUR_STEPS[state.tourIndex];
   Object.assign(state, step.state);
@@ -617,6 +746,8 @@ function applyTourStep(index, { scroll = true } = {}) {
 
 function stopTour() {
   state.tourPlaying = false;
+  state.tourPhase = "idle";
+  document.body.dataset.tourPhase = "idle";
   clearTourTimers();
   hideTip();
   demoCursor()?.classList.remove("is-visible", "is-clicking");
@@ -628,6 +759,7 @@ function stopTour() {
 function startTour() {
   state.tourPlaying = true;
   state.tourIndex = 0;
+  setTourPhase("intro");
   clearTourTimers();
   hideTip();
   setTourAction("开始：先界定系统，再进入证据、模型、仿真和决策。");
@@ -640,6 +772,7 @@ function runTourStep(index) {
   applyTourStep(index);
   const step = TOUR_STEPS[state.tourIndex];
   runTourActions(step);
+  const duration = step.duration;
   scheduleTour(() => {
     if (!state.tourPlaying) return;
     const next = state.tourIndex + 1;
@@ -648,7 +781,7 @@ function runTourStep(index) {
       return;
     }
     runTourStep(next);
-  }, step.duration || 3200);
+  }, duration || 3200);
 }
 
 function toggleTour() {
@@ -1730,7 +1863,10 @@ function bindControls() {
   networkCanvas?.addEventListener("mouseleave", hideTip);
   window.addEventListener("scroll", hideTip, { passive: true });
   window.addEventListener("blur", hideTip);
-  window.addEventListener("resize", debounce(renderAll, 180));
+  window.addEventListener("resize", debounce(() => {
+    state.isMobile = window.matchMedia("(max-width: 640px)").matches;
+    renderAll();
+  }, 180));
 }
 
 function debounce(fn, delay) {
